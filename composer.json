@@ -11,10 +11,12 @@
         "laravel/framework": "^13.8",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^3.0",
+        "spatie/laravel-deleted-models": "^1.2",
         "tightenco/ziggy": "^2.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
+        "larastan/larastan": "^3.10",
         "laravel/breeze": "^2.4",
         "laravel/pail": "^1.2.5",
         "laravel/pao": "^1.0.6",
@@ -22,6 +24,9 @@
         "laravel/sail": "^1.63",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.6",
+        "pestphp/pest": "^4.7",
+        "pestphp/pest-plugin-laravel": "^4.1",
+        "phpstan/phpstan": "^2.2",
         "phpunit/phpunit": "^12.5.12"
     },
     "autoload": {
@@ -49,9 +54,20 @@
             "Composer\\Config::disableProcessTimeout",
             "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1 --timeout=0\" \"php artisan pail --timeout=0\" \"npm run dev\" --names=server,queue,logs,vite --kill-others"
         ],
+        "pest": "./vendor/bin/pest",
+        "pint": "./vendor/bin/pint",
+        "phpstan": "./vendor/bin/phpstan analyse",
+        "lint:vue": "npm run lint",
+        "quality": [
+            "@pint",
+            "@phpstan",
+            "@lint:vue",
+            "@pest"
+        ],
         "test": [
             "@php artisan config:clear --ansi @no_additional_args",
-            "@php artisan test"
+            "@php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\"",
+            "./vendor/bin/pest"
         ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",

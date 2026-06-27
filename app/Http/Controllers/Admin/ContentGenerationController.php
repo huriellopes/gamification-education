@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Actions\GenerateStudyMaterialAction;
+use App\Actions\GenerateTestForSubjectAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\GenerateContentRequest;
 use App\Models\Subject;
-use App\Actions\GenerateStudyMaterialAction;
-use App\Actions\GenerateTestForSubjectAction;
 
 class ContentGenerationController extends Controller
 {
     protected GenerateStudyMaterialAction $generateMaterialAction;
+
     protected GenerateTestForSubjectAction $generateTestAction;
 
     public function __construct(

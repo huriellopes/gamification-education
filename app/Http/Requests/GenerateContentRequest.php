@@ -8,13 +8,17 @@ class GenerateContentRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user() && $this->user()->isAdmin();
+        return $this->user() && (
+            $this->user()->isSuperAdmin() ||
+            $this->user()->isInstitutionAdmin() ||
+            $this->user()->isTeacher()
+        );
     }
 
     public function rules(): array
     {
         return [
-            'theme' => ['required', 'string', 'max' => 255],
+            'theme' => ['required', 'string', 'max:255'],
         ];
     }
 }

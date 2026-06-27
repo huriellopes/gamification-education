@@ -1,13 +1,17 @@
 <script setup>
-import { ref } from 'vue';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, router } from '@inertiajs/vue3';
+import { ref } from 'vue';
 
 const showingNavigationDropdown = ref(false);
+
+const switchInstitution = (id) => {
+    router.post(route('admin.institutions.switch', id));
+};
 </script>
 
 <template>
@@ -35,22 +39,38 @@ const showingNavigationDropdown = ref(false);
                             >
                                 <NavLink
                                     :href="route('dashboard')"
-                                    :active="route().current('dashboard') || route().current('admin.dashboard') || route().current('student.dashboard')"
+                                    :active="
+                                        route().current('dashboard') ||
+                                        route().current(
+                                            'super-admin.dashboard',
+                                        ) ||
+                                        route().current('admin.dashboard') ||
+                                        route().current('teacher.dashboard') ||
+                                        route().current('student.dashboard')
+                                    "
                                 >
                                     Dashboard
                                 </NavLink>
-                                <template v-if="$page.props.auth.user.role === 'admin'">
-                                    <NavLink
-                                        :href="route('admin.institutions.index')"
-                                        :active="route().current('admin.institutions.*')"
-                                    >
-                                        Instituições
-                                    </NavLink>
+                                <template
+                                    v-if="
+                                        $page.props.auth.user.role === 'admin'
+                                    "
+                                >
                                     <NavLink
                                         :href="route('admin.subjects.index')"
-                                        :active="route().current('admin.subjects.*')"
+                                        :active="
+                                            route().current('admin.subjects.*')
+                                        "
                                     >
                                         Matérias
+                                    </NavLink>
+                                    <NavLink
+                                        :href="route('admin.users.index')"
+                                        :active="
+                                            route().current('admin.users.*')
+                                        "
+                                    >
+                                        Membros
                                     </NavLink>
                                 </template>
                                 <NavLink
@@ -63,6 +83,68 @@ const showingNavigationDropdown = ref(false);
                         </div>
 
                         <div class="hidden sm:ms-6 sm:flex sm:items-center">
+                            <!-- Seletor de Instituição para Admin -->
+                            <div
+                                v-if="
+                                    $page.props.auth.user.role === 'admin' &&
+                                    $page.props.auth.user.institutions?.length >
+                                        1
+                                "
+                                class="relative ms-3"
+                            >
+                                <Dropdown align="right" width="60">
+                                    <template #trigger>
+                                        <span class="inline-flex rounded-md">
+                                            <button
+                                                type="button"
+                                                class="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none dark:bg-gray-800 dark:text-gray-400 dark:hover:text-gray-300"
+                                            >
+                                                🏫
+                                                {{
+                                                    $page.props.auth.user
+                                                        .institution?.name ||
+                                                    'Selecionar Instituição'
+                                                }}
+                                                <svg
+                                                    class="-me-0.5 ms-2 h-4 w-4"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    viewBox="0 0 20 20"
+                                                    fill="currentColor"
+                                                >
+                                                    <path
+                                                        fill-rule="evenodd"
+                                                        d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
+                                                        clip-rule="evenodd"
+                                                    />
+                                                </svg>
+                                            </button>
+                                        </span>
+                                    </template>
+                                    <template #content>
+                                        <div
+                                            class="block px-4 py-2 text-xs text-gray-400"
+                                        >
+                                            Alternar Instituição
+                                        </div>
+                                        <button
+                                            v-for="inst in $page.props.auth.user
+                                                .institutions"
+                                            :key="inst.id"
+                                            @click="switchInstitution(inst.id)"
+                                            class="block w-full px-4 py-2 text-start text-sm leading-5 text-gray-700 transition duration-150 ease-in-out hover:bg-gray-100 focus:bg-gray-100 focus:outline-none dark:text-gray-300 dark:hover:bg-gray-700 dark:focus:bg-gray-700"
+                                            :class="{
+                                                'font-bold text-indigo-400':
+                                                    inst.id ===
+                                                    $page.props.auth.user
+                                                        .institution_id,
+                                            }"
+                                        >
+                                            {{ inst.name }}
+                                        </button>
+                                    </template>
+                                </Dropdown>
+                            </div>
+
                             <!-- Settings Dropdown -->
                             <div class="relative ms-3">
                                 <Dropdown align="right" width="48">
@@ -162,22 +244,28 @@ const showingNavigationDropdown = ref(false);
                     <div class="space-y-1 pb-3 pt-2">
                         <ResponsiveNavLink
                             :href="route('dashboard')"
-                            :active="route().current('dashboard') || route().current('admin.dashboard') || route().current('student.dashboard')"
+                            :active="
+                                route().current('dashboard') ||
+                                route().current('super-admin.dashboard') ||
+                                route().current('admin.dashboard') ||
+                                route().current('teacher.dashboard') ||
+                                route().current('student.dashboard')
+                            "
                         >
                             Dashboard
                         </ResponsiveNavLink>
                         <template v-if="$page.props.auth.user.role === 'admin'">
                             <ResponsiveNavLink
-                                :href="route('admin.institutions.index')"
-                                :active="route().current('admin.institutions.*')"
-                            >
-                                Instituições
-                            </ResponsiveNavLink>
-                            <ResponsiveNavLink
                                 :href="route('admin.subjects.index')"
                                 :active="route().current('admin.subjects.*')"
                             >
                                 Matérias
+                            </ResponsiveNavLink>
+                            <ResponsiveNavLink
+                                :href="route('admin.users.index')"
+                                :active="route().current('admin.users.*')"
+                            >
+                                Membros
                             </ResponsiveNavLink>
                         </template>
                         <ResponsiveNavLink
@@ -192,6 +280,37 @@ const showingNavigationDropdown = ref(false);
                     <div
                         class="border-t border-gray-200 pb-1 pt-4 dark:border-gray-600"
                     >
+                        <!-- Seletor de Instituição Mobile -->
+                        <div
+                            v-if="
+                                $page.props.auth.user.role === 'admin' &&
+                                $page.props.auth.user.institutions?.length > 1
+                            "
+                            class="mb-4 border-b border-gray-200 px-4 pb-3 dark:border-gray-600"
+                        >
+                            <div
+                                class="mb-2 text-xs font-bold uppercase tracking-wider text-gray-400"
+                            >
+                                Alternar Instituição
+                            </div>
+                            <div class="space-y-1">
+                                <button
+                                    v-for="inst in $page.props.auth.user
+                                        .institutions"
+                                    :key="inst.id"
+                                    @click="switchInstitution(inst.id)"
+                                    class="block w-full rounded-md px-3 py-2 text-start text-sm font-semibold hover:bg-gray-100 dark:hover:bg-gray-700"
+                                    :class="
+                                        inst.id ===
+                                        $page.props.auth.user.institution_id
+                                            ? 'bg-indigo-500/10 font-bold text-indigo-400'
+                                            : 'text-gray-600 dark:text-gray-400'
+                                    "
+                                >
+                                    🏫 {{ inst.name }}
+                                </button>
+                            </div>
+                        </div>
                         <div class="px-4">
                             <div
                                 class="text-base font-medium text-gray-800 dark:text-gray-200"

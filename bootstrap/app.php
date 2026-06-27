@@ -1,8 +1,14 @@
 <?php
 
+use App\Http\Middleware\EnsureUserIsAdmin;
+use App\Http\Middleware\EnsureUserIsStudent;
+use App\Http\Middleware\EnsureUserIsSuperAdmin;
+use App\Http\Middleware\EnsureUserIsTeacher;
+use App\Http\Middleware\HandleInertiaRequests;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
 use Illuminate\Http\Request;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -13,13 +19,15 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->web(append: [
-            \App\Http\Middleware\HandleInertiaRequests::class,
-            \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
+            HandleInertiaRequests::class,
+            AddLinkHeadersForPreloadedAssets::class,
         ]);
 
         $middleware->alias([
-            'role.admin' => \App\Http\Middleware\EnsureUserIsAdmin::class,
-            'role.student' => \App\Http\Middleware\EnsureUserIsStudent::class,
+            'role.super_admin' => EnsureUserIsSuperAdmin::class,
+            'role.admin' => EnsureUserIsAdmin::class,
+            'role.teacher' => EnsureUserIsTeacher::class,
+            'role.student' => EnsureUserIsStudent::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

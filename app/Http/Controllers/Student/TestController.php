@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers\Student;
 
+use App\Actions\SubmitTestAttemptAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SubmitTestRequest;
+use App\Models\Question;
 use App\Models\Subject;
 use App\Models\Test;
-use App\Actions\SubmitTestAttemptAction;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 
 class TestController extends Controller
@@ -19,10 +22,13 @@ class TestController extends Controller
     {
         abort_if($test->subject_id !== $subject->id, 404);
 
+        Gate::authorize('view', $test);
+
         // Carrega as questões sem enviar o índice correto para o cliente (segurança)
         $questions = $test->questions()
             ->get()
             ->map(function ($question) {
+                /** @var Question $question */
                 return [
                     'id' => $question->id,
                     'question_text' => $question->question_text,
@@ -53,6 +59,9 @@ class TestController extends Controller
     ) {
         abort_if($test->subject_id !== $subject->id, 404);
 
+        Gate::authorize('submit', $test);
+
+        /** @var User $user */
         $user = Auth::user();
         $answers = $request->input('answers', []); // [question_id => selected_option_index]
 

@@ -11,16 +11,25 @@ class EnsureUserIsStudent
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  Closure(Request): (Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
     {
         if ($request->user()) {
-            if ($request->user()->isAdmin()) {
+            if ($request->user()->isSuperAdmin()) {
+                return redirect()->route('super-admin.dashboard');
+            }
+            if ($request->user()->isInstitutionAdmin()) {
                 return redirect()->route('admin.dashboard');
             }
+            if ($request->user()->isTeacher()) {
+                return redirect()->route('teacher.dashboard');
+            }
+            if ($request->user()->isStudent()) {
+                return $next($request);
+            }
 
-            return $next($request);
+            abort(403, 'Acesso não autorizado.');
         }
 
         abort(401);

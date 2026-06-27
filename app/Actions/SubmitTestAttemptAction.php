@@ -2,9 +2,10 @@
 
 namespace App\Actions;
 
-use App\Models\User;
+use App\Models\Question;
 use App\Models\Test;
 use App\Models\TestAttempt;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 class SubmitTestAttemptAction
@@ -19,10 +20,7 @@ class SubmitTestAttemptAction
     /**
      * Corrige o teste enviado pelo aluno, registra a tentativa e calcula a pontuação.
      *
-     * @param User $user
-     * @param Test $test
-     * @param array $answers Array no formato [question_id => selected_option_index]
-     * @return TestAttempt
+     * @param  array  $answers  Array no formato [question_id => selected_option_index]
      */
     public function execute(User $user, Test $test, array $answers): TestAttempt
     {
@@ -32,15 +30,16 @@ class SubmitTestAttemptAction
             $correctCount = 0;
 
             foreach ($questions as $question) {
+                /** @var Question $question */
                 $selected = $answers[$question->id] ?? null;
-                if ($selected !== null && (int)$selected === (int)$question->correct_option_index) {
+                if ($selected !== null && (int) $selected === (int) $question->correct_option_index) {
                     $correctCount++;
                 }
             }
 
             // Calcula a pontuação proporcional aos acertos
             $maxPoints = $test->points_reward;
-            $pointsEarned = $totalQuestions > 0 ? (int)round(($correctCount / $totalQuestions) * $maxPoints) : 0;
+            $pointsEarned = $totalQuestions > 0 ? (int) round(($correctCount / $totalQuestions) * $maxPoints) : 0;
 
             // Busca a melhor pontuação anterior deste aluno neste teste
             $bestPreviousScore = TestAttempt::where('user_id', $user->id)
@@ -60,7 +59,7 @@ class SubmitTestAttemptAction
             // Se o aluno melhorou a nota anterior, concede a diferença de pontos
             if ($pointsEarned > $bestPreviousScore) {
                 $pointsDiff = $pointsEarned - $bestPreviousScore;
-                $description = "Atividade: {$test->title} (" . ($bestPreviousScore > 0 ? "Melhoria de nota" : "Primeira tentativa") . ")";
+                $description = "Atividade: {$test->title} (".($bestPreviousScore > 0 ? 'Melhoria de nota' : 'Primeira tentativa').')';
 
                 $this->addPointsAction->execute(
                     $user,

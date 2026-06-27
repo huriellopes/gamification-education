@@ -51,7 +51,7 @@ foreach ($subjects as $subject) {
 ```
 
 ## 3. Otimização de Consultas
-Para otimizar o consumo de memória, evite carregar colunas desnecessárias e use `select` ou métodos de paginação e paginação rápida como `cursorPaginate` e `chunk`.'
+Para otimizar o consumo de memória, evite carregar colunas desnecessárias e use `select` ou métodos de paginação e paginação rápida como `cursorPaginate` e `chunk`.',
             ],
             'test' => [
                 'title' => 'Avaliação: Eloquent ORM e Relacionamentos',
@@ -60,12 +60,12 @@ Para otimizar o consumo de memória, evite carregar colunas desnecessárias e us
                     [
                         'question_text' => 'Qual método é utilizado para evitar o problema de consulta N+1 no Eloquent ORM?',
                         'options' => ['load() apenas', 'with() (Eager Loading)', 'select()', 'lazy()'],
-                        'correct_option_index' => 1
+                        'correct_option_index' => 1,
                     ],
                     [
                         'question_text' => 'Como é definido um relacionamento de "Um para Muitos" no Model pai?',
                         'options' => ['belongsTo()', 'hasOne()', 'hasMany()', 'belongsToMany()'],
-                        'correct_option_index' => 2
+                        'correct_option_index' => 2,
                     ],
                     [
                         'question_text' => 'Qual a finalidade de usar transações de banco de dados (DB::transaction) no Laravel?',
@@ -73,12 +73,12 @@ Para otimizar o consumo de memória, evite carregar colunas desnecessárias e us
                             'Executar consultas SQL mais rapidamente.',
                             'Garantir que um grupo de operações no banco seja executado por completo ou desfeito em caso de erro.',
                             'Excluir automaticamente dados duplicados.',
-                            'Criar tabelas de histórico de forma nativa.'
+                            'Criar tabelas de histórico de forma nativa.',
                         ],
-                        'correct_option_index' => 1
-                    ]
-                ]
-            ]
+                        'correct_option_index' => 1,
+                    ],
+                ],
+            ],
         ],
         'vue_composition' => [
             'material' => [
@@ -112,7 +112,7 @@ const doublePoints = computed(() => points.value * 2);
 ```
 
 ## 3. Composables (Reuso de Lógica)
-Um Composable é uma função que encapsula estado reativo e lógica de ciclo de vida para ser compartilhada entre múltiplos componentes. Exemplo clássico: `useMouse`, `useFetch`, ou no nosso caso, `usePoints`.'
+Um Composable é uma função que encapsula estado reativo e lógica de ciclo de vida para ser compartilhada entre múltiplos componentes. Exemplo clássico: `useMouse`, `useFetch`, ou no nosso caso, `usePoints`.',
             ],
             'test' => [
                 'title' => 'Avaliação: Reactividade e Estrutura no Vue 3',
@@ -121,7 +121,7 @@ Um Composable é uma função que encapsula estado reativo e lógica de ciclo de
                     [
                         'question_text' => 'Como se acessa o valor de uma variável declarada como `const name = ref("John")` no bloco `<script setup>` do Vue 3?',
                         'options' => ['name', 'name.value', 'name.val', 'name()'],
-                        'correct_option_index' => 1
+                        'correct_option_index' => 1,
                     ],
                     [
                         'question_text' => 'Qual é a principal limitação do método `reactive()` em comparação com `ref()`?',
@@ -129,9 +129,9 @@ Um Composable é uma função que encapsula estado reativo e lógica de ciclo de
                             'Não suporta reatividade em tempo real.',
                             'Só pode receber objetos/arrays, não suportando primitivos diretamente.',
                             'Não pode ser atualizado de forma dinâmica.',
-                            'Gera erros ao usar com componentes InertiaJS.'
+                            'Gera erros ao usar com componentes InertiaJS.',
                         ],
-                        'correct_option_index' => 1
+                        'correct_option_index' => 1,
                     ],
                     [
                         'question_text' => 'Qual a principal vantagem de usar `computed()` em vez de um método comum para retornar um valor calculado no template?',
@@ -139,12 +139,12 @@ Um Composable é uma função que encapsula estado reativo e lógica de ciclo de
                             'O computed faz cache do resultado e só reavalia se um de seus estados reativos mudar.',
                             'O computed roda em uma thread separada do navegador.',
                             'O computed permite alterar variáveis diretamente sem reatividade.',
-                            'O computed só roda uma vez na vida do componente.'
+                            'O computed só roda uma vez na vida do componente.',
                         ],
-                        'correct_option_index' => 0
-                    ]
-                ]
-            ]
+                        'correct_option_index' => 0,
+                    ],
+                ],
+            ],
         ],
         'tailwind_css' => [
             'material' => [
@@ -178,7 +178,7 @@ CSS Grid é perfeito para layouts bidimensionais. Definimos o número de colunas
 ```
 
 ## 3. Design Responsivo
-O Tailwind usa uma abordagem *Mobile-First*. Prefixos como `sm:`, `md:`, `lg:`, `xl:` aplicam estilos apenas em telas daquele tamanho para cima.'
+O Tailwind usa uma abordagem *Mobile-First*. Prefixos como `sm:`, `md:`, `lg:`, `xl:` aplicam estilos apenas em telas daquele tamanho para cima.',
             ],
             'test' => [
                 'title' => 'Avaliação: Flexbox, Grid e Responsividade CSS',
@@ -187,7 +187,7 @@ O Tailwind usa uma abordagem *Mobile-First*. Prefixos como `sm:`, `md:`, `lg:`, 
                     [
                         'question_text' => 'Qual classe do Tailwind CSS deve ser aplicada para definir uma grade com 3 colunas de tamanhos iguais?',
                         'options' => ['grid-3', 'grid-cols-3', 'cols-span-3', 'flex-cols-3'],
-                        'correct_option_index' => 1
+                        'correct_option_index' => 1,
                     ],
                     [
                         'question_text' => 'Dado o prefixo responsive `md:block hidden`, qual o comportamento visual do elemento?',
@@ -195,18 +195,18 @@ O Tailwind usa uma abordagem *Mobile-First*. Prefixos como `sm:`, `md:`, `lg:`, 
                             'O elemento fica oculto em telas menores que o breakpoint `md` e visível (como block) de `md` em diante.',
                             'O elemento fica visível em celulares e some em desktops.',
                             'O elemento some de forma animada.',
-                            'O elemento sempre fica visível como block.'
+                            'O elemento sempre fica visível como block.',
                         ],
-                        'correct_option_index' => 0
+                        'correct_option_index' => 0,
                     ],
                     [
                         'question_text' => 'Como alinhamos verticalmente no centro os itens dentro de um container flexível (`flex`)?',
                         'options' => ['content-center', 'justify-center', 'items-center', 'self-center'],
-                        'correct_option_index' => 2
-                    ]
-                ]
-            ]
-        ]
+                        'correct_option_index' => 2,
+                    ],
+                ],
+            ],
+        ],
     ];
 
     /**
@@ -240,13 +240,13 @@ O Tailwind usa uma abordagem *Mobile-First*. Prefixos como `sm:`, `md:`, `lg:`, 
         }
 
         // Fallback genérico para outros tópicos
-        $title = 'Estudo Aprofundado: ' . ucwords($theme);
-        $content = '# Estudo Aprofundado: ' . ucwords($theme) . '
+        $title = 'Estudo Aprofundado: '.ucwords($theme);
+        $content = '# Estudo Aprofundado: '.ucwords($theme).'
 
-Este material foi gerado de forma dinâmica para fornecer conceitos essenciais sobre **' . ucwords($theme) . '**.
+Este material foi gerado de forma dinâmica para fornecer conceitos essenciais sobre **'.ucwords($theme).'**.
 
 ## Introdução e Conceitos Chave
-Entender ' . ucwords($theme) . ' é um passo fundamental para se destacar no mercado profissional atual. A aplicação prática desse conhecimento envolve a compreensão de:
+Entender '.ucwords($theme).' é um passo fundamental para se destacar no mercado profissional atual. A aplicação prática desse conhecimento envolve a compreensão de:
 
 1. **Fundamentos sólidos:** a base teórica e de boas práticas.
 2. **Arquitetura organizada:** dividindo responsabilidades e mantendo o código limpo.
@@ -258,7 +258,7 @@ Após esta leitura, realize as atividades práticas anexadas para consolidar a t
 
         return [
             'title' => $title,
-            'content' => $content
+            'content' => $content,
         ];
     }
 
@@ -275,18 +275,18 @@ Após esta leitura, realize as atividades práticas anexadas para consolidar a t
 
         // Fallback genérico para outros tópicos
         return [
-            'title' => 'Quiz Rápido: ' . ucwords($theme),
-            'description' => 'Teste de nivelamento geral sobre ' . ucwords($theme) . '.',
+            'title' => 'Quiz Rápido: '.ucwords($theme),
+            'description' => 'Teste de nivelamento geral sobre '.ucwords($theme).'.',
             'questions' => [
                 [
-                    'question_text' => 'Qual é a principal vantagem de aplicar padrões de projeto na implementação de ' . ucwords($theme) . '?',
+                    'question_text' => 'Qual é a principal vantagem de aplicar padrões de projeto na implementação de '.ucwords($theme).'?',
                     'options' => [
                         'Garantir melhor desempenho em tempo de compilação.',
                         'Facilitar a manutenção, legibilidade e reuso do código mantendo a separação de responsabilidades.',
                         'Excluir a necessidade de testes automatizados.',
-                        'Economizar espaço de armazenamento em disco.'
+                        'Economizar espaço de armazenamento em disco.',
                     ],
-                    'correct_option_index' => 1
+                    'correct_option_index' => 1,
                 ],
                 [
                     'question_text' => 'Na gamificação profissional, qual é o principal benefício do ranking competitivo?',
@@ -294,11 +294,11 @@ Após esta leitura, realize as atividades práticas anexadas para consolidar a t
                         'Fazer os alunos estudarem menos.',
                         'Reduzir a pontuação geral.',
                         'Estimular o engajamento e a participação ativa no aprendizado através da competição saudável.',
-                        'Gerar relatórios de erros técnicos.'
+                        'Gerar relatórios de erros técnicos.',
                     ],
-                    'correct_option_index' => 2
-                ]
-            ]
+                    'correct_option_index' => 2,
+                ],
+            ],
         ];
     }
 }

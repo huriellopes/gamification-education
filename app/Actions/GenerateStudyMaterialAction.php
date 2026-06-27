@@ -17,10 +17,6 @@ class GenerateStudyMaterialAction
 
     /**
      * Gera um material de estudo para uma matéria específica baseado em um tema.
-     *
-     * @param Subject $subject
-     * @param string $theme
-     * @return StudyMaterial
      */
     public function execute(Subject $subject, string $theme): StudyMaterial
     {

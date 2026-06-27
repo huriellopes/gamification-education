@@ -8,14 +8,17 @@ class StoreSubjectRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user() && $this->user()->isAdmin();
+        return $this->user() && (
+            $this->user()->isSuperAdmin() ||
+            $this->user()->isInstitutionAdmin()
+        );
     }
 
     public function rules(): array
     {
         return [
-            'institution_id' => ['required', 'exists:institutions,id'],
-            'name' => ['required', 'string', 'max' => 255],
+            'institution_id' => ['nullable', 'exists:institutions,id'],
+            'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
         ];
     }

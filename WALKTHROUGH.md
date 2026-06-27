@@ -45,24 +45,38 @@ Construído com design moderno dark-mode, gradientes e micro-animações:
 
 ---
 
-## Verificação e Qualidade
+## Qualidade, Padrões de Código e Testes com PestPHP
 
-### Testes Automatizados
-Escrevemos um conjunto de testes em `tests/Feature/GamificationTest.php` e rodamos o conjunto padrão do Laravel. **Todos os 28 testes passaram com sucesso (76 asserções)**:
-* Validação de adição de pontos sem duplicidade ao ler material.
-* Correção de atividades e lógica de concessão de diferença de pontos na melhoria de nota.
-* Ordenação correta do serviço de ranking.
-* Autenticação e perfilamento do Laravel Breeze.
+Adicionamos ferramentas avançadas de controle de qualidade e testes ao projeto:
+
+### 1. Ambiente Isolado de Teste (`.env.testing`)
+Configuramos o arquivo `.env.testing` para usar o driver **SQLite em memória (`:memory:`)**. Isso isola os testes do banco de dados MySQL de desenvolvimento e os faz rodar instantaneamente em memória a cada execução.
+
+### 2. PestPHP (Cobertura 100% no Backend)
+Migramos e expandimos toda a suíte de testes para a API funcional do **PestPHP**. 
+Nossos testes cobrem:
+* **Actions:** Cálculo proporcional de XP em quizzes, bloqueio de XP duplicado na leitura de materiais, dedução de pontos e transações.
+* **Services:** Respostas estáticas e fallbacks da geração de material de estudo e questionários.
+* **Controllers & Requests:** Restrição de acessos baseada em papéis (RBAC), envio de dados seguros sem gabarito para o cliente Inertia, criação de matérias, submissão de respostas e fluxos de autenticação do Breeze.
+
+### 3. Laravel Pint (Formatador de Código)
+Rodamos o Laravel Pint em toda a aplicação PHP para alinhar todos os arquivos de código sob os padrões e estilo recomendados pela comunidade do Laravel (estilos PSR-12 / PER).
+
+### 4. PHPStan e Larastan (Análise Estática de Tipos)
+Instalamos o PHPStan com a extensão **Larastan** (Nível 5) para garantir consistência de tipos e integridade do código PHP. Resolvemos todas as pendências de propriedades e relacionamentos mágicos do Eloquent.
+
+### 5. ESLint (Qualidade no Vue)
+Rodamos e reajustamos a configuração do ESLint no frontend Vue, eliminando quaisquer declarações ou imports não utilizados (`no-unused-vars`), garantindo integridade e otimização no carregamento das páginas.
 
 ---
 
 ## Como Rodar e Testar Localmente via Laravel Sail
 
-Siga as instruções abaixo para subir o projeto usando o Laravel Sail.
+Siga as instruções abaixo para subir e inspecionar a aplicação.
 
 ### 1. Iniciar os Containers do Sail
 ```bash
-# Sobe o Laravel Sail em background (na porta 80 por padrão)
+# Sobe o Laravel Sail em background (inclui MySQL e Redis)
 ./vendor/bin/sail up -d
 ```
 
@@ -74,11 +88,29 @@ Como o banco de dados agora está rodando no contêiner do MySQL, precisamos mig
 
 ### 3. Iniciar o Vite
 ```bash
-# Executa o Vite dentro do container do Sail
+# Executa o Vite dentro do container do Sail para compilar o Vue/CSS
 ./vendor/bin/sail npm run dev
 ```
 
-### 4. Acessar e Logar
+### 4. Executar os Testes Automatizados (PestPHP)
+```bash
+# Roda a suíte completa de testes (Pest) dentro do container
+./vendor/bin/sail pest
+```
+
+### 5. Executar as Ferramentas de Integridade e Formatação
+```bash
+# Formata os arquivos PHP usando Laravel Pint
+./vendor/bin/sail pint
+
+# Executa análise estática de tipos com PHPStan
+./vendor/bin/sail artisan code:analyse
+
+# Executa o linter do frontend Vue
+./vendor/bin/sail npm run lint
+```
+
+### 6. Acessar e Logar
 Acesse `http://localhost` no seu navegador e logue usando as credenciais abaixo:
 
 #### Perfil Administrador (Gerador de Matérias/Testes)

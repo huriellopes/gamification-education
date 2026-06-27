@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 #[Fillable(['test_id', 'question_text', 'options', 'correct_option_index'])]
 class Question extends Model
@@ -16,7 +17,7 @@ class Question extends Model
         ];
     }
 
-    public function test()
+    public function test(): BelongsTo
     {
         return $this->belongsTo(Test::class);
     }
