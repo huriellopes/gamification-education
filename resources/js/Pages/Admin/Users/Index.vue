@@ -1,7 +1,29 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, useForm } from '@inertiajs/vue3';
+import BaseModal from '@/Components/BaseModal.vue';
+import ConfirmModal from '@/Components/ConfirmModal.vue';
+import Tooltip from '@/Components/Tooltip.vue';
+import TextInput from '@/Components/TextInput.vue';
+import SelectInput from '@/Components/SelectInput.vue';
+import DataTable from '@/Components/DataTable.vue';
+import { Head, useForm, router } from '@inertiajs/vue3';
 import { ref } from 'vue';
+import { Pencil, Trash2, Plus, Power } from '@lucide/vue';
+
+const studentHeaders = [
+    { key: 'name', label: 'Nome', sortable: true },
+    { key: 'email', label: 'E-mail', sortable: true },
+    { key: 'is_active', label: 'Status', sortable: true, align: 'center' },
+    { key: 'points', label: 'XP Acumulado', sortable: true, align: 'center' },
+    { key: 'actions', label: 'Ações', sortable: false, align: 'center' },
+];
+
+const teacherHeaders = [
+    { key: 'name', label: 'Nome', sortable: true },
+    { key: 'email', label: 'E-mail', sortable: true },
+    { key: 'is_active', label: 'Status', sortable: true, align: 'center' },
+    { key: 'actions', label: 'Ações', sortable: false, align: 'center' },
+];
 
 defineProps({
     teachers: {
@@ -15,6 +37,8 @@ defineProps({
 });
 
 const isModalOpen = ref(false);
+const isEditing = ref(false);
+const selectedUserId = ref(null);
 const activeTab = ref('students'); // 'students' ou 'teachers'
 
 const form = useForm({
@@ -24,13 +48,100 @@ const form = useForm({
     role: 'student',
 });
 
+const isActive = (item) => {
+    if (!item) return false;
+    const val = typeof item === 'object' && 'is_active' in item ? item.is_active : item;
+    if (typeof val === 'object' && val !== null) {
+        return val.value === 1 || val.value === true || String(val.value) === '1' || val.value === 'active';
+    }
+    return val === 1 || val === true || String(val) === '1' || val === 'active';
+};
+
+const openCreateModal = () => {
+    isEditing.value = false;
+    selectedUserId.value = null;
+    form.reset();
+    form.role = activeTab.value === 'teachers' ? 'teacher' : 'student';
+    isModalOpen.value = true;
+};
+
+const openEditModal = (user) => {
+    isEditing.value = true;
+    selectedUserId.value = user.id;
+    form.name = user.name;
+    form.email = user.email;
+    form.role = user.role;
+    form.password = '';
+    isModalOpen.value = true;
+};
+
+const confirmState = ref({
+    show: false,
+    title: '',
+    message: '',
+    onConfirm: null,
+});
+
+const triggerConfirm = (title, message, onConfirm) => {
+    confirmState.value.title = title;
+    confirmState.value.message = message;
+    confirmState.value.onConfirm = onConfirm;
+    confirmState.value.show = true;
+};
+
 const submit = () => {
-    form.post(route('admin.users.store'), {
-        onSuccess: () => {
-            isModalOpen.value = false;
-            form.reset();
-        },
-    });
+    triggerConfirm(
+        isEditing.value ? 'Salvar Alterações' : 'Cadastrar Membro',
+        'Deseja salvar as informações deste membro?',
+        () => {
+            if (isEditing.value) {
+                form.put(route('admin.users.update', selectedUserId.value), {
+                    onSuccess: () => {
+                        isModalOpen.value = false;
+                        form.reset();
+                        confirmState.value.show = false;
+                    },
+                });
+            } else {
+                form.post(route('admin.users.store'), {
+                    onSuccess: () => {
+                        isModalOpen.value = false;
+                        form.reset();
+                        confirmState.value.show = false;
+                    },
+                });
+            }
+        }
+    );
+};
+
+const confirmDeleteUser = (id) => {
+    triggerConfirm(
+        'Excluir Membro',
+        'Tem certeza que deseja enviar este membro para a lixeira?',
+        () => {
+            router.delete(route('admin.users.destroy', id), {
+                onSuccess: () => {
+                    confirmState.value.show = false;
+                },
+            });
+        }
+    );
+};
+
+const toggleStatus = (user) => {
+    const actionText = isActive(user) ? 'desativar' : 'ativar';
+    triggerConfirm(
+        'Alterar Status',
+        `Tem certeza de que deseja ${actionText} o usuário "${user.name}"?`,
+        () => {
+            router.post(route('admin.users.toggle', user.id), {}, {
+                onSuccess: () => {
+                    confirmState.value.show = false;
+                },
+            });
+        }
+    );
 };
 </script>
 
@@ -44,8 +155,16 @@ const submit = () => {
             </h2>
         </template>
 
-        <div class="min-h-[calc(100vh-64px)] bg-zinc-950 py-12 text-zinc-100">
+        <div class="min-h-[calc(100vh-64px)] bg-zinc-955 py-12 text-zinc-100">
             <div class="mx-auto max-w-7xl space-y-8 px-4 sm:px-6 lg:px-8">
+                <!-- Toast/Flash Message -->
+                <div
+                    v-if="$page.props.flash?.success"
+                    class="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-sm text-emerald-400"
+                >
+                    {{ $page.props.flash.success }}
+                </div>
+
                 <div class="flex flex-wrap items-center justify-between gap-4">
                     <!-- Abas -->
                     <div
@@ -77,7 +196,7 @@ const submit = () => {
 
                     <!-- Botão Novo -->
                     <button
-                        @click="isModalOpen = true"
+                        @click="openCreateModal"
                         class="rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-indigo-900/30 transition-all duration-200 hover:from-violet-500 hover:to-indigo-500"
                     >
                         + Cadastrar Membro
@@ -92,50 +211,59 @@ const submit = () => {
                     <h3 class="mb-4 text-lg font-bold text-white">
                         Estudantes Matriculados
                     </h3>
-                    <div class="overflow-x-auto">
-                        <table class="w-full border-collapse text-left">
-                            <thead>
-                                <tr
-                                    class="border-b border-zinc-800 text-xs font-bold uppercase tracking-wider text-zinc-400"
-                                >
-                                    <th class="px-4 py-3">Nome</th>
-                                    <th class="px-4 py-3">E-mail</th>
-                                    <th class="px-4 py-3 text-center">
-                                        XP Acumulado
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-zinc-800 text-sm">
-                                <tr
-                                    v-for="std in students"
-                                    :key="std.id"
-                                    class="transition-colors hover:bg-zinc-800/30"
-                                >
-                                    <td
-                                        class="px-4 py-4 font-semibold text-zinc-100"
+                    <DataTable
+                        :items="students"
+                        :columns="studentHeaders"
+                        searchPlaceholder="Pesquisar estudantes..."
+                    >
+                        <template #is_active="{ item }">
+                            <span
+                                class="inline-flex rounded-full px-2 text-xs font-semibold leading-5"
+                                :class="
+                                    isActive(item)
+                                        ? 'bg-emerald-100 text-emerald-800'
+                                        : 'bg-red-100 text-red-800'
+                                "
+                            >
+                                {{ isActive(item) ? 'Ativo' : 'Inativo' }}
+                            </span>
+                        </template>
+
+                        <template #points="{ item }">
+                            <span class="font-bold text-emerald-400">
+                                {{ item.points }} XP
+                            </span>
+                        </template>
+
+                        <template #actions="{ item }">
+                            <div class="flex items-center justify-center gap-1">
+                                <Tooltip text="Editar Aluno">
+                                    <button
+                                        @click="openEditModal(item)"
+                                        class="rounded-lg p-1.5 text-zinc-400 transition-colors hover:bg-zinc-850 hover:text-white"
                                     >
-                                        {{ std.name }}
-                                    </td>
-                                    <td class="px-4 py-4 text-zinc-400">
-                                        {{ std.email }}
-                                    </td>
-                                    <td
-                                        class="px-4 py-4 text-center font-bold text-emerald-400"
+                                        <Pencil class="h-4 w-4" />
+                                    </button>
+                                </Tooltip>
+                                <Tooltip text="Alterar Status">
+                                    <button
+                                        @click="toggleStatus(item)"
+                                        class="rounded-lg p-1.5 text-zinc-400 transition-colors hover:bg-zinc-850 hover:text-white"
                                     >
-                                        {{ std.points }} XP
-                                    </td>
-                                </tr>
-                                <tr v-if="students.length === 0">
-                                    <td
-                                        colspan="3"
-                                        class="py-8 text-center text-zinc-500"
+                                        <Power class="h-4 w-4" />
+                                    </button>
+                                </Tooltip>
+                                <Tooltip text="Excluir Aluno">
+                                    <button
+                                        @click="confirmDeleteUser(item.id)"
+                                        class="rounded-lg p-1.5 text-zinc-400 transition-colors hover:bg-red-500/20 hover:text-red-400"
                                     >
-                                        Nenhum estudante cadastrado.
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                                        <Trash2 class="h-4 w-4" />
+                                    </button>
+                                </Tooltip>
+                            </div>
+                        </template>
+                    </DataTable>
                 </div>
 
                 <!-- Lista de Professores -->
@@ -146,126 +274,109 @@ const submit = () => {
                     <h3 class="mb-4 text-lg font-bold text-white">
                         Professores da Instituição
                     </h3>
-                    <div class="overflow-x-auto">
-                        <table class="w-full border-collapse text-left">
-                            <thead>
-                                <tr
-                                    class="border-b border-zinc-800 text-xs font-bold uppercase tracking-wider text-zinc-400"
-                                >
-                                    <th class="px-4 py-3">Nome</th>
-                                    <th class="px-4 py-3">E-mail</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-zinc-800 text-sm">
-                                <tr
-                                    v-for="tchr in teachers"
-                                    :key="tchr.id"
-                                    class="transition-colors hover:bg-zinc-800/30"
-                                >
-                                    <td
-                                        class="px-4 py-4 font-semibold text-zinc-100"
+                    <DataTable
+                        :items="teachers"
+                        :columns="teacherHeaders"
+                        searchPlaceholder="Pesquisar professores..."
+                    >
+                        <template #is_active="{ item }">
+                            <span
+                                class="inline-flex rounded-full px-2 text-xs font-semibold leading-5"
+                                :class="
+                                    isActive(item)
+                                        ? 'bg-emerald-100 text-emerald-800'
+                                        : 'bg-red-100 text-red-800'
+                                "
+                            >
+                                {{ isActive(item) ? 'Ativo' : 'Inativo' }}
+                            </span>
+                        </template>
+
+                        <template #actions="{ item }">
+                            <div class="flex items-center justify-center gap-1">
+                                <Tooltip text="Editar Professor">
+                                    <button
+                                        @click="openEditModal(item)"
+                                        class="rounded-lg p-1.5 text-zinc-400 transition-colors hover:bg-zinc-850 hover:text-white"
                                     >
-                                        {{ tchr.name }}
-                                    </td>
-                                    <td class="px-4 py-4 text-zinc-400">
-                                        {{ tchr.email }}
-                                    </td>
-                                </tr>
-                                <tr v-if="teachers.length === 0">
-                                    <td
-                                        colspan="2"
-                                        class="py-8 text-center text-zinc-500"
+                                        <Pencil class="h-4 w-4" />
+                                    </button>
+                                </Tooltip>
+                                <Tooltip text="Alterar Status">
+                                    <button
+                                        @click="toggleStatus(item)"
+                                        class="rounded-lg p-1.5 text-zinc-400 transition-colors hover:bg-zinc-850 hover:text-white"
                                     >
-                                        Nenhum professor cadastrado.
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                                        <Power class="h-4 w-4" />
+                                    </button>
+                                </Tooltip>
+                                <Tooltip text="Excluir Professor">
+                                    <button
+                                        @click="confirmDeleteUser(item.id)"
+                                        class="rounded-lg p-1.5 text-zinc-400 transition-colors hover:bg-red-500/20 hover:text-red-400"
+                                    >
+                                        <Trash2 class="h-4 w-4" />
+                                    </button>
+                                </Tooltip>
+                            </div>
+                        </template>
+                    </DataTable>
                 </div>
             </div>
         </div>
 
-        <!-- Modal Cadastrar Membro -->
-        <div
-            v-if="isModalOpen"
-            class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
+        <!-- Member Form Modal -->
+        <BaseModal
+            :show="isModalOpen"
+            :title="isEditing ? 'Editar Membro' : 'Cadastrar Membro'"
+            maxWidth="md"
+            @close="isModalOpen = false"
         >
-            <div
-                class="w-full max-w-md space-y-4 rounded-2xl border border-zinc-800 bg-zinc-900 p-6 shadow-2xl"
-            >
-                <h3 class="text-lg font-bold text-white">
-                    Novo Membro da Instituição
-                </h3>
-                <form @submit.prevent="submit" class="space-y-4">
-                    <div>
-                        <label
-                            class="mb-2 block text-xs font-bold uppercase text-zinc-400"
-                            >Função / Perfil</label
-                        >
-                        <select
-                            v-model="form.role"
-                            required
-                            class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-sm text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                        >
-                            <option value="student">Estudante (Aluno)</option>
-                            <option value="teacher">Professor</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label
-                            class="mb-2 block text-xs font-bold uppercase text-zinc-400"
-                            >Nome Completo</label
-                        >
-                        <input
-                            v-model="form.name"
-                            type="text"
-                            required
-                            class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-sm text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                        />
-                    </div>
-                    <div>
-                        <label
-                            class="mb-2 block text-xs font-bold uppercase text-zinc-400"
-                            >E-mail</label
-                        >
-                        <input
-                            v-model="form.email"
-                            type="email"
-                            required
-                            class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-sm text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                        />
-                    </div>
-                    <div>
-                        <label
-                            class="mb-2 block text-xs font-bold uppercase text-zinc-400"
-                            >Senha Inicial</label
-                        >
-                        <input
-                            v-model="form.password"
-                            type="password"
-                            required
-                            class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-sm text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                        />
-                    </div>
-                    <div class="flex justify-end gap-3 pt-2">
-                        <button
-                            type="button"
-                            @click="isModalOpen = false"
-                            class="rounded-xl border border-zinc-700 bg-transparent px-4 py-2.5 text-sm font-semibold text-zinc-300 transition-all hover:bg-zinc-800"
-                        >
-                            Cancelar
-                        </button>
-                        <button
-                            type="submit"
-                            :disabled="form.processing"
-                            class="rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-bold text-white transition-all hover:bg-indigo-500 disabled:opacity-55"
-                        >
-                            Salvar
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
+            <form @submit.prevent="submit" class="space-y-4">
+                <div>
+                    <label class="mb-2 block text-xs font-bold uppercase text-zinc-400">Função / Perfil</label>
+                    <SelectInput v-model="form.role" required :disabled="isEditing">
+                        <option value="student">Estudante (Aluno)</option>
+                        <option value="teacher">Professor</option>
+                    </SelectInput>
+                </div>
+
+                <div>
+                    <label class="mb-2 block text-xs font-bold uppercase text-zinc-400">Nome Completo</label>
+                    <TextInput v-model="form.name" type="text" required placeholder="Ex: João Silva" />
+                    <span v-if="form.errors.name" class="text-xs text-red-500 mt-1 block">{{ form.errors.name }}</span>
+                </div>
+
+                <div>
+                    <label class="mb-2 block text-xs font-bold uppercase text-zinc-400">E-mail</label>
+                    <TextInput v-model="form.email" type="email" required placeholder="Ex: joao@instituicao.com" />
+                    <span v-if="form.errors.email" class="text-xs text-red-500 mt-1 block">{{ form.errors.email }}</span>
+                </div>
+
+                <div>
+                    <label class="mb-2 block text-xs font-bold uppercase text-zinc-400">Senha {{ isEditing ? '(Deixe em branco para não alterar)' : '' }}</label>
+                    <TextInput v-model="form.password" type="password" :required="!isEditing" placeholder="••••••••" />
+                    <span v-if="form.errors.password" class="text-xs text-red-500 mt-1 block">{{ form.errors.password }}</span>
+                </div>
+
+                <div class="flex justify-end gap-3 pt-3">
+                    <button type="button" @click="isModalOpen = false" class="rounded-xl bg-zinc-800 px-5 py-2.5 text-xs font-bold text-zinc-400 transition-colors hover:bg-zinc-700">
+                        Cancelar
+                    </button>
+                    <button type="submit" :disabled="form.processing" class="rounded-xl bg-indigo-600 px-5 py-2.5 text-xs font-bold text-white transition-colors hover:bg-indigo-500 disabled:opacity-50">
+                        {{ isEditing ? 'Salvar Alterações' : 'Salvar' }}
+                    </button>
+                </div>
+            </form>
+        </BaseModal>
+
+        <!-- Dynamic Confirmation Modal -->
+        <ConfirmModal
+            :show="confirmState.show"
+            :title="confirmState.title"
+            :message="confirmState.message"
+            @close="confirmState.show = false"
+            @confirm="confirmState.onConfirm"
+        />
     </AuthenticatedLayout>
 </template>

@@ -1,28 +1,32 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Teacher;
 
-use App\Actions\GenerateStudyMaterialAction;
-use App\Actions\GenerateTestForSubjectAction;
+use App\Data\Teacher\GenerateContentData;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\GenerateContentRequest;
+use App\Http\Resources\SuperAdmin\SubjectResource;
+use App\Jobs\GenerateContentJob;
 use App\Models\Subject;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class TeacherContentController extends Controller
 {
     /**
      * Exibe o painel de gerenciamento de conteúdo da matéria para o professor.
      */
-    public function show(Subject $subject)
+    public function show(Subject $subject): Response
     {
         Gate::authorize('manageContent', $subject);
 
         $subject->load(['studyMaterials', 'tests.questions']);
 
         return Inertia::render('Teacher/Subjects/Show', [
-            'subject' => $subject,
+            'subject' => new SubjectResource($subject),
         ]);
     }
 
@@ -31,19 +35,15 @@ class TeacherContentController extends Controller
      */
     public function generate(
         Subject $subject,
-        GenerateContentRequest $request,
-        GenerateStudyMaterialAction $generateMaterial,
-        GenerateTestForSubjectAction $generateTest
-    ) {
+        GenerateContentData $data,
+    ): RedirectResponse {
         Gate::authorize('manageContent', $subject);
 
-        $theme = $request->input('theme');
+        $theme = $data->theme;
 
-        // Dispara as actions de criação de conteúdo didático e quiz
-        $generateMaterial->execute($subject, $theme);
-        $generateTest->execute($subject, $theme);
+        GenerateContentJob::dispatch($subject, $theme);
 
         return redirect()->route('teacher.subjects.show', $subject)
-            ->with('success', 'Conteúdo didático e avaliação gerados com sucesso!');
+            ->with('success', 'Geração de conteúdo didático e avaliação iniciada em segundo plano!');
     }
 }

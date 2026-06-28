@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
@@ -21,7 +23,7 @@ class SwitchInstitutionController extends Controller
         abort_unless(
             $user->institutions()->where('institution_id', $institution->id)->exists(),
             403,
-            'Você não tem permissão para gerenciar esta instituição.'
+            'Você não tem permissão para gerenciar esta instituição.',
         );
 
         // Atualiza a instituição de contexto ativa

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Policies;
 
 use App\Models\StudyMaterial;
@@ -8,6 +10,11 @@ use App\Models\User;
 
 class StudyMaterialPolicy
 {
+    public function viewAny(User $user): bool
+    {
+        return true;
+    }
+
     /**
      * Determine whether the user can view the model.
      */
@@ -49,5 +56,18 @@ class StudyMaterialPolicy
         $subject = $studyMaterial->subject;
 
         return $user->isStudent() && $subject && $subject->institution_id === $user->institution_id;
+    }
+
+    public function restore(User $user, StudyMaterial $studyMaterial): bool
+    {
+        return $this->update($user, $studyMaterial);
+    }
+
+    public function forceDelete(User $user, StudyMaterial $studyMaterial): bool
+    {
+        /** @var Subject|null $subject */
+        $subject = $studyMaterial->subject;
+
+        return $user->isSuperAdmin() || ($user->isInstitutionAdmin() && $subject && $subject->institution_id === $user->institution_id);
     }
 }

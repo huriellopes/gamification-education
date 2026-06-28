@@ -1,7 +1,12 @@
 <script setup>
+import MetricCard from '@/Components/MetricCard.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, Link } from '@inertiajs/vue3';
-import { computed, ref } from 'vue';
+import DataTable from '@/Components/DataTable.vue';
+import Button from '@/Components/Button.vue';
+import Tooltip from '@/Components/Tooltip.vue';
+import { Head, Link, router } from '@inertiajs/vue3';
+import { BookOpen, GraduationCap, Users } from '@lucide/vue';
+import { computed, ref, onMounted, onUnmounted, watch } from 'vue';
 
 const props = defineProps({
     students: {
@@ -18,18 +23,81 @@ const props = defineProps({
         type: Object,
         required: true,
     },
+    reports: {
+        type: Array,
+        default: () => [],
+    },
 });
 
-const searchQuery = ref('');
+const reportColumns = [
+    { key: 'name', label: 'Nome', sortable: true },
+    { key: 'status', label: 'Status', sortable: true },
+    { key: 'created_at', label: 'Solicitado em', sortable: true },
+    { key: 'actions', label: 'Ações', sortable: false, align: 'right' },
+];
 
-const filteredStudents = computed(() => {
-    if (!searchQuery.value) return props.students;
-    const query = searchQuery.value.toLowerCase();
-    return props.students.filter(
-        (student) =>
-            student.name.toLowerCase().includes(query) ||
-            student.email.toLowerCase().includes(query),
-    );
+const studentColumns = [
+    { key: 'rank', label: '#', sortable: false, align: 'center' },
+    { key: 'name', label: 'Nome', sortable: true },
+    { key: 'email', label: 'E-mail', sortable: true },
+    { key: 'points', label: 'XP Total', sortable: true, align: 'right' },
+];
+
+// Polling Relativos a Relatórios
+const pollInterval = ref(null);
+
+const checkAndStartPolling = () => {
+    const hasPending = props.reports.some(r => r.status === 'pending');
+    if (hasPending) {
+        if (!pollInterval.value) {
+            pollInterval.value = setInterval(() => {
+                router.reload({
+                    only: ['reports', 'stats'],
+                    preserveScroll: true,
+                    preserveState: true,
+                    onSuccess: () => {
+                        const stillPending = props.reports.some(r => r.status === 'pending');
+                        if (!stillPending) {
+                            stopPolling();
+                        }
+                    }
+                });
+            }, 4000);
+        }
+    } else {
+        stopPolling();
+    }
+};
+
+const stopPolling = () => {
+    if (pollInterval.value) {
+        clearInterval(pollInterval.value);
+        pollInterval.value = null;
+    }
+};
+
+watch(() => props.reports, () => {
+    checkAndStartPolling();
+}, { deep: true });
+
+const generalSyncInterval = ref(null);
+
+onMounted(() => {
+    checkAndStartPolling();
+    generalSyncInterval.value = setInterval(() => {
+        router.reload({
+            only: ['stats'],
+            preserveScroll: true,
+            preserveState: true,
+        });
+    }, 15000);
+});
+
+onUnmounted(() => {
+    stopPolling();
+    if (generalSyncInterval.value) {
+        clearInterval(generalSyncInterval.value);
+    }
 });
 </script>
 
@@ -50,116 +118,112 @@ const filteredStudents = computed(() => {
         <div class="min-h-[calc(100vh-64px)] bg-zinc-950 py-12 text-zinc-100">
             <div class="mx-auto max-w-7xl space-y-8 px-4 sm:px-6 lg:px-8">
                 <!-- Cards de Estatísticas com Estética Premium -->
+                <!-- Cards de Estatísticas com Estética Premium -->
                 <div
                     class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3"
                 >
                     <!-- Card Alunos -->
-                    <div
-                        class="relative overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6 shadow-xl backdrop-blur-md"
+                    <MetricCard
+                        title="Alunos Matriculados"
+                        :value="stats.total_students"
+                        color="text-white"
                     >
-                        <div class="absolute right-0 top-0 p-4 opacity-10">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke-width="1.5"
-                                stroke="currentColor"
-                                class="h-20 w-20 text-white"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.109A9.342 9.342 0 0 1 12.625 19.5a9.379 9.379 0 0 1-4.12-.952 4.125 4.125 0 0 1-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M12.625 19.5a9.38 9.38 0 0 1-2.625.372 9.337 9.337 0 0 1-4.121-.952 4.125 4.125 0 0 1 7.533-2.493M12.625 19.5v-.003a9.38 9.38 0 0 0 2.625-.372"
-                                />
-                            </svg>
-                        </div>
-                        <p
-                            class="text-zinc-550 text-xs font-bold uppercase tracking-wider"
-                        >
-                            Alunos Matriculados
-                        </p>
-                        <h3 class="mt-2 text-3xl font-extrabold text-white">
-                            {{ stats.total_students }}
-                        </h3>
+                        <template #icon><Users class="h-12 w-12" /></template>
+                        <template #icon-header>
+                            <Users class="mb-2 h-8 w-8 text-indigo-500" />
+                        </template>
                         <Link
                             :href="route('admin.users.index')"
                             class="mt-2 inline-block text-xs font-semibold text-indigo-400 transition-colors hover:text-indigo-300"
                         >
                             Gerenciar Alunos &rarr;
                         </Link>
-                    </div>
+                    </MetricCard>
 
                     <!-- Card Professores -->
-                    <div
-                        class="relative overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6 shadow-xl backdrop-blur-md"
+                    <MetricCard
+                        title="Corpo Docente (Professores)"
+                        :value="stats.total_teachers"
+                        color="text-white"
                     >
-                        <div class="absolute right-0 top-0 p-4 opacity-10">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke-width="1.5"
-                                stroke="currentColor"
-                                class="h-20 w-20 text-white"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.57 50.57 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.902 59.902 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M22.25 9.313a11.975 11.975 0 0 1-2.81 7.832m-11.214-.07a11.975 11.975 0 0 1-2.81-7.832"
-                                />
-                            </svg>
-                        </div>
-                        <p
-                            class="text-zinc-550 text-xs font-bold uppercase tracking-wider"
-                        >
-                            Corpo Docente (Professores)
-                        </p>
-                        <h3 class="mt-2 text-3xl font-extrabold text-white">
-                            {{ stats.total_teachers }}
-                        </h3>
+                        <template #icon
+                            ><GraduationCap class="h-12 w-12"
+                        /></template>
+                        <template #icon-header>
+                            <GraduationCap
+                                class="mb-2 h-8 w-8 text-indigo-500"
+                            />
+                        </template>
                         <Link
                             :href="route('admin.users.index')"
                             class="mt-2 inline-block text-xs font-semibold text-indigo-400 transition-colors hover:text-indigo-300"
                         >
                             Gerenciar Professores &rarr;
                         </Link>
-                    </div>
+                    </MetricCard>
 
                     <!-- Card Matérias -->
-                    <div
-                        class="relative overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6 shadow-xl backdrop-blur-md"
+                    <MetricCard
+                        title="Matérias Ativas"
+                        :value="stats.total_subjects"
+                        color="text-white"
                     >
-                        <div class="absolute right-0 top-0 p-4 opacity-10">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke-width="1.5"
-                                stroke="currentColor"
-                                class="h-20 w-20 text-white"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25"
-                                />
-                            </svg>
-                        </div>
-                        <p
-                            class="text-zinc-550 text-xs font-bold uppercase tracking-wider"
-                        >
-                            Matérias Ativas
-                        </p>
-                        <h3 class="mt-2 text-3xl font-extrabold text-white">
-                            {{ stats.total_subjects }}
-                        </h3>
+                        <template #icon
+                            ><BookOpen class="h-12 w-12"
+                        /></template>
+                        <template #icon-header>
+                            <BookOpen class="mb-2 h-8 w-8 text-indigo-500" />
+                        </template>
                         <Link
                             :href="route('admin.subjects.index')"
                             class="mt-2 inline-block text-xs font-semibold text-indigo-400 transition-colors hover:text-indigo-300"
                         >
                             Gerenciar Matérias &rarr;
                         </Link>
-                    </div>
+                    </MetricCard>
+                </div>
+
+                <!-- Fila de Relatórios Solicitados -->
+                <div v-if="reports.length > 0" class="mb-8 rounded-2xl border border-zinc-800 bg-zinc-900/30 p-6 backdrop-blur-md">
+                    <h3 class="text-lg font-bold text-white mb-2">Relatórios Solicitados</h3>
+                    <p class="text-xs text-zinc-400 mb-4">
+                        Os relatórios são processados em segundo plano. Os arquivos baixados são removidos automaticamente do servidor após o download.
+                    </p>
+                    
+                    <DataTable
+                        :items="reports"
+                        :columns="reportColumns"
+                        searchPlaceholder="Buscar relatório..."
+                    >
+                        <template #name="{ item }">
+                            <span class="font-semibold text-zinc-200">{{ item.name }}</span>
+                        </template>
+                        <template #status="{ item }">
+                            <span v-if="item.status === 'pending'" class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold text-amber-400 bg-amber-400/10 rounded-full">
+                                <span class="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+                                Processando
+                            </span>
+                            <span v-else class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold text-emerald-400 bg-emerald-400/10 rounded-full">
+                                <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
+                                Concluído
+                            </span>
+                        </template>
+                        <template #created_at="{ item }">
+                            <span class="text-zinc-400 font-mono text-xs">
+                                {{ new Date(item.created_at).toLocaleString('pt-BR') }}
+                            </span>
+                        </template>
+                        <template #actions="{ item }">
+                            <a
+                                v-if="item.status === 'completed'"
+                                :href="route('reports.download', item.id)"
+                                class="inline-flex items-center gap-1.5 rounded-xl border border-zinc-800 bg-zinc-950/40 px-4 py-2 text-sm text-indigo-400 hover:bg-zinc-800 hover:text-zinc-200 transition-all font-semibold active:scale-98"
+                            >
+                                Baixar Relatório (XLSX)
+                            </a>
+                            <span v-else class="text-zinc-500 text-xs font-bold animate-pulse">Aguarde...</span>
+                        </template>
+                    </DataTable>
                 </div>
 
                 <!-- Painel de Relatório e Desempenho (Tabela de Alunos) -->
@@ -167,94 +231,75 @@ const filteredStudents = computed(() => {
                     class="rounded-2xl border border-zinc-800 bg-zinc-900/30 p-6 backdrop-blur-md"
                 >
                     <div
-                        class="flex flex-col justify-between gap-4 md:flex-row md:items-center"
+                        class="flex flex-col justify-between gap-4 md:flex-row md:items-center mb-6"
                     >
                         <div>
                             <h3 class="text-lg font-bold text-white">
                                 Classificação de Alunos (Internal Ranking)
                             </h3>
-                            <p class="text-xs text-zinc-400">
-                                Veja o desempenho geral e a pontuação XP dos
-                                alunos da sua instituição.
-                            </p>
-                        </div>
-                        <div class="relative w-full max-w-xs">
-                            <input
-                                v-model="searchQuery"
-                                type="text"
-                                placeholder="Buscar aluno..."
-                                class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-2.5 text-sm text-zinc-100 placeholder-zinc-500 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                            />
+                            <div class="flex items-center gap-3 mt-1">
+                                <p class="text-xs text-zinc-400">
+                                    Veja o desempenho geral e a pontuação XP dos alunos da sua instituição.
+                                </p>
+                                <Button
+                                    variant="secondary"
+                                    @click="router.post(route('admin.reports.performance'))"
+                                    class="text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/10 !py-1.5 !px-3 text-xs"
+                                >
+                                    <template #icon>
+                                        <svg
+                                            class="h-3.5 w-3.5"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                            ></path>
+                                        </svg>
+                                    </template>
+                                    Exportar Relatório
+                                </Button>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="mt-6 overflow-x-auto">
-                        <table class="w-full border-collapse text-left">
-                            <thead>
-                                <tr
-                                    class="border-b border-zinc-800 text-xs font-bold uppercase tracking-wider text-zinc-400"
-                                >
-                                    <th class="px-4 py-3 text-center">#</th>
-                                    <th class="px-4 py-3">Nome</th>
-                                    <th class="px-4 py-3">E-mail</th>
-                                    <th class="px-4 py-3 text-right">
-                                        XP Total
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-zinc-800 text-sm">
-                                <tr
-                                    v-for="(student, idx) in filteredStudents"
-                                    :key="student.id"
-                                    class="transition-colors hover:bg-zinc-800/20"
-                                >
-                                    <td class="px-4 py-4 text-center">
-                                        <span
-                                            v-if="idx === 0"
-                                            class="inline-block rounded bg-amber-500/10 px-2 py-0.5 text-xs font-bold text-amber-500"
-                                            >🥇 1º</span
-                                        >
-                                        <span
-                                            v-else-if="idx === 1"
-                                            class="inline-block rounded bg-zinc-300/10 px-2 py-0.5 text-xs font-bold text-zinc-300"
-                                            >🥈 2º</span
-                                        >
-                                        <span
-                                            v-else-if="idx === 2"
-                                            class="inline-block rounded bg-amber-700/10 px-2 py-0.5 text-xs font-bold text-amber-700"
-                                            >🥉 3º</span
-                                        >
-                                        <span
-                                            v-else
-                                            class="text-xs font-semibold text-zinc-500"
-                                            >{{ idx + 1 }}º</span
-                                        >
-                                    </td>
-                                    <td
-                                        class="px-4 py-4 font-semibold text-white"
-                                    >
-                                        {{ student.name }}
-                                    </td>
-                                    <td class="px-4 py-4 text-zinc-400">
-                                        {{ student.email }}
-                                    </td>
-                                    <td
-                                        class="px-4 py-4 text-right font-black text-emerald-400"
-                                    >
-                                        {{ student.points }} XP
-                                    </td>
-                                </tr>
-                                <tr v-if="filteredStudents.length === 0">
-                                    <td
-                                        colspan="4"
-                                        class="py-8 text-center text-zinc-500"
-                                    >
-                                        Nenhum aluno encontrado.
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                    <DataTable
+                        :items="students"
+                        :columns="studentColumns"
+                        searchPlaceholder="Buscar aluno..."
+                    >
+                        <template #rank="{ item }">
+                            <span
+                                v-if="students.findIndex(s => s.id === item.id) === 0"
+                                class="inline-block rounded bg-amber-500/10 px-2 py-0.5 text-xs font-bold text-amber-500"
+                            >🥇 1º</span>
+                            <span
+                                v-else-if="students.findIndex(s => s.id === item.id) === 1"
+                                class="inline-block rounded bg-zinc-300/10 px-2 py-0.5 text-xs font-bold text-zinc-300"
+                            >🥈 2º</span>
+                            <span
+                                v-else-if="students.findIndex(s => s.id === item.id) === 2"
+                                class="inline-block rounded bg-amber-700/10 px-2 py-0.5 text-xs font-bold text-amber-700"
+                            >🥉 3º</span>
+                            <span
+                                v-else
+                                class="text-xs font-semibold text-zinc-500"
+                            >{{ students.findIndex(s => s.id === item.id) + 1 }}º</span>
+                        </template>
+                        <template #name="{ item }">
+                            <span class="font-semibold text-white">{{ item.name }}</span>
+                        </template>
+                        <template #email="{ item }">
+                            <span class="text-zinc-400">{{ item.email }}</span>
+                        </template>
+                        <template #points="{ item }">
+                            <span class="font-bold text-emerald-450">{{ item.points }} XP</span>
+                        </template>
+                    </DataTable>
                 </div>
 
                 <!-- Painel de Corpo Docente -->

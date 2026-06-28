@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use Illuminate\Support\Str;
@@ -210,25 +212,6 @@ O Tailwind usa uma abordagem *Mobile-First*. Prefixos como `sm:`, `md:`, `lg:`, 
     ];
 
     /**
-     * Normaliza a chave do tema.
-     */
-    protected function getThemeKey(string $theme): string
-    {
-        $theme = Str::slug($theme, '_');
-        if (str_contains($theme, 'eloquent') || str_contains($theme, 'laravel')) {
-            return 'laravel_eloquent';
-        }
-        if (str_contains($theme, 'vue') || str_contains($theme, 'inertia')) {
-            return 'vue_composition';
-        }
-        if (str_contains($theme, 'tailwind') || str_contains($theme, 'css') || str_contains($theme, 'flex') || str_contains($theme, 'grid')) {
-            return 'tailwind_css';
-        }
-
-        return 'generic';
-    }
-
-    /**
      * Gera os dados do Material de Estudo com base no tema.
      */
     public function generateMaterialData(string $theme): array
@@ -240,13 +223,13 @@ O Tailwind usa uma abordagem *Mobile-First*. Prefixos como `sm:`, `md:`, `lg:`, 
         }
 
         // Fallback genérico para outros tópicos
-        $title = 'Estudo Aprofundado: '.ucwords($theme);
-        $content = '# Estudo Aprofundado: '.ucwords($theme).'
+        $title = 'Estudo Aprofundado: ' . ucwords($theme);
+        $content = '# Estudo Aprofundado: ' . ucwords($theme) . '
 
-Este material foi gerado de forma dinâmica para fornecer conceitos essenciais sobre **'.ucwords($theme).'**.
+Este material foi gerado de forma dinâmica para fornecer conceitos essenciais sobre **' . ucwords($theme) . '**.
 
 ## Introdução e Conceitos Chave
-Entender '.ucwords($theme).' é um passo fundamental para se destacar no mercado profissional atual. A aplicação prática desse conhecimento envolve a compreensão de:
+Entender ' . ucwords($theme) . ' é um passo fundamental para se destacar no mercado profissional atual. A aplicação prática desse conhecimento envolve a compreensão de:
 
 1. **Fundamentos sólidos:** a base teórica e de boas práticas.
 2. **Arquitetura organizada:** dividindo responsabilidades e mantendo o código limpo.
@@ -275,11 +258,11 @@ Após esta leitura, realize as atividades práticas anexadas para consolidar a t
 
         // Fallback genérico para outros tópicos
         return [
-            'title' => 'Quiz Rápido: '.ucwords($theme),
-            'description' => 'Teste de nivelamento geral sobre '.ucwords($theme).'.',
+            'title' => 'Quiz Rápido: ' . ucwords($theme),
+            'description' => 'Teste de nivelamento geral sobre ' . ucwords($theme) . '.',
             'questions' => [
                 [
-                    'question_text' => 'Qual é a principal vantagem de aplicar padrões de projeto na implementação de '.ucwords($theme).'?',
+                    'question_text' => 'Qual é a principal vantagem de aplicar padrões de projeto na implementação de ' . ucwords($theme) . '?',
                     'options' => [
                         'Garantir melhor desempenho em tempo de compilação.',
                         'Facilitar a manutenção, legibilidade e reuso do código mantendo a separação de responsabilidades.',
@@ -300,5 +283,27 @@ Após esta leitura, realize as atividades práticas anexadas para consolidar a t
                 ],
             ],
         ];
+    }
+
+    /**
+     * Normaliza a chave do tema.
+     */
+    protected function getThemeKey(string $theme): string
+    {
+        $theme = Str::slug($theme, '_');
+
+        if (str_contains($theme, 'eloquent') || str_contains($theme, 'laravel')) {
+            return 'laravel_eloquent';
+        }
+
+        if (str_contains($theme, 'vue') || str_contains($theme, 'inertia')) {
+            return 'vue_composition';
+        }
+
+        if (str_contains($theme, 'tailwind') || str_contains($theme, 'css') || str_contains($theme, 'flex') || str_contains($theme, 'grid')) {
+            return 'tailwind_css';
+        }
+
+        return 'generic';
     }
 }

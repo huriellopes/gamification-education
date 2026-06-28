@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
@@ -27,6 +29,7 @@ class StudentDashboardController extends Controller
 
         // Se o usuário não tem uma instituição associada, mostramos uma lista vazia de matérias
         $subjects = collect();
+
         if ($user->institution_id) {
             $subjects = Subject::where('institution_id', $user->institution_id)
                 ->with(['studyMaterials', 'tests'])
@@ -67,6 +70,7 @@ class StudentDashboardController extends Controller
         $leaderboardRaw = $this->rankingService->getGlobalRanking(5);
         /** @var array<int, array{position: int, name: string, points: int, institution: string}> $leaderboardItems */
         $leaderboardItems = [];
+
         foreach ($leaderboardRaw as $index => $rankUser) {
             /** @var User $rankUser */
             /** @var Institution|null $inst */

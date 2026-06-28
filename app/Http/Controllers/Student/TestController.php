@@ -1,24 +1,28 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Student;
 
 use App\Actions\SubmitTestAttemptAction;
+use App\Data\Student\SubmitTestData;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\SubmitTestRequest;
 use App\Models\Question;
 use App\Models\Subject;
 use App\Models\Test;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class TestController extends Controller
 {
     /**
      * Exibe a interface de realização do teste.
      */
-    public function show(Subject $subject, Test $test)
+    public function show(Subject $subject, Test $test): Response
     {
         abort_if($test->subject_id !== $subject->id, 404);
 
@@ -54,16 +58,16 @@ class TestController extends Controller
     public function submit(
         Subject $subject,
         Test $test,
-        SubmitTestRequest $request,
-        SubmitTestAttemptAction $action
-    ) {
+        SubmitTestData $data,
+        SubmitTestAttemptAction $action,
+    ): RedirectResponse {
         abort_if($test->subject_id !== $subject->id, 404);
 
         Gate::authorize('submit', $test);
 
         /** @var User $user */
         $user = Auth::user();
-        $answers = $request->input('answers', []); // [question_id => selected_option_index]
+        $answers = $data->answers; // [question_id => selected_option_index]
 
         $attempt = $action->execute($user, $test, $answers);
 

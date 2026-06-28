@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Policies;
 
 use App\Models\Subject;
@@ -8,6 +10,11 @@ use App\Models\User;
 
 class TestPolicy
 {
+    public function viewAny(User $user): bool
+    {
+        return true;
+    }
+
     /**
      * Determine whether the user can view the model.
      */
@@ -49,5 +56,18 @@ class TestPolicy
         $subject = $test->subject;
 
         return $user->isStudent() && $subject && $subject->institution_id === $user->institution_id;
+    }
+
+    public function restore(User $user, Test $test): bool
+    {
+        return $this->update($user, $test);
+    }
+
+    public function forceDelete(User $user, Test $test): bool
+    {
+        /** @var Subject|null $subject */
+        $subject = $test->subject;
+
+        return $user->isSuperAdmin() || ($user->isInstitutionAdmin() && $subject && $subject->institution_id === $user->institution_id);
     }
 }

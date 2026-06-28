@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Actions;
 
 use App\Models\Question;
@@ -32,6 +34,7 @@ class SubmitTestAttemptAction
             foreach ($questions as $question) {
                 /** @var Question $question */
                 $selected = $answers[$question->id] ?? null;
+
                 if ($selected !== null && (int) $selected === (int) $question->correct_option_index) {
                     $correctCount++;
                 }
@@ -59,14 +62,14 @@ class SubmitTestAttemptAction
             // Se o aluno melhorou a nota anterior, concede a diferença de pontos
             if ($pointsEarned > $bestPreviousScore) {
                 $pointsDiff = $pointsEarned - $bestPreviousScore;
-                $description = "Atividade: {$test->title} (".($bestPreviousScore > 0 ? 'Melhoria de nota' : 'Primeira tentativa').')';
+                $description = "Atividade: {$test->title} (" . ($bestPreviousScore > 0 ? 'Melhoria de nota' : 'Primeira tentativa') . ')';
 
                 $this->addPointsAction->execute(
                     $user,
                     $pointsDiff,
                     'test',
                     $attempt->id,
-                    $description
+                    $description,
                 );
             }
 

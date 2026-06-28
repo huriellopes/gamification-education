@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Models\Institution;
 use App\Models\Question;
 use App\Models\StudyMaterial;
@@ -76,7 +78,7 @@ test('student can access dashboard, subjects, and stats', function () {
             ->has('subjects')
             ->has('scoreHistory')
             ->has('leaderboard')
-            ->has('stats')
+            ->has('stats'),
         );
 });
 
@@ -88,7 +90,7 @@ test('student can view subject learning path', function () {
             ->component('Student/Subjects/Show')
             ->has('subject')
             ->has('materials')
-            ->has('tests')
+            ->has('tests'),
         );
 });
 
@@ -100,7 +102,7 @@ test('student can read study material and complete it', function () {
             ->component('Student/Materials/Show')
             ->has('material')
             ->has('completed')
-            ->where('completed', false)
+            ->where('completed', false),
         );
 
     $this->actingAs($this->student)
@@ -119,7 +121,7 @@ test('student can view test questions which hide correct indices and submit answ
             ->component('Student/Tests/Show')
             ->has('test')
             // Verifica que a resposta correta foi omitida do JSON enviado para segurança
-            ->missing('test.questions.0.correct_option_index')
+            ->missing('test.questions.0.correct_option_index'),
         );
 
     // Envia respostas corretas
@@ -143,6 +145,6 @@ test('student can view ranking list with global and institution scopes', functio
             ->component('Ranking/Index')
             ->has('globalRanking')
             ->has('institutionRanking')
-            ->has('subjects')
+            ->has('subjects'),
         );
 });

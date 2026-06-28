@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Actions;
 
 use App\Models\StudyMaterial;
@@ -42,7 +44,7 @@ class CompleteStudyMaterialAction
                 $material->points_reward,
                 'material',
                 $material->id,
-                $description
+                $description,
             );
 
             return true;

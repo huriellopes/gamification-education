@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Actions\GenerateStudyMaterialAction;
 use App\Actions\GenerateTestForSubjectAction;
 use App\Models\Institution;

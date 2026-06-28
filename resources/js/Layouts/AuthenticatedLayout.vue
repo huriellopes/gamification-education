@@ -4,10 +4,23 @@ import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-import { Link, router } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import Toast from '@/Components/Toast.vue';
+import { Link, router, usePage } from '@inertiajs/vue3';
+import { ref, computed } from 'vue';
 
+const page = usePage();
 const showingNavigationDropdown = ref(false);
+
+const uniqueUserInstitutions = computed(() => {
+    const user = page.props.auth.user;
+    if (!user || !user.institutions) return [];
+    const seen = new Set();
+    return user.institutions.filter(inst => {
+        if (!inst || seen.has(inst.id)) return false;
+        seen.add(inst.id);
+        return true;
+    });
+});
 
 const switchInstitution = (id) => {
     router.post(route('admin.institutions.switch', id));
@@ -16,6 +29,30 @@ const switchInstitution = (id) => {
 
 <template>
     <div>
+        <Toast />
+        <!-- Impersonation Banner -->
+        <div
+            v-if="$page.props.auth.is_impersonating"
+            class="bg-indigo-600 px-4 py-3 text-white sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8"
+        >
+            <p class="text-center text-sm font-medium sm:text-left">
+                Você está personificando a conta de
+                <strong>{{ $page.props.auth.user.name }}</strong> ({{
+                    $page.props.auth.user.email
+                }}).
+            </p>
+            <div class="mt-4 flex justify-center sm:mt-0 sm:shrink-0">
+                <Link
+                    :href="route('impersonate.leave')"
+                    method="post"
+                    as="button"
+                    class="flex items-center justify-center rounded-md border border-transparent bg-white px-4 py-2 text-sm font-medium text-indigo-600 shadow-sm hover:bg-indigo-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-indigo-600"
+                >
+                    Voltar ao Super Admin
+                </Link>
+            </div>
+        </div>
+
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
             <nav
                 class="border-b border-gray-100 bg-white dark:border-gray-700 dark:bg-gray-800"
@@ -87,8 +124,7 @@ const switchInstitution = (id) => {
                             <div
                                 v-if="
                                     $page.props.auth.user.role === 'admin' &&
-                                    $page.props.auth.user.institutions?.length >
-                                        1
+                                    uniqueUserInstitutions.length > 1
                                 "
                                 class="relative ms-3"
                             >
@@ -127,8 +163,7 @@ const switchInstitution = (id) => {
                                             Alternar Instituição
                                         </div>
                                         <button
-                                            v-for="inst in $page.props.auth.user
-                                                .institutions"
+                                            v-for="inst in uniqueUserInstitutions"
                                             :key="inst.id"
                                             @click="switchInstitution(inst.id)"
                                             class="block w-full px-4 py-2 text-start text-sm leading-5 text-gray-700 transition duration-150 ease-in-out hover:bg-gray-100 focus:bg-gray-100 focus:outline-none dark:text-gray-300 dark:hover:bg-gray-700 dark:focus:bg-gray-700"
@@ -284,7 +319,7 @@ const switchInstitution = (id) => {
                         <div
                             v-if="
                                 $page.props.auth.user.role === 'admin' &&
-                                $page.props.auth.user.institutions?.length > 1
+                                uniqueUserInstitutions.length > 1
                             "
                             class="mb-4 border-b border-gray-200 px-4 pb-3 dark:border-gray-600"
                         >
@@ -295,8 +330,7 @@ const switchInstitution = (id) => {
                             </div>
                             <div class="space-y-1">
                                 <button
-                                    v-for="inst in $page.props.auth.user
-                                        .institutions"
+                                    v-for="inst in uniqueUserInstitutions"
                                     :key="inst.id"
                                     @click="switchInstitution(inst.id)"
                                     class="block w-full rounded-md px-3 py-2 text-start text-sm font-semibold hover:bg-gray-100 dark:hover:bg-gray-700"

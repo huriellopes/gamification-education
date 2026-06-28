@@ -1,12 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Admin;
 
 use App\Actions\GenerateStudyMaterialAction;
 use App\Actions\GenerateTestForSubjectAction;
+use App\Data\Teacher\GenerateContentData;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\GenerateContentRequest;
 use App\Models\Subject;
+use Illuminate\Http\RedirectResponse;
 
 class ContentGenerationController extends Controller
 {
@@ -16,7 +19,7 @@ class ContentGenerationController extends Controller
 
     public function __construct(
         GenerateStudyMaterialAction $generateMaterialAction,
-        GenerateTestForSubjectAction $generateTestAction
+        GenerateTestForSubjectAction $generateTestAction,
     ) {
         $this->generateMaterialAction = $generateMaterialAction;
         $this->generateTestAction = $generateTestAction;
@@ -25,9 +28,9 @@ class ContentGenerationController extends Controller
     /**
      * Dispara a geração de materiais e testes para uma matéria.
      */
-    public function generate(GenerateContentRequest $request, Subject $subject)
+    public function generate(GenerateContentData $data, Subject $subject): RedirectResponse
     {
-        $theme = $request->input('theme');
+        $theme = $data->theme;
 
         // Gera o material de estudo
         $material = $this->generateMaterialAction->execute($subject, $theme);

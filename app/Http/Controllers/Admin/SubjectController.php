@@ -1,21 +1,28 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Admin;
 
+use App\Data\Admin\AssignTeachersData;
+use App\Data\SuperAdmin\Subject\SubjectData;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreSubjectRequest;
+use App\Http\Resources\SuperAdmin\InstitutionResource;
+use App\Http\Resources\SuperAdmin\SubjectResource;
+use App\Http\Resources\UserResource;
 use App\Models\Subject;
 use App\Models\User;
-use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class SubjectController extends Controller
 {
     /**
      * Lista as matérias da instituição do administrador.
      */
-    public function index()
+    public function index(): Response
     {
         /** @var User $user */
         $user = auth()->user();
@@ -25,8 +32,15 @@ class SubjectController extends Controller
             ->withCount('studyMaterials', 'tests')
             ->get();
 
+        $institutions = $user->institutions()->get();
+
+        if ($institutions->isEmpty() && $user->institution) {
+            $institutions = collect([$user->institution]);
+        }
+
         return Inertia::render('Admin/Subjects/Index', [
-            'subjects' => $subjects,
+            'subjects' => SubjectResource::collection($subjects),
+            'institutions' => InstitutionResource::collection($institutions),
             'institution_id' => $institutionId,
         ]);
     }
@@ -34,16 +48,16 @@ class SubjectController extends Controller
     /**
      * Cadastra uma nova matéria na instituição do administrador.
      */
-    public function store(StoreSubjectRequest $request)
+    public function store(SubjectData $data): RedirectResponse
     {
         /** @var User $user */
         $user = auth()->user();
 
-        $data = $request->validated();
+        $attributes = $data->toArray();
         // Força a matéria a pertencer à instituição do administrador logado
-        $data['institution_id'] = $user->institution_id;
+        $attributes['institution_id'] = $user->institution_id;
 
-        Subject::create($data);
+        Subject::create($attributes);
 
         return redirect()->back()->with('success', 'Matéria criada com sucesso!');
     }
@@ -51,7 +65,7 @@ class SubjectController extends Controller
     /**
      * Exibe os detalhes da matéria e permite gerenciar professores.
      */
-    public function show(Subject $subject)
+    public function show(Subject $subject): Response
     {
         Gate::authorize('view', $subject);
 
@@ -66,25 +80,20 @@ class SubjectController extends Controller
             ->get();
 
         return Inertia::render('Admin/Subjects/Show', [
-            'subject' => $subject,
-            'availableTeachers' => $teachers,
+            'subject' => new SubjectResource($subject),
+            'availableTeachers' => UserResource::collection($teachers),
         ]);
     }
 
     /**
      * Associa professores a uma matéria.
      */
-    public function assignTeachers(Subject $subject, Request $request)
+    public function assignTeachers(Subject $subject, AssignTeachersData $data): RedirectResponse
     {
         Gate::authorize('update', $subject);
 
-        $data = $request->validate([
-            'teacher_ids' => ['required', 'array'],
-            'teacher_ids.*' => ['exists:users,id'],
-        ]);
-
         // Sincroniza os professores associados à matéria
-        $subject->teachers()->sync($data['teacher_ids']);
+        $subject->teachers()->sync($data->teacher_ids);
 
         return redirect()->back()->with('success', 'Professores associados com sucesso!');
     }

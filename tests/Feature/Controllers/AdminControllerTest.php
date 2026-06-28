@@ -1,5 +1,8 @@
 <?php
 
+declare(strict_types=1);
+
+use App\Enums\GeneralStatus;
 use App\Models\Institution;
 use App\Models\Subject;
 use App\Models\User;
@@ -57,7 +60,7 @@ test('admin can access dashboard and view stats scoped to institution', function
             ->component('Admin/Dashboard')
             ->has('stats')
             ->has('students')
-            ->has('teachers')
+            ->has('teachers'),
         );
 });
 
@@ -68,13 +71,15 @@ test('admin can view and store subject for their institution', function () {
         ->assertInertia(fn (Assert $page) => $page
             ->component('Admin/Subjects/Index')
             ->has('subjects')
-            ->has('institution_id')
+            ->has('institution_id'),
         );
 
     $this->actingAs($this->admin)
         ->post(route('admin.subjects.store'), [
             'name' => 'Vue 3 Course',
+            'slug' => 'vue-3-course',
             'description' => 'Learn composition API',
+            'duration' => '30 horas',
         ])
         ->assertRedirect();
 
@@ -125,7 +130,7 @@ test('admin can manage users in institution', function () {
         ->assertInertia(fn (Assert $page) => $page
             ->component('Admin/Users/Index')
             ->has('students')
-            ->has('teachers')
+            ->has('teachers'),
         );
 
     $this->actingAs($this->admin)
@@ -162,4 +167,84 @@ test('admin cannot switch context to an institution they do not manage', functio
     $this->actingAs($this->admin)
         ->post(route('admin.institutions.switch', $unmanagedInstitution->id))
         ->assertForbidden();
+});
+
+test('admin can update, toggle status, and delete subjects', function () {
+    $subject = Subject::create([
+        'institution_id' => $this->institution->id,
+        'name' => 'Laravel Basic',
+        'slug' => 'laravel-basic',
+    ]);
+
+    $this->actingAs($this->admin)
+        ->put(route('admin.subjects.update', $subject->id), [
+            'name' => 'Laravel Basic Updated',
+            'slug' => 'laravel-basic-updated',
+            'duration' => '20 hours',
+            'description' => 'Updated desc',
+            'institution_id' => $this->institution->id,
+        ])
+        ->assertRedirect();
+
+    $this->assertDatabaseHas('subjects', [
+        'id' => $subject->id,
+        'name' => 'Laravel Basic Updated',
+    ]);
+
+    // Toggle status
+    $this->actingAs($this->admin)
+        ->post(route('admin.subjects.toggle', $subject->id))
+        ->assertRedirect();
+
+    $this->assertEquals(GeneralStatus::INACTIVE, $subject->fresh()->is_active);
+
+    // Delete Subject
+    $this->actingAs($this->admin)
+        ->delete(route('admin.subjects.destroy', $subject->id))
+        ->assertRedirect();
+
+    $this->assertDatabaseMissing('subjects', [
+        'id' => $subject->id,
+    ]);
+});
+
+test('admin can update, toggle status, and delete users in institution', function () {
+    $teacher = User::create([
+        'name' => 'Original Teacher',
+        'email' => 'originalt@example.com',
+        'password' => bcrypt('password'),
+        'role' => 'teacher',
+        'institution_id' => $this->institution->id,
+    ]);
+
+    $this->actingAs($this->admin)
+        ->put(route('admin.users.update', $teacher->id), [
+            'name' => 'Updated Teacher',
+            'email' => 'updatedt@example.com',
+            'password' => '',
+            'role' => 'teacher',
+        ])
+        ->assertRedirect();
+
+    $this->assertDatabaseHas('users', [
+        'id' => $teacher->id,
+        'name' => 'Updated Teacher',
+        'email' => 'updatedt@example.com',
+    ]);
+
+    // Toggle status
+    $this->actingAs($this->admin)
+        ->post(route('admin.users.toggle', $teacher->id))
+        ->assertRedirect();
+
+    $this->assertEquals(GeneralStatus::INACTIVE, $teacher->fresh()->is_active);
+
+    // Delete User
+    $this->actingAs($this->admin)
+        ->delete(route('admin.users.destroy', $teacher->id))
+        ->assertRedirect();
+
+    $this->assertDatabaseMissing('users', [
+        'id' => $teacher->id,
+    ]);
 });

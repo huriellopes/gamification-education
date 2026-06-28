@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Models\User;
@@ -51,7 +53,7 @@ class RankingService
                 'users.id as user_id',
                 'users.name as user_name',
                 'institutions.name as institution_name',
-                DB::raw('SUM(test_attempts.score) as total_subject_score')
+                DB::raw('SUM(test_attempts.score) as total_subject_score'),
             )
             ->where('tests.subject_id', $subjectId)
             ->where('users.role', 'student')

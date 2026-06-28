@@ -5,6 +5,10 @@ parameters:
     level: 5
     paths:
         - app/
+
+    treatPhpDocTypesAsCertain: false
+
+    reportUnmatchedIgnoredErrors: false
+
     excludePaths:
-        - app/Providers/*
-        - app/Http/Controllers/Auth/*
+        # - ./*/*/FileToBeExcluded.php

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Actions\CompleteStudyMaterialAction;
 use App\Actions\SubmitTestAttemptAction;
 use App\Models\Institution;

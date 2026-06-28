@@ -28,6 +28,8 @@
         "vue": "^3.4.0"
     },
     "dependencies": {
+        "@lucide/vue": "^1.21.0",
+        "lucide-vue-next": "^1.0.0",
         "vue-tsc": "^3.3.5"
     }
 }

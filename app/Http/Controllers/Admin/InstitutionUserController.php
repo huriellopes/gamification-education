@@ -1,18 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Admin;
 
+use App\Data\SuperAdmin\User\UserData;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResource;
 use App\Models\User;
-use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class InstitutionUserController extends Controller
 {
     /**
      * Exibe a listagem de professores e estudantes da instituição.
      */
-    public function index()
+    public function index(): Response
     {
         /** @var User $user */
         $user = auth()->user();
@@ -27,33 +32,27 @@ class InstitutionUserController extends Controller
             ->get();
 
         return Inertia::render('Admin/Users/Index', [
-            'teachers' => $teachers,
-            'students' => $students,
+            'teachers' => UserResource::collection($teachers),
+            'students' => UserResource::collection($students),
         ]);
     }
 
     /**
      * Cadastra um novo professor ou estudante na instituição.
      */
-    public function store(Request $request)
+    public function store(UserData $data): RedirectResponse
     {
         /** @var User $user */
         $user = auth()->user();
         $institutionId = $user->institution_id;
 
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8'],
-            'role' => ['required', 'in:teacher,student'],
-        ]);
+        $attributes = $data->toArray();
+        $attributes['institution_id'] = $institutionId;
+        $attributes['password'] = bcrypt($attributes['password']);
 
-        $data['institution_id'] = $institutionId;
-        $data['password'] = bcrypt($data['password']);
+        User::create($attributes);
 
-        User::create($data);
-
-        $roleText = $data['role'] === 'teacher' ? 'Professor' : 'Estudante';
+        $roleText = $attributes['role'] === 'teacher' ? 'Professor' : 'Estudante';
 
         return redirect()->back()->with('success', "{$roleText} cadastrado com sucesso!");
     }

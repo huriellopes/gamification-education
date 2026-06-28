@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Seeders;
 
 use App\Actions\GenerateStudyMaterialAction;
@@ -20,12 +22,38 @@ class DatabaseSeeder extends Seeder
         // 1. Criar Instituições de Ensino
         $ift = Institution::create([
             'name' => 'Instituto Federal de Tecnologia (IFT)',
+            'razao_social' => 'Instituto Federal de Tecnologia Ltda',
+            'cnpj' => '12345678000195',
+            'slug' => 'ift',
             'description' => 'Campus Avançado de Tecnologia da Informação e Programação.',
+            'address' => [
+                'cep' => '70070-010',
+                'logradouro' => 'Via S2',
+                'numero' => 'S/N',
+                'complemento' => 'Anexo IV',
+                'bairro' => 'Zona Cívico-Administrativa',
+                'cidade' => 'Brasília',
+                'uf' => 'DF',
+            ],
+            'phones' => ['6133034100'],
         ]);
 
         $uec = Institution::create([
             'name' => 'Universidade Estadual de Computação (UEC)',
+            'razao_social' => 'Universidade Estadual de Computação S.A.',
+            'cnpj' => '98765432000198',
+            'slug' => 'uec',
             'description' => 'Centro de Excelência em Engenharia de Software e Ciências de Dados.',
+            'address' => [
+                'cep' => '01310-200',
+                'logradouro' => 'Avenida Paulista',
+                'numero' => '1700',
+                'complemento' => 'Bloco B',
+                'bairro' => 'Bela Vista',
+                'cidade' => 'São Paulo',
+                'uf' => 'SP',
+            ],
+            'phones' => ['1132543000'],
         ]);
 
         // 2. Criar Usuário Super Admin (Acesso Global)

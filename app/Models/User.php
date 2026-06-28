@@ -1,8 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Enums\GeneralStatus;
+use App\Enums\UserRole;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
@@ -12,27 +16,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\DeletedModels\Models\Concerns\KeepsDeletedModels;
 
-#[Fillable(['name', 'email', 'password', 'institution_id', 'role', 'points'])]
+/**
+ * @property UserRole $role
+ * @property GeneralStatus $is_active
+ */
+#[Fillable(['name', 'email', 'password', 'institution_id', 'role', 'points', 'is_active', 'must_change_password'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
-
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-            'points' => 'integer',
-        ];
-    }
+    use HasFactory, KeepsDeletedModels, Notifiable;
 
     public function institution(): BelongsTo
     {
@@ -70,26 +65,43 @@ class User extends Authenticatable
 
     public function isSuperAdmin(): bool
     {
-        return $this->role === 'super_admin';
+        return $this->role === UserRole::SUPER_ADMIN;
     }
 
     public function isInstitutionAdmin(): bool
     {
-        return $this->role === 'admin';
+        return $this->role === UserRole::ADMIN;
     }
 
     public function isTeacher(): bool
     {
-        return $this->role === 'teacher';
+        return $this->role === UserRole::TEACHER;
     }
 
     public function isStudent(): bool
     {
-        return $this->role === 'student';
+        return $this->role === UserRole::STUDENT;
     }
 
     public function isAdmin(): bool
     {
-        return $this->role === 'admin';
+        return $this->role === UserRole::ADMIN;
+    }
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+            'points' => 'integer',
+            'is_active' => GeneralStatus::class,
+            'role' => UserRole::class,
+            'must_change_password' => 'boolean',
+        ];
     }
 }
