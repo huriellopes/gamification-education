@@ -112,7 +112,7 @@ const setTab = (tabName) => {
         </template>
 
         <div
-            class="bg-zinc-955 min-h-[calc(100vh-64px)] py-12 pb-20 text-zinc-100"
+            class="bg-zinc-955 min-h-[calc(100vh-80px)] py-12 pb-20 text-zinc-100"
         >
             <div class="mx-auto max-w-5xl space-y-10 px-4 sm:px-6 lg:px-8">
                 <!-- Abas de Navegação (Tabs Premium) -->

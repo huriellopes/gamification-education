@@ -3,6 +3,7 @@ import BaseModal from '@/Components/BaseModal.vue';
 import ConfirmModal from '@/Components/ConfirmModal.vue';
 import DataTable from '@/Components/DataTable.vue';
 import InputLabel from '@/Components/InputLabel.vue';
+import SelectInput from '@/Components/SelectInput.vue';
 import TextInput from '@/Components/TextInput.vue';
 import TextareaInput from '@/Components/TextareaInput.vue';
 import Tooltip from '@/Components/Tooltip.vue';
@@ -175,7 +176,7 @@ const confirmToggle = (classroom) => {
             </div>
         </template>
 
-        <div class="min-h-[calc(100vh-64px)] bg-zinc-950 py-12 text-zinc-100">
+        <div class="min-h-[calc(100vh-80px)] bg-zinc-950 py-12 text-zinc-100">
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div
                     class="rounded-2xl border border-zinc-800 bg-zinc-900/30 p-6 backdrop-blur-md"
@@ -338,18 +339,14 @@ const confirmToggle = (classroom) => {
                         for="teacher_id"
                         :value="__('classrooms.form_teacher')"
                     />
-                    <select
-                        id="teacher_id"
-                        v-model="form.teacher_id"
-                        class="mt-1 block w-full rounded-xl border-zinc-700 bg-zinc-900 text-sm text-zinc-200 focus:border-indigo-500 focus:ring-indigo-500"
-                    >
+                    <SelectInput id="teacher_id" v-model="form.teacher_id">
                         <option value="">
                             {{ __('classrooms.form_no_teacher') }}
                         </option>
                         <option v-for="t in teachers" :key="t.id" :value="t.id">
                             {{ t.name }}
                         </option>
-                    </select>
+                    </SelectInput>
                 </div>
 
                 <div>

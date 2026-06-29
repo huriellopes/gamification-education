@@ -1,16 +1,20 @@
 <script setup>
 import BaseModal from '@/Components/BaseModal.vue';
 import ConfirmModal from '@/Components/ConfirmModal.vue';
+import SelectInput from '@/Components/SelectInput.vue';
+import TextareaInput from '@/Components/TextareaInput.vue';
+import TextInput from '@/Components/TextInput.vue';
 import Tooltip from '@/Components/Tooltip.vue';
+import { __ } from '@/i18n';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { slugify } from '@/Utils/mask';
-import { __ } from '@/i18n';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { FileText, ListChecks, Pencil, Plus, Trash2 } from '@lucide/vue';
 import { ref, watch } from 'vue';
 
 defineProps({
     subjects: { type: Array, default: () => [] },
+    classrooms: { type: Array, default: () => [] },
 });
 
 const isSubjectModalOpen = ref(false);
@@ -23,6 +27,7 @@ const subForm = useForm({
     slug: '',
     description: '',
     duration: '',
+    classroom_id: '',
 });
 
 watch(
@@ -50,6 +55,7 @@ const openEditModal = (subject) => {
     subForm.slug = subject.slug;
     subForm.description = subject.description;
     subForm.duration = subject.duration;
+    subForm.classroom_id = subject.classroom_id ?? '';
     isSubjectModalOpen.value = true;
 };
 
@@ -115,7 +121,7 @@ const deleteSubject = () => {
             </div>
         </template>
 
-        <div class="min-h-[calc(100vh-64px)] bg-zinc-950 py-12 text-zinc-100">
+        <div class="min-h-[calc(100vh-80px)] bg-zinc-950 py-12 text-zinc-100">
             <div class="mx-auto max-w-7xl space-y-8 px-4 sm:px-6 lg:px-8">
                 <div
                     v-if="$page.props.flash?.success"
@@ -250,14 +256,13 @@ const deleteSubject = () => {
                         class="mb-2 block text-xs font-bold uppercase text-zinc-400"
                         >{{ __('teacher.subject_form.name_label') }}</label
                     >
-                    <input
+                    <TextInput
                         v-model="subForm.name"
                         type="text"
                         required
                         :placeholder="
                             __('teacher.subject_form.name_placeholder')
                         "
-                        class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-2.5 text-sm text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                     />
                     <span
                         v-if="subForm.errors.name"
@@ -271,8 +276,8 @@ const deleteSubject = () => {
                         class="mb-2 block text-xs font-bold uppercase text-zinc-400"
                         >{{ __('teacher.subject_form.slug_label') }}</label
                     >
-                    <input
-                        :value="subForm.slug"
+                    <TextInput
+                        :model-value="subForm.slug"
                         @input="
                             wasSlugManuallyEdited = true;
                             subForm.slug = slugify($event.target.value);
@@ -282,7 +287,6 @@ const deleteSubject = () => {
                         :placeholder="
                             __('teacher.subject_form.slug_placeholder')
                         "
-                        class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-2.5 text-sm text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                     />
                     <span
                         v-if="subForm.errors.slug"
@@ -296,14 +300,13 @@ const deleteSubject = () => {
                         class="mb-2 block text-xs font-bold uppercase text-zinc-400"
                         >{{ __('teacher.subject_form.duration_label') }}</label
                     >
-                    <input
+                    <TextInput
                         v-model="subForm.duration"
                         type="text"
                         required
                         :placeholder="
                             __('teacher.subject_form.duration_placeholder')
                         "
-                        class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-2.5 text-sm text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                     />
                     <span
                         v-if="subForm.errors.duration"
@@ -315,18 +318,41 @@ const deleteSubject = () => {
                 <div>
                     <label
                         class="mb-2 block text-xs font-bold uppercase text-zinc-400"
+                        >{{ __('teacher.subject_form.classroom_label') }}</label
+                    >
+                    <SelectInput v-model="subForm.classroom_id">
+                        <option value="">
+                            {{ __('teacher.subject_form.classroom_none') }}
+                        </option>
+                        <option
+                            v-for="classroom in classrooms"
+                            :key="classroom.id"
+                            :value="classroom.id"
+                        >
+                            {{ classroom.name }}
+                        </option>
+                    </SelectInput>
+                    <span
+                        v-if="subForm.errors.classroom_id"
+                        class="mt-1 block text-xs text-red-500"
+                        >{{ subForm.errors.classroom_id }}</span
+                    >
+                </div>
+
+                <div>
+                    <label
+                        class="mb-2 block text-xs font-bold uppercase text-zinc-400"
                         >{{
                             __('teacher.subject_form.description_label')
                         }}</label
                     >
-                    <textarea
+                    <TextareaInput
                         v-model="subForm.description"
                         rows="3"
                         :placeholder="
                             __('teacher.subject_form.description_placeholder')
                         "
-                        class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-2.5 text-sm text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                    ></textarea>
+                    />
                     <span
                         v-if="subForm.errors.description"
                         class="mt-1 block text-xs text-red-500"

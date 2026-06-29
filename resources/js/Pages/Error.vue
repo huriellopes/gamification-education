@@ -52,7 +52,7 @@ const goBack = () => {
     <Head :title="title" />
 
     <div
-        class="relative flex min-h-screen items-center justify-center overflow-hidden bg-gray-100 p-4 transition-colors duration-300 sm:p-6 lg:p-8 dark:bg-gray-900"
+        class="relative flex min-h-screen items-center justify-center overflow-hidden bg-gray-100 p-4 transition-colors duration-300 dark:bg-gray-900 sm:p-6 lg:p-8"
     >
         <!-- Background Effects -->
         <div class="pointer-events-none absolute inset-0">
@@ -75,7 +75,7 @@ const goBack = () => {
                     <!-- Status Code / Icon -->
                     <div class="relative mb-8 inline-block">
                         <div
-                            class="select-none bg-gradient-to-br bg-clip-text text-[8rem] font-black leading-none text-transparent opacity-20 sm:text-[10rem] dark:opacity-30"
+                            class="select-none bg-gradient-to-br bg-clip-text text-[8rem] font-black leading-none text-transparent opacity-20 dark:opacity-30 sm:text-[10rem]"
                             :class="getGradientClass"
                         >
                             {{ status }}
@@ -84,7 +84,7 @@ const goBack = () => {
                             class="absolute inset-0 flex items-center justify-center"
                         >
                             <div
-                                class="relative flex h-24 w-24 items-center justify-center rounded-full border border-gray-100 bg-white shadow-lg sm:h-32 sm:w-32 dark:border-gray-700 dark:bg-gray-800"
+                                class="relative flex h-24 w-24 items-center justify-center rounded-full border border-gray-100 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800 sm:h-32 sm:w-32"
                             >
                                 <div
                                     class="absolute inset-0 rounded-full bg-gradient-to-br opacity-10"
@@ -143,7 +143,7 @@ const goBack = () => {
                     </div>
 
                     <h1
-                        class="mb-4 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl dark:text-white"
+                        class="mb-4 text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl"
                     >
                         {{ title.split(': ')[1] || title }}
                     </h1>
@@ -159,7 +159,7 @@ const goBack = () => {
                     >
                         <button
                             @click="goBack"
-                            class="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-300 bg-white px-6 py-3 font-medium text-gray-700 shadow-sm transition-colors hover:bg-gray-50 focus:ring-2 focus:ring-gray-200 focus:ring-offset-2 sm:w-auto dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:focus:ring-offset-gray-900"
+                            class="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-300 bg-white px-6 py-3 font-medium text-gray-700 shadow-sm transition-colors hover:bg-gray-50 focus:ring-2 focus:ring-gray-200 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:focus:ring-offset-gray-900 sm:w-auto"
                         >
                             <svg
                                 class="h-5 w-5"
@@ -179,7 +179,7 @@ const goBack = () => {
 
                         <Link
                             href="/"
-                            class="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r px-6 py-3 font-medium text-white shadow-lg transition-all hover:shadow-xl focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:w-auto dark:focus:ring-offset-gray-900"
+                            class="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r px-6 py-3 font-medium text-white shadow-lg transition-all hover:shadow-xl focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 sm:w-auto"
                             :class="getGradientClass"
                         >
                             <svg

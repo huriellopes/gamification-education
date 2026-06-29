@@ -3,10 +3,12 @@ import BaseModal from '@/Components/BaseModal.vue';
 import Button from '@/Components/Button.vue';
 import ConfirmModal from '@/Components/ConfirmModal.vue';
 import DataTable from '@/Components/DataTable.vue';
+import TextareaInput from '@/Components/TextareaInput.vue';
+import TextInput from '@/Components/TextInput.vue';
 import Tooltip from '@/Components/Tooltip.vue';
+import { __ } from '@/i18n';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { maskCep, maskCnpj, maskPhone, slugify } from '@/Utils/mask';
-import { __ } from '@/i18n';
 import { Head, router, useForm } from '@inertiajs/vue3';
 import { CheckCircle, Pencil, Plus, Power, Trash2, XCircle } from '@lucide/vue';
 import { ref, watch } from 'vue';
@@ -455,11 +457,10 @@ const confirmDeleteInstitution = (inst) => {
                                 __('superadmin.institutions.label_name')
                             }}</label
                         >
-                        <input
+                        <TextInput
                             v-model="instForm.name"
                             type="text"
                             required
-                            class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-sm text-white focus:border-indigo-500 focus:outline-none"
                         />
                     </div>
                     <div>
@@ -469,12 +470,11 @@ const confirmDeleteInstitution = (inst) => {
                                 __('superadmin.institutions.label_slug')
                             }}</label
                         >
-                        <input
+                        <TextInput
                             v-model="instForm.slug"
                             type="text"
                             required
                             @input="wasSlugManuallyEdited = true"
-                            class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-sm text-white focus:border-indigo-500 focus:outline-none"
                         />
                     </div>
                 </div>
@@ -487,10 +487,9 @@ const confirmDeleteInstitution = (inst) => {
                                 __('superadmin.institutions.label_razao_social')
                             }}</label
                         >
-                        <input
+                        <TextInput
                             v-model="instForm.razao_social"
                             type="text"
-                            class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-sm text-white focus:border-indigo-500"
                         />
                     </div>
                     <div>
@@ -500,15 +499,14 @@ const confirmDeleteInstitution = (inst) => {
                                 __('superadmin.institutions.label_cnpj')
                             }}</label
                         >
-                        <input
-                            :value="instForm.cnpj"
+                        <TextInput
+                            :model-value="instForm.cnpj"
                             @input="
                                 instForm.cnpj = maskCnpj($event.target.value)
                             "
                             type="text"
                             placeholder="00.000.000/0000-00"
                             maxlength="18"
-                            class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-sm text-white focus:border-indigo-500 focus:outline-none"
                         />
                     </div>
                 </div>
@@ -520,11 +518,7 @@ const confirmDeleteInstitution = (inst) => {
                             __('superadmin.institutions.label_description')
                         }}</label
                     >
-                    <textarea
-                        v-model="instForm.description"
-                        rows="2"
-                        class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-sm text-zinc-200 focus:border-indigo-500 focus:outline-none"
-                    ></textarea>
+                    <TextareaInput v-model="instForm.description" rows="2" />
                 </div>
 
                 <!-- Address Section (ViaCEP auto lookup) -->
@@ -542,8 +536,8 @@ const confirmDeleteInstitution = (inst) => {
                                 }}</label
                             >
                             <div class="flex gap-2">
-                                <input
-                                    :value="instForm.address.cep"
+                                <TextInput
+                                    :model-value="instForm.address.cep"
                                     @input="
                                         instForm.address.cep = maskCep(
                                             $event.target.value,
@@ -552,7 +546,6 @@ const confirmDeleteInstitution = (inst) => {
                                     type="text"
                                     placeholder="00000-000"
                                     maxlength="9"
-                                    class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-white focus:border-indigo-500 focus:outline-none"
                                 />
                                 <Button
                                     type="button"
@@ -582,10 +575,9 @@ const confirmDeleteInstitution = (inst) => {
                                     __('superadmin.institutions.label_street')
                                 }}</label
                             >
-                            <input
+                            <TextInput
                                 v-model="instForm.address.logradouro"
                                 type="text"
-                                class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-2.5 text-sm text-white focus:border-indigo-500"
                             />
                         </div>
                     </div>
@@ -598,10 +590,9 @@ const confirmDeleteInstitution = (inst) => {
                                     __('superadmin.institutions.label_number')
                                 }}</label
                             >
-                            <input
+                            <TextInput
                                 v-model="instForm.address.numero"
                                 type="text"
-                                class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-2.5 text-sm text-white focus:border-indigo-500"
                             />
                         </div>
                         <div>
@@ -613,10 +604,9 @@ const confirmDeleteInstitution = (inst) => {
                                     )
                                 }}</label
                             >
-                            <input
+                            <TextInput
                                 v-model="instForm.address.complemento"
                                 type="text"
-                                class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-2.5 text-sm text-white focus:border-indigo-500"
                             />
                         </div>
                         <div>
@@ -628,10 +618,9 @@ const confirmDeleteInstitution = (inst) => {
                                     )
                                 }}</label
                             >
-                            <input
+                            <TextInput
                                 v-model="instForm.address.bairro"
                                 type="text"
-                                class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-2.5 text-sm text-white focus:border-indigo-500"
                             />
                         </div>
                         <div>
@@ -642,7 +631,7 @@ const confirmDeleteInstitution = (inst) => {
                                 }}</label
                             >
                             <div class="flex gap-2">
-                                <input
+                                <TextInput
                                     v-model="instForm.address.cidade"
                                     type="text"
                                     :placeholder="
@@ -650,9 +639,8 @@ const confirmDeleteInstitution = (inst) => {
                                             'superadmin.institutions.placeholder_city',
                                         )
                                     "
-                                    class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-3 py-2.5 text-sm text-white focus:border-indigo-500"
                                 />
-                                <input
+                                <TextInput
                                     v-model="instForm.address.uf"
                                     type="text"
                                     :placeholder="
@@ -661,7 +649,7 @@ const confirmDeleteInstitution = (inst) => {
                                         )
                                     "
                                     maxlength="2"
-                                    class="w-12 rounded-xl border border-zinc-800 bg-zinc-950 px-2 py-2.5 text-center text-sm text-white focus:border-indigo-500"
+                                    class="w-12 text-center"
                                 />
                             </div>
                         </div>
@@ -692,8 +680,8 @@ const confirmDeleteInstitution = (inst) => {
                             :key="index"
                             class="flex items-center gap-2"
                         >
-                            <input
-                                :value="phone"
+                            <TextInput
+                                :model-value="phone"
                                 @input="
                                     instForm.phones[index] = maskPhone(
                                         $event.target.value,
@@ -702,7 +690,6 @@ const confirmDeleteInstitution = (inst) => {
                                 type="text"
                                 placeholder="(00) 00000-0000"
                                 maxlength="15"
-                                class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-2.5 text-sm text-white focus:border-indigo-500 focus:outline-none"
                             />
                             <Button
                                 type="button"

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Enums\GeneralStatus;
 use App\Jobs\GenerateContentJob;
+use App\Models\Classroom;
 use App\Models\Institution;
 use App\Models\Question;
 use App\Models\StudyMaterial;
@@ -132,7 +133,7 @@ test('teacher can store, update, and delete subject', function () {
             'duration' => '40 hours',
             'description' => 'Advanced topics in Laravel framework',
         ])
-        ->assertRedirect(route('teacher.dashboard'));
+        ->assertRedirect(route('teacher.subjects.index'));
 
     $this->assertDatabaseHas('subjects', [
         'name' => 'Laravel 11 Advanced',
@@ -278,6 +279,106 @@ test('teacher can manage tests and questions', function () {
 
     $this->assertDatabaseMissing('tests', [
         'id' => $test->id,
+    ]);
+});
+
+test('question rejects a correct option index outside the provided options', function () {
+    $test = Test::create([
+        'subject_id' => $this->subject->id,
+        'title' => 'Bounds Quiz',
+        'description' => 'Quiz description.',
+        'points_reward' => 50,
+    ]);
+
+    $this->actingAs($this->teacher)
+        ->post(route('teacher.questions.store', $test->id), [
+            'question_text' => 'Pick one',
+            'options' => ['A', 'B'],
+            'correct_option_index' => 5,
+        ])
+        ->assertInvalid('correct_option_index');
+
+    $this->assertDatabaseMissing('questions', [
+        'test_id' => $test->id,
+        'question_text' => 'Pick one',
+    ]);
+});
+
+test('teacher can link a subject to their own classroom but not to another teachers classroom', function () {
+    $ownClassroom = Classroom::create([
+        'institution_id' => $this->institution->id,
+        'teacher_id' => $this->teacher->id,
+        'name' => 'My Classroom',
+        'is_active' => GeneralStatus::ACTIVE,
+    ]);
+
+    $otherTeacher = User::create([
+        'name' => 'Other Teacher',
+        'email' => 'other.teacher@example.com',
+        'password' => bcrypt('password'),
+        'role' => 'teacher',
+        'institution_id' => $this->institution->id,
+    ]);
+
+    $foreignClassroom = Classroom::create([
+        'institution_id' => $this->institution->id,
+        'teacher_id' => $otherTeacher->id,
+        'name' => 'Foreign Classroom',
+        'is_active' => GeneralStatus::ACTIVE,
+    ]);
+
+    // Links to own classroom: accepted.
+    $this->actingAs($this->teacher)
+        ->post(route('teacher.subjects.store'), [
+            'name' => 'Linked Subject',
+            'slug' => 'linked-subject',
+            'duration' => '20 hours',
+            'classroom_id' => $ownClassroom->id,
+        ])
+        ->assertRedirect(route('teacher.subjects.index'));
+
+    $this->assertDatabaseHas('subjects', [
+        'name' => 'Linked Subject',
+        'classroom_id' => $ownClassroom->id,
+    ]);
+
+    // Links to a classroom owned by another teacher: rejected.
+    $this->actingAs($this->teacher)
+        ->post(route('teacher.subjects.store'), [
+            'name' => 'Invalid Link Subject',
+            'slug' => 'invalid-link-subject',
+            'duration' => '20 hours',
+            'classroom_id' => $foreignClassroom->id,
+        ])
+        ->assertInvalid('classroom_id');
+});
+
+test('teacher responsible for a classroom can manage content of its subjects', function () {
+    $classroom = Classroom::create([
+        'institution_id' => $this->institution->id,
+        'teacher_id' => $this->teacher->id,
+        'name' => 'Owned Classroom',
+        'is_active' => GeneralStatus::ACTIVE,
+    ]);
+
+    // Subject linked to the classroom but NOT attached via the subject_user pivot.
+    $classroomSubject = Subject::create([
+        'institution_id' => $this->institution->id,
+        'classroom_id' => $classroom->id,
+        'name' => 'Classroom Owned Subject',
+    ]);
+
+    $this->actingAs($this->teacher)
+        ->post(route('teacher.materials.store', $classroomSubject->id), [
+            'title' => 'Material via classroom ownership',
+            'content' => 'Content body.',
+            'points_reward' => 10,
+        ])
+        ->assertRedirect();
+
+    $this->assertDatabaseHas('study_materials', [
+        'subject_id' => $classroomSubject->id,
+        'title' => 'Material via classroom ownership',
     ]);
 });
 

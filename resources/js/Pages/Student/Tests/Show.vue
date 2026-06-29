@@ -97,7 +97,7 @@ const submitTest = () => {
         </template>
 
         <div
-            class="bg-zinc-955 min-h-[calc(100vh-64px)] py-12 pb-32 text-zinc-100"
+            class="bg-zinc-955 min-h-[calc(100vh-80px)] py-12 pb-32 text-zinc-100"
         >
             <div class="mx-auto max-w-3xl space-y-8 px-4 sm:px-6 lg:px-8">
                 <!-- Card de Instrução/Status -->

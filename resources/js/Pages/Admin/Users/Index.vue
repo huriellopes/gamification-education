@@ -223,7 +223,7 @@ const toggleStatus = (user) => {
             </h2>
         </template>
 
-        <div class="bg-zinc-955 min-h-[calc(100vh-64px)] py-12 text-zinc-100">
+        <div class="bg-zinc-955 min-h-[calc(100vh-80px)] py-12 text-zinc-100">
             <div class="mx-auto max-w-7xl space-y-8 px-4 sm:px-6 lg:px-8">
                 <!-- Toast/Flash Message -->
                 <div
@@ -584,10 +584,7 @@ const toggleStatus = (user) => {
                         class="mb-2 block text-xs font-bold uppercase text-zinc-400"
                         >{{ __('classrooms.enroll_label') }}</label
                     >
-                    <select
-                        v-model="form.classroom_id"
-                        class="block w-full rounded-xl border-zinc-700 bg-zinc-900 text-sm text-zinc-200 focus:border-indigo-500 focus:ring-indigo-500"
-                    >
+                    <SelectInput v-model="form.classroom_id">
                         <option value="">
                             {{ __('classrooms.enroll_none') }}
                         </option>
@@ -598,7 +595,7 @@ const toggleStatus = (user) => {
                         >
                             {{ c.name }}
                         </option>
-                    </select>
+                    </SelectInput>
                     <span
                         v-if="form.errors.classroom_id"
                         class="mt-1 block text-xs text-red-500"

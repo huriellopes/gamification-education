@@ -1,6 +1,8 @@
 <script setup>
 import BaseModal from '@/Components/BaseModal.vue';
 import ConfirmModal from '@/Components/ConfirmModal.vue';
+import TextareaInput from '@/Components/TextareaInput.vue';
+import TextInput from '@/Components/TextInput.vue';
 import Tooltip from '@/Components/Tooltip.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
@@ -289,7 +291,7 @@ const deleteQuestion = () => {
             </div>
         </template>
 
-        <div class="bg-zinc-955 min-h-[calc(100vh-64px)] py-12 text-zinc-100">
+        <div class="bg-zinc-955 min-h-[calc(100vh-80px)] py-12 text-zinc-100">
             <div class="mx-auto max-w-7xl space-y-8 px-4 sm:px-6 lg:px-8">
                 <!-- Success Flash Messages -->
                 <div
@@ -374,7 +376,7 @@ const deleteQuestion = () => {
                             class="flex flex-col gap-3 md:flex-row"
                         >
                             <div class="flex-grow">
-                                <input
+                                <TextInput
                                     v-model="aiForm.theme"
                                     type="text"
                                     required
@@ -383,7 +385,6 @@ const deleteQuestion = () => {
                                             'teacher.subject_show.ai_input_placeholder',
                                         )
                                     "
-                                    class="w-full rounded-xl border border-zinc-800 bg-zinc-900/60 px-4 py-3 text-sm text-zinc-100 placeholder-zinc-500 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                                 />
                                 <span
                                     v-if="aiForm.errors.theme"
@@ -727,14 +728,13 @@ const deleteQuestion = () => {
                         class="mb-2 block text-xs font-bold uppercase text-zinc-400"
                         >{{ __('teacher.material_form.title_label') }}</label
                     >
-                    <input
+                    <TextInput
                         v-model="matForm.title"
                         type="text"
                         required
                         :placeholder="
                             __('teacher.material_form.title_placeholder')
                         "
-                        class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-2.5 text-sm text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                     />
                     <span
                         v-if="matForm.errors.title"
@@ -748,12 +748,11 @@ const deleteQuestion = () => {
                         class="mb-2 block text-xs font-bold uppercase text-zinc-400"
                         >{{ __('teacher.material_form.reward_label') }}</label
                     >
-                    <input
+                    <TextInput
                         v-model="matForm.points_reward"
                         type="number"
                         required
                         min="1"
-                        class="bg-zinc-955 w-full rounded-xl border border-zinc-800 px-4 py-2.5 text-sm text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                     />
                     <span
                         v-if="matForm.errors.points_reward"
@@ -767,15 +766,14 @@ const deleteQuestion = () => {
                         class="mb-2 block text-xs font-bold uppercase text-zinc-400"
                         >{{ __('teacher.material_form.content_label') }}</label
                     >
-                    <textarea
+                    <TextareaInput
                         v-model="matForm.content"
                         rows="6"
                         required
                         :placeholder="
                             __('teacher.material_form.content_placeholder')
                         "
-                        class="bg-zinc-955 w-full rounded-xl border border-zinc-800 px-4 py-2.5 text-sm text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                    ></textarea>
+                    />
                     <span
                         v-if="matForm.errors.content"
                         class="mt-1 block text-xs text-red-500"
@@ -823,12 +821,11 @@ const deleteQuestion = () => {
                         class="mb-2 block text-xs font-bold uppercase text-zinc-400"
                         >{{ __('teacher.test_form.title_label') }}</label
                     >
-                    <input
+                    <TextInput
                         v-model="testForm.title"
                         type="text"
                         required
                         :placeholder="__('teacher.test_form.title_placeholder')"
-                        class="bg-zinc-955 w-full rounded-xl border border-zinc-800 px-4 py-2.5 text-sm text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                     />
                     <span
                         v-if="testForm.errors.title"
@@ -842,12 +839,11 @@ const deleteQuestion = () => {
                         class="mb-2 block text-xs font-bold uppercase text-zinc-400"
                         >{{ __('teacher.test_form.reward_label') }}</label
                     >
-                    <input
+                    <TextInput
                         v-model="testForm.points_reward"
                         type="number"
                         required
                         min="1"
-                        class="bg-zinc-955 w-full rounded-xl border border-zinc-800 px-4 py-2.5 text-sm text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                     />
                     <span
                         v-if="testForm.errors.points_reward"
@@ -861,15 +857,14 @@ const deleteQuestion = () => {
                         class="mb-2 block text-xs font-bold uppercase text-zinc-400"
                         >{{ __('teacher.test_form.description_label') }}</label
                     >
-                    <textarea
+                    <TextareaInput
                         v-model="testForm.description"
                         rows="3"
                         required
                         :placeholder="
                             __('teacher.test_form.description_placeholder')
                         "
-                        class="bg-zinc-955 w-full rounded-xl border border-zinc-800 px-4 py-2.5 text-sm text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                    ></textarea>
+                    />
                     <span
                         v-if="testForm.errors.description"
                         class="mt-1 block text-xs text-red-500"
@@ -917,15 +912,14 @@ const deleteQuestion = () => {
                         class="mb-2 block text-xs font-bold uppercase text-zinc-400"
                         >{{ __('teacher.question_form.text_label') }}</label
                     >
-                    <textarea
+                    <TextareaInput
                         v-model="questionForm.question_text"
                         rows="3"
                         required
                         :placeholder="
                             __('teacher.question_form.text_placeholder')
                         "
-                        class="bg-zinc-955 w-full rounded-xl border border-zinc-800 px-4 py-2.5 text-sm text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                    ></textarea>
+                    />
                     <span
                         v-if="questionForm.errors.question_text"
                         class="mt-1 block text-xs text-red-500"
@@ -961,7 +955,7 @@ const deleteQuestion = () => {
                                 v-model="questionForm.correct_option_index"
                                 class="h-4 w-4 border-zinc-800 bg-zinc-950 text-indigo-600 focus:ring-indigo-500"
                             />
-                            <input
+                            <TextInput
                                 v-model="questionForm.options[idx]"
                                 type="text"
                                 required
@@ -970,7 +964,7 @@ const deleteQuestion = () => {
                                         'teacher.question_form.option_placeholder',
                                     ).replace(':number', idx + 1)
                                 "
-                                class="bg-zinc-955 flex-grow rounded-xl border border-zinc-800 px-4 py-2 text-xs text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                                class="flex-grow"
                             />
                             <button
                                 v-if="questionForm.options.length > 2"

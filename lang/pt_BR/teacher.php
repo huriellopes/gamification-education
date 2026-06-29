@@ -33,6 +33,8 @@ return [
         'slug_placeholder' => 'ex: algoritmos-e-programacao',
         'duration_label' => 'Duração',
         'duration_placeholder' => 'Ex: 60 horas',
+        'classroom_label' => 'Turma',
+        'classroom_none' => 'Sem turma',
         'description_label' => 'Descrição',
         'description_placeholder' => 'Insira a ementa ou resumo da matéria...',
         'save_changes' => 'Salvar Alterações',

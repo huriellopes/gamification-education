@@ -1,0 +1,86 @@
+name: Release
+
+# Roda automaticamente após o CI passar na branch main.
+# Incrementa a versão (patch) a partir da última tag — ou respeita um bump
+# manual de minor/major feito no arquivo VERSION — grava o VERSION de volta,
+# cria a tag vX.Y.Z e a GitHub Release com notas geradas automaticamente.
+on:
+  workflow_run:
+    workflows: ['CI - Code Integrity']
+    types: [completed]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    if: >-
+      ${{ github.event.workflow_run.conclusion == 'success' &&
+          github.event.workflow_run.head_branch == 'main' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Resolve next version
+        id: version
+        run: |
+          set -euo pipefail
+
+          # Última tag semver (vX.Y.Z); 0.0.0 se não houver nenhuma.
+          latest_tag="$(git tag --list 'v*' --sort=-v:refname | head -n1)"
+          latest="${latest_tag#v}"
+          latest="${latest:-0.0.0}"
+
+          # Versão declarada no arquivo (permite bump manual de minor/major).
+          file_version="$(tr -d '[:space:]' < VERSION || echo '')"
+
+          if [ -n "$file_version" ] && [ "$file_version" != "$latest" ] && ! git rev-parse "v$file_version" >/dev/null 2>&1; then
+            # Bump manual: usa o VERSION como está.
+            next="$file_version"
+          else
+            # Auto-bump de patch a partir da última tag.
+            IFS='.' read -r major minor patch <<< "$latest"
+            next="${major:-0}.${minor:-0}.$(( ${patch:-0} + 1 ))"
+          fi
+
+          echo "next=$next" >> "$GITHUB_OUTPUT"
+          echo "Próxima versão: $next (última tag: ${latest_tag:-nenhuma})"
+
+      - name: Write VERSION and commit back (if changed)
+        id: commit
+        run: |
+          set -euo pipefail
+          next="${{ steps.version.outputs.next }}"
+          current="$(tr -d '[:space:]' < VERSION || echo '')"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          if [ "$current" != "$next" ]; then
+            echo "$next" > VERSION
+            git add VERSION
+            git commit -m "chore(release): v$next [skip ci]"
+            git push origin main
+          fi
+
+      - name: Create tag and GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          version="v${{ steps.version.outputs.next }}"
+
+          if git rev-parse "$version" >/dev/null 2>&1; then
+            echo "Tag $version já existe — nada a fazer."
+            exit 0
+          fi
+
+          git tag -a "$version" -m "Release $version"
+          git push origin "$version"
+          gh release create "$version" --title "$version" --generate-notes

@@ -2,6 +2,7 @@
 import BaseModal from '@/Components/BaseModal.vue';
 import Button from '@/Components/Button.vue';
 import DataTable from '@/Components/DataTable.vue';
+import TextareaInput from '@/Components/TextareaInput.vue';
 import { __ } from '@/i18n';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
@@ -290,15 +291,14 @@ const formatDateTime = (dateStr) => {
                                 __('superadmin.supports.your_reply_label')
                             }}</label
                         >
-                        <textarea
+                        <TextareaInput
                             v-model="replyForm.reply"
                             required
                             rows="5"
                             :placeholder="
                                 __('superadmin.supports.reply_placeholder')
                             "
-                            class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-sm text-white focus:border-indigo-500 focus:outline-none"
-                        ></textarea>
+                        />
                     </div>
 
                     <div

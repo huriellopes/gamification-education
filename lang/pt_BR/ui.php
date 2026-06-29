@@ -136,9 +136,14 @@ return [
             'online_responsive' => 'Online e Responsivo',
         ],
         'footer' => '© :year GamificaEdu. Desenvolvido em Laravel, InertiaJS e VueJS.',
+        'legal' => [
+            'privacy' => 'Política de Privacidade',
+            'guidelines' => 'Diretrizes de Uso',
+        ],
         'cookie' => [
             'title' => 'Valorizamos sua privacidade!',
             'body' => 'Usamos cookies para melhorar sua navegação e personalizar o conteúdo. Ao clicar em "Aceitar Todos", nosso sistema de análise passará a captar dados anonimizados de navegação para fins estatísticos e de marketing.',
+            'learn_more' => 'Saiba mais em:',
             'decline' => 'Recusar',
             'accept' => 'Aceitar Todos',
         ],

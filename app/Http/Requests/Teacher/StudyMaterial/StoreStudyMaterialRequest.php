@@ -21,7 +21,7 @@ class StoreStudyMaterialRequest extends FormRequest
         return [
             'title' => ['required', 'string', 'max:255'],
             'content' => ['required', 'string'],
-            'points_reward' => ['required', 'integer', 'min:1'],
+            'points_reward' => ['required', 'integer', 'min:1', 'max:10000'],
         ];
     }
 }

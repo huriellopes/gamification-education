@@ -33,6 +33,8 @@ return [
         'slug_placeholder' => 'e.g.: algorithms-and-programming',
         'duration_label' => 'Duration',
         'duration_placeholder' => 'e.g.: 60 hours',
+        'classroom_label' => 'Classroom',
+        'classroom_none' => 'No classroom',
         'description_label' => 'Description',
         'description_placeholder' => 'Enter the syllabus or summary of the subject...',
         'save_changes' => 'Save Changes',

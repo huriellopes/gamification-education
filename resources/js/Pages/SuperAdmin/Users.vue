@@ -3,6 +3,8 @@ import BaseModal from '@/Components/BaseModal.vue';
 import Button from '@/Components/Button.vue';
 import ConfirmModal from '@/Components/ConfirmModal.vue';
 import DataTable from '@/Components/DataTable.vue';
+import SelectInput from '@/Components/SelectInput.vue';
+import TextInput from '@/Components/TextInput.vue';
 import Tooltip from '@/Components/Tooltip.vue';
 import { __ } from '@/i18n';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
@@ -425,12 +427,7 @@ const formatDateTime = (dateStr) => {
                         class="mb-2 block text-xs font-bold uppercase text-zinc-400"
                         >{{ __('superadmin.users.label_full_name') }}</label
                     >
-                    <input
-                        v-model="userForm.name"
-                        type="text"
-                        required
-                        class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-sm text-white focus:border-indigo-500 focus:outline-none"
-                    />
+                    <TextInput v-model="userForm.name" type="text" required />
                 </div>
 
                 <div>
@@ -438,12 +435,7 @@ const formatDateTime = (dateStr) => {
                         class="mb-2 block text-xs font-bold uppercase text-zinc-400"
                         >{{ __('superadmin.users.label_email') }}</label
                     >
-                    <input
-                        v-model="userForm.email"
-                        type="email"
-                        required
-                        class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-sm text-white focus:border-indigo-500 focus:outline-none"
-                    />
+                    <TextInput v-model="userForm.email" type="email" required />
                 </div>
 
                 <div>
@@ -457,11 +449,10 @@ const formatDateTime = (dateStr) => {
                                 : ''
                         }}
                     </label>
-                    <input
+                    <TextInput
                         v-model="userForm.password"
                         type="password"
                         :required="!isEditingUser"
-                        class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-sm text-white focus:border-indigo-500 focus:outline-none"
                     />
                 </div>
 
@@ -470,11 +461,7 @@ const formatDateTime = (dateStr) => {
                         class="mb-2 block text-xs font-bold uppercase text-zinc-400"
                         >{{ __('superadmin.users.label_role') }}</label
                     >
-                    <select
-                        v-model="userForm.role"
-                        required
-                        class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-sm text-white focus:border-indigo-500 focus:outline-none"
-                    >
+                    <SelectInput v-model="userForm.role" required>
                         <option value="student">
                             {{ __('superadmin.users.option_student') }}
                         </option>
@@ -484,7 +471,7 @@ const formatDateTime = (dateStr) => {
                         <option value="admin">
                             {{ __('superadmin.users.option_admin') }}
                         </option>
-                    </select>
+                    </SelectInput>
                 </div>
 
                 <!-- Single Institution (Student/Teacher) -->
@@ -493,11 +480,7 @@ const formatDateTime = (dateStr) => {
                         class="mb-2 block text-xs font-bold uppercase text-zinc-400"
                         >{{ __('superadmin.users.label_institution') }}</label
                     >
-                    <select
-                        v-model="userForm.institution_id"
-                        required
-                        class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-sm text-white focus:border-indigo-500 focus:outline-none"
-                    >
+                    <SelectInput v-model="userForm.institution_id" required>
                         <option value="" disabled>
                             {{ __('superadmin.users.select_institution') }}
                         </option>
@@ -508,7 +491,7 @@ const formatDateTime = (dateStr) => {
                         >
                             {{ inst.name }}
                         </option>
-                    </select>
+                    </SelectInput>
                 </div>
 
                 <!-- Turma do aluno (vínculo opcional) -->
@@ -517,10 +500,9 @@ const formatDateTime = (dateStr) => {
                         class="mb-2 block text-xs font-bold uppercase text-zinc-400"
                         >{{ __('classrooms.enroll_label') }}</label
                     >
-                    <select
+                    <SelectInput
                         v-model="userForm.classroom_id"
                         :disabled="!userForm.institution_id"
-                        class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-sm text-white focus:border-indigo-500 focus:outline-none disabled:opacity-50"
                     >
                         <option value="">
                             {{ __('classrooms.enroll_none') }}
@@ -532,7 +514,7 @@ const formatDateTime = (dateStr) => {
                         >
                             {{ c.name }}
                         </option>
-                    </select>
+                    </SelectInput>
                 </div>
 
                 <!-- Multi-institution (Admin) -->

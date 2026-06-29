@@ -4,13 +4,17 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\SuperAdmin\Subject;
 
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreSubjectRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        /** @var User|null $user */
+        $user = $this->user();
+
+        return $user !== null && $user->isSuperAdmin();
     }
 
     /**
