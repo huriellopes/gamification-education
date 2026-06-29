@@ -12,13 +12,13 @@ GamificaEdu is a modern ecosystem for K-12 and higher education, built with **La
 
 - **Backend**: Laravel 13 (PHP 8.4+)
 - **Frontend**: Vue 3 (Composition API) with InertiaJS (SPA)
-- **Styling**: TailwindCSS (premium, responsive dark theme)
-- **Validation/DTO**: Form Requests + `spatie/laravel-data`
+- **Styling**: TailwindCSS (premium, deterministic, responsive dark theme)
+- **Validation**: Form Requests (validation + authorization) and JsonResources (serialization)
 - **Queue/Jobs**: Laravel Queue (Database / Redis)
 - **Environment**: Docker via **Laravel Sail** (PHP 8.5, MySQL 8.4, Redis, Mailpit)
 - **Supported Databases**: MySQL / PostgreSQL / SQLite
 - **i18n**: `lang/` files (pt_BR and en) exposed to the frontend via the `__()` helper
-- **Quality**: Pest (113 tests), PHPStan (level 5 / Larastan), Laravel Pint, ESLint + Prettier
+- **Quality**: Pest (116 tests), PHPStan (level 5 / Larastan), Laravel Pint, Rector and ESLint + Prettier — orchestrated via `composer quality`
 
 ---
 
@@ -26,13 +26,16 @@ GamificaEdu is a modern ecosystem for K-12 and higher education, built with **La
 
 The backend follows a senior single-responsibility pattern:
 
-- **Single-action controllers** (`__invoke`) — one action per controller.
+- **Single-action controllers** (`__invoke`) — one action per controller, with no queries (business rules only).
 - **Form Requests** for validation and authorization.
 - **Resources** for response serialization (Inertia).
 - **Actions** for database writes (transactional cases).
 - **Services** for integrations and orchestration (e.g. dashboards, ranking, email).
-- **Enums** (`UserRole`, `GeneralStatus`) for data integrity.
-- **Lean models** with reusable scopes and traits (e.g. `HasRoles`).
+- **Policies** for per-model authorization (auto-discovered).
+- **Observers** for lifecycle rules (e.g. unique subject/institution slug generation).
+- **Events & Listeners** for decoupled side effects (e.g. `MilestoneReached`, last-login update).
+- **String-backed Enums** (`UserRole`, `GeneralStatus`, `ScoreSource`, `ReportStatus`, `SupportStatus`).
+- **Lean models** with reusable scopes and traits (`HasRoles`, `Activatable`, `BelongsToInstitution`).
 
 ---
 
@@ -54,12 +57,17 @@ The backend follows a senior single-responsibility pattern:
 - **Dedicated sidebar**: My Classes, My Students and Subjects.
 - **Dashboard with real, reactive metrics** (classes, students, subjects) + **performance charts** (per class and per student), auto-refreshing.
 - **Student registration** and enrollment into one of their classes.
-- **Subject management**: materials (readings), tests (quizzes) and a question bank, plus automatic content generation (mock AI).
+- **Subject management**: link a subject to one of their classes, manage materials (readings), tests (quizzes) and a question bank — with integrity validation (correct-answer index bounded by the options) and idempotent automatic content generation (mock AI).
 
 ### 🎓 Student
-- **Learning track**: dynamic subject progress.
+- **Learning track**: subjects from the classes they are enrolled in, with dynamic progress.
 - **Interactive activities**: quizzes with automatic grading and XP proportional to correct answers.
 - **Leaderboard**: Global, per Institution and per Subject, with pagination, sorting and search.
+
+### 🌐 Public Site
+- Landing page with real platform metrics and SEO (sitemap + Schema.org).
+- **Legal pages**: **Privacy Policy** (LGPD) and **Usage Guidelines** (bilingual).
+- **Cookie consent banner** with links to the legal pages.
 
 ---
 
@@ -71,6 +79,7 @@ The layer connecting teachers, subjects and students:
 - A **teacher can have many classes**.
 - A **class can have many subjects**.
 - **Students are enrolled in classes** (teacher, admin or super admin can link them).
+- The teacher responsible for a class automatically gains access to its subjects' content.
 
 ---
 
@@ -127,33 +136,41 @@ npm run dev                 # in another
 
 ## 🧪 Quality & Tests
 
-With Sail (prefix `./vendor/bin/sail`) or locally:
+`composer quality` runs the whole pipeline in order: **Rector → Pint → PHPStan → ESLint → Pest**.
 
 ```bash
-# Tests (Pest)
-php artisan test
+# Full pipeline (prefix ./vendor/bin/sail when using Sail)
+composer quality
 
-# Code style (Laravel Pint)
-./vendor/bin/pint            # fixes
-./vendor/bin/pint --test     # checks only
-
-# Static analysis (PHPStan / Larastan, level 5)
-./vendor/bin/phpstan analyse
-
-# Frontend lint (ESLint + Prettier)
-npm run lint                 # eslint --fix on resources/js
+# Individual commands
+composer pest            # Tests (Pest) — 116 tests
+composer pint            # Code style (Laravel Pint)
+composer phpstan         # Static analysis (PHPStan / Larastan, level 5)
+composer rector          # Automated refactors (Rector)
+composer rector:check    # Rector in dry-run mode
+composer lint:vue        # Frontend lint (ESLint + Prettier)
 ```
 
 ### Continuous Integration
 
-The `.github/workflows/quality.yml` workflow runs, on every push/PR: dependency install, **Pint**, **PHPStan**, **ESLint**, the Vite build and the **Pest** suite (PHP 8.4).
+- `.github/workflows/quality.yml` — on every push/PR: dependency install, **Rector (check)**, **Pint**, **PHPStan**, **ESLint**, the Vite build and the **Pest** suite (PHP 8.4).
+- `.github/workflows/release.yml` — after CI passes on `main`, it **bumps the version**, writes the `VERSION` file, creates the **`vX.Y.Z` tag** and the **GitHub Release** with auto-generated notes.
+
+---
+
+## 🏷️ Versioning & Releases
+
+- The single application version lives in the **`VERSION`** file at the root (currently `0.1.0`).
+- The version is **exposed on every dashboard** (via `HandleInertiaRequests`) and updated automatically by the release workflow.
+- A _patch_ bump is automatic; a manual _minor/major_ bump in the `VERSION` file is honored by the pipeline.
 
 ---
 
 ## 🌍 Internationalization (i18n)
 
-- UI strings live in `lang/pt_BR/*.php` and `lang/en/*.php` (groups: `ui`, `nav`, `admin`, `teacher`, `superadmin`, `student`, `misc`, `classrooms`).
-- The backend shares translations via Inertia; the frontend uses the global **`__('group.key')`** helper (mirroring Laravel's `__()`), with placeholder support (`:name`).
+- UI strings live in `lang/pt_BR/*.php` and `lang/en/*.php`. The groups shared with the frontend via Inertia are: `ui`, `nav`, `admin`, `teacher`, `superadmin`, `student`, `misc` and `classrooms`.
+- The frontend uses the global **`__('group.key')`** helper (mirroring Laravel's `__()`), with placeholder support (`:name`).
+- Large content (e.g. legal pages in `lang/{locale}/legal.php`) is delivered as page _props_ — it does not travel in the global translations payload.
 
 ---
 
