@@ -1,15 +1,16 @@
 <script setup>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import BaseModal from '@/Components/BaseModal.vue';
 import ConfirmModal from '@/Components/ConfirmModal.vue';
-import Tooltip from '@/Components/Tooltip.vue';
-import TextInput from '@/Components/TextInput.vue';
 import SelectInput from '@/Components/SelectInput.vue';
 import TextareaInput from '@/Components/TextareaInput.vue';
-import { Head, Link, useForm, router } from '@inertiajs/vue3';
-import { ref, watch, computed } from 'vue';
+import TextInput from '@/Components/TextInput.vue';
+import Tooltip from '@/Components/Tooltip.vue';
+import { __ } from '@/i18n';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { slugify } from '@/Utils/mask';
-import { Pencil, Trash2, Plus, Power } from '@lucide/vue';
+import { Head, Link, router, useForm } from '@inertiajs/vue3';
+import { Pencil, Plus, Power, Trash2 } from '@lucide/vue';
+import { computed, ref, watch } from 'vue';
 
 const props = defineProps({
     subjects: {
@@ -24,7 +25,7 @@ const props = defineProps({
 
 const uniqueInstitutions = computed(() => {
     const seen = new Set();
-    return props.institutions.filter(inst => {
+    return props.institutions.filter((inst) => {
         if (!inst || seen.has(inst.id)) return false;
         seen.add(inst.id);
         return true;
@@ -46,18 +47,27 @@ const form = useForm({
 
 const isActive = (item) => {
     if (!item) return false;
-    const val = typeof item === 'object' && 'is_active' in item ? item.is_active : item;
+    const val =
+        typeof item === 'object' && 'is_active' in item ? item.is_active : item;
     if (typeof val === 'object' && val !== null) {
-        return val.value === 1 || val.value === true || String(val.value) === '1' || val.value === 'active';
+        return (
+            val.value === 1 ||
+            val.value === true ||
+            String(val.value) === '1' ||
+            val.value === 'active'
+        );
     }
     return val === 1 || val === true || String(val) === '1' || val === 'active';
 };
 
-watch(() => form.name, (newName) => {
-    if (!isEditing.value && !wasSlugManuallyEdited.value) {
-        form.slug = slugify(newName);
-    }
-});
+watch(
+    () => form.name,
+    (newName) => {
+        if (!isEditing.value && !wasSlugManuallyEdited.value) {
+            form.slug = slugify(newName);
+        }
+    },
+);
 
 const openCreateModal = () => {
     isEditing.value = false;
@@ -81,18 +91,23 @@ const openEditModal = (subject) => {
 
 const submit = () => {
     triggerConfirm(
-        isEditing.value ? 'Salvar Alterações' : 'Salvar Matéria',
-        'Deseja gravar as informações desta matéria?',
+        isEditing.value
+            ? __('admin.subjects.confirm_save_title')
+            : __('admin.subjects.confirm_create_title'),
+        __('admin.subjects.confirm_save_message'),
         () => {
             if (isEditing.value) {
-                form.put(route('admin.subjects.update', selectedSubjectId.value), {
-                    preserveScroll: true,
-                    onSuccess: () => {
-                        form.reset();
-                        isModalOpen.value = false;
-                        confirmState.value.show = false;
+                form.put(
+                    route('admin.subjects.update', selectedSubjectId.value),
+                    {
+                        preserveScroll: true,
+                        onSuccess: () => {
+                            form.reset();
+                            isModalOpen.value = false;
+                            confirmState.value.show = false;
+                        },
                     },
-                });
+                );
             } else {
                 form.post(route('admin.subjects.store'), {
                     preserveScroll: true,
@@ -103,7 +118,7 @@ const submit = () => {
                     },
                 });
             }
-        }
+        },
     );
 };
 
@@ -123,8 +138,8 @@ const triggerConfirm = (title, message, onConfirm) => {
 
 const confirmDeleteSubject = (id) => {
     triggerConfirm(
-        'Excluir Matéria',
-        'Tem certeza que deseja enviar esta matéria para a lixeira? Todos os materiais associados também serão arquivados.',
+        __('admin.subjects.confirm_delete_title'),
+        __('admin.subjects.confirm_delete_message'),
         () => {
             router.delete(route('admin.subjects.destroy', id), {
                 preserveScroll: true,
@@ -132,47 +147,56 @@ const confirmDeleteSubject = (id) => {
                     confirmState.value.show = false;
                 },
             });
-        }
+        },
     );
 };
 
 const toggleStatus = (sub) => {
-    const actionText = isActive(sub) ? 'desativar' : 'ativar';
+    const actionText = isActive(sub)
+        ? __('admin.subjects.confirm_toggle_deactivate')
+        : __('admin.subjects.confirm_toggle_activate');
     triggerConfirm(
-        'Alterar Status',
-        `Deseja ${actionText} a matéria "${sub.name}"?`,
+        __('admin.subjects.confirm_toggle_title'),
+        __('admin.subjects.confirm_toggle_message', {
+            action: actionText,
+            name: sub.name,
+        }),
         () => {
-            router.post(route('admin.subjects.toggle', sub.id), {}, {
-                preserveScroll: true,
-                onSuccess: () => {
-                    confirmState.value.show = false;
+            router.post(
+                route('admin.subjects.toggle', sub.id),
+                {},
+                {
+                    preserveScroll: true,
+                    onSuccess: () => {
+                        confirmState.value.show = false;
+                    },
                 },
-            });
-        }
+            );
+        },
     );
 };
 </script>
 
 <template>
-    <Head title="Gerenciar Matérias" />
+    <Head :title="__('admin.subjects.title')" />
 
     <AuthenticatedLayout>
         <template #header>
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-bold leading-tight text-zinc-100">
-                    Matérias Cadastradas
+                    {{ __('admin.subjects.header') }}
                 </h2>
                 <button
                     @click="openCreateModal"
-                    class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-650 px-4 py-2.5 text-xs font-bold text-white transition-all hover:brightness-110"
+                    class="to-violet-650 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 px-4 py-2.5 text-xs font-bold text-white transition-all hover:brightness-110"
                 >
                     <Plus class="h-4 w-4" />
-                    Nova Matéria
+                    {{ __('admin.subjects.new_subject') }}
                 </button>
             </div>
         </template>
 
-        <div class="min-h-[calc(100vh-64px)] bg-zinc-955 py-12 text-zinc-100">
+        <div class="bg-zinc-955 min-h-[calc(100vh-64px)] py-12 text-zinc-100">
             <div class="mx-auto max-w-7xl space-y-8 px-4 sm:px-6 lg:px-8">
                 <!-- Toast/Flash Message -->
                 <div
@@ -199,11 +223,15 @@ const toggleStatus = (sub) => {
                                     {{
                                         sub.institution
                                             ? sub.institution.name
-                                            : 'N/A'
+                                            : __('admin.subjects.na')
                                     }}
                                 </span>
                                 <div class="flex items-center gap-1">
-                                    <Tooltip text="Editar Matéria">
+                                    <Tooltip
+                                        :text="
+                                            __('admin.subjects.edit_subject')
+                                        "
+                                    >
                                         <button
                                             @click="openEditModal(sub)"
                                             class="rounded-lg p-1.5 text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-white"
@@ -212,20 +240,40 @@ const toggleStatus = (sub) => {
                                             <Pencil class="h-4 w-4" />
                                         </button>
                                     </Tooltip>
-                                    <Tooltip :text="isActive(sub) ? 'Desativar Matéria' : 'Ativar Matéria'">
+                                    <Tooltip
+                                        :text="
+                                            isActive(sub)
+                                                ? __(
+                                                      'admin.subjects.deactivate_subject',
+                                                  )
+                                                : __(
+                                                      'admin.subjects.activate_subject',
+                                                  )
+                                        "
+                                    >
                                         <button
                                             @click="toggleStatus(sub)"
                                             class="rounded-lg p-1.5 transition-colors"
-                                            :class="isActive(sub) ? 'text-red-500 hover:text-red-400 hover:bg-red-500/10' : 'text-emerald-500 hover:text-emerald-400 hover:bg-emerald-500/10'"
+                                            :class="
+                                                isActive(sub)
+                                                    ? 'text-red-500 hover:bg-red-500/10 hover:text-red-400'
+                                                    : 'text-emerald-500 hover:bg-emerald-500/10 hover:text-emerald-400'
+                                            "
                                             type="button"
                                         >
                                             <Power class="h-4 w-4" />
                                         </button>
                                     </Tooltip>
-                                    <Tooltip text="Excluir Matéria">
+                                    <Tooltip
+                                        :text="
+                                            __('admin.subjects.delete_subject')
+                                        "
+                                    >
                                         <button
-                                            @click="confirmDeleteSubject(sub.id)"
-                                            class="rounded-lg p-1.5 text-red-500 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                                            @click="
+                                                confirmDeleteSubject(sub.id)
+                                            "
+                                            class="rounded-lg p-1.5 text-red-500 transition-colors hover:bg-red-500/10 hover:text-red-400"
                                             type="button"
                                         >
                                             <Trash2 class="h-4 w-4" />
@@ -238,8 +286,8 @@ const toggleStatus = (sub) => {
                             >
                                 {{ sub.name }}
                             </h4>
-                            <p class="text-xs text-zinc-500 mt-1">
-                                Status:
+                            <p class="mt-1 text-xs text-zinc-500">
+                                {{ __('admin.subjects.status_label') }}
                                 <span
                                     class="font-semibold"
                                     :class="
@@ -248,7 +296,13 @@ const toggleStatus = (sub) => {
                                             : 'text-red-400'
                                     "
                                 >
-                                    {{ isActive(sub) ? 'Ativa' : 'Inativa' }}
+                                    {{
+                                        isActive(sub)
+                                            ? __('admin.subjects.status_active')
+                                            : __(
+                                                  'admin.subjects.status_inactive',
+                                              )
+                                    }}
                                 </span>
                             </p>
                             <p
@@ -256,7 +310,7 @@ const toggleStatus = (sub) => {
                             >
                                 {{
                                     sub.description ||
-                                    'Sem descrição cadastrada.'
+                                    __('admin.subjects.no_description')
                                 }}
                             </p>
                         </div>
@@ -268,13 +322,13 @@ const toggleStatus = (sub) => {
                                 class="flex items-center justify-between text-xs text-zinc-500"
                             >
                                 <span
-                                    >Materiais:
+                                    >{{ __('admin.subjects.materials') }}
                                     <strong>{{
                                         sub.study_materials_count || 0
                                     }}</strong></span
                                 >
                                 <span
-                                    >Testes:
+                                    >{{ __('admin.subjects.tests') }}
                                     <strong>{{
                                         sub.tests_count || 0
                                     }}</strong></span
@@ -285,7 +339,7 @@ const toggleStatus = (sub) => {
                                 :href="route('admin.subjects.show', sub.id)"
                                 class="hover:bg-indigo-650 block w-full rounded-xl bg-zinc-800 py-2.5 text-center text-xs font-bold text-white transition-all"
                             >
-                                Gerenciar Conteúdo &rarr;
+                                {{ __('admin.subjects.manage_content') }} &rarr;
                             </Link>
                         </div>
                     </div>
@@ -294,7 +348,7 @@ const toggleStatus = (sub) => {
                         v-if="subjects.length === 0"
                         class="col-span-full rounded-2xl border border-dashed border-zinc-800 p-12 text-center text-zinc-500"
                     >
-                        Nenhuma matéria cadastrada ainda. Clique em "Nova Matéria" para começar!
+                        {{ __('admin.subjects.empty_state') }}
                     </div>
                 </div>
             </div>
@@ -303,54 +357,142 @@ const toggleStatus = (sub) => {
         <!-- Create/Edit Subject Modal -->
         <BaseModal
             :show="isModalOpen"
-            :title="isEditing ? 'Editar Matéria' : 'Nova Matéria'"
+            :title="
+                isEditing
+                    ? __('admin.subjects.edit_subject')
+                    : __('admin.subjects.new_subject')
+            "
             maxWidth="xl"
             @close="isModalOpen = false"
         >
             <form @submit.prevent="submit" class="space-y-4">
                 <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <div>
-                        <label class="mb-2 block text-xs font-bold uppercase text-zinc-400">Instituição de Ensino</label>
+                        <label
+                            class="mb-2 block text-xs font-bold uppercase text-zinc-400"
+                            >{{ __('admin.subjects.institution_label') }}</label
+                        >
                         <SelectInput v-model="form.institution_id" required>
-                            <option value="" disabled>Selecione a instituição...</option>
-                            <option v-for="inst in uniqueInstitutions" :key="inst.id" :value="inst.id">{{ inst.name }}</option>
+                            <option value="" disabled>
+                                {{
+                                    __('admin.subjects.institution_placeholder')
+                                }}
+                            </option>
+                            <option
+                                v-for="inst in uniqueInstitutions"
+                                :key="inst.id"
+                                :value="inst.id"
+                            >
+                                {{ inst.name }}
+                            </option>
                         </SelectInput>
-                        <span v-if="form.errors.institution_id" class="text-xs text-red-500 mt-1 block">{{ form.errors.institution_id }}</span>
+                        <span
+                            v-if="form.errors.institution_id"
+                            class="mt-1 block text-xs text-red-500"
+                            >{{ form.errors.institution_id }}</span
+                        >
                     </div>
 
                     <div>
-                        <label class="mb-2 block text-xs font-bold uppercase text-zinc-400">Duração</label>
-                        <TextInput v-model="form.duration" type="text" required placeholder="Ex: 80 horas" />
-                        <span v-if="form.errors.duration" class="text-xs text-red-500 mt-1 block">{{ form.errors.duration }}</span>
+                        <label
+                            class="mb-2 block text-xs font-bold uppercase text-zinc-400"
+                            >{{ __('admin.subjects.duration_label') }}</label
+                        >
+                        <TextInput
+                            v-model="form.duration"
+                            type="text"
+                            required
+                            :placeholder="
+                                __('admin.subjects.duration_placeholder')
+                            "
+                        />
+                        <span
+                            v-if="form.errors.duration"
+                            class="mt-1 block text-xs text-red-500"
+                            >{{ form.errors.duration }}</span
+                        >
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <div>
-                        <label class="mb-2 block text-xs font-bold uppercase text-zinc-400">Nome da Matéria</label>
-                        <TextInput v-model="form.name" type="text" required placeholder="Ex: Algoritmos e Programação" />
-                        <span v-if="form.errors.name" class="text-xs text-red-500 mt-1 block">{{ form.errors.name }}</span>
+                        <label
+                            class="mb-2 block text-xs font-bold uppercase text-zinc-400"
+                            >{{ __('admin.subjects.name_label') }}</label
+                        >
+                        <TextInput
+                            v-model="form.name"
+                            type="text"
+                            required
+                            :placeholder="__('admin.subjects.name_placeholder')"
+                        />
+                        <span
+                            v-if="form.errors.name"
+                            class="mt-1 block text-xs text-red-500"
+                            >{{ form.errors.name }}</span
+                        >
                     </div>
 
                     <div>
-                        <label class="mb-2 block text-xs font-bold uppercase text-zinc-400">Slug</label>
-                        <TextInput v-model="form.slug" @input="wasSlugManuallyEdited = true; form.slug = slugify($event.target.value)" type="text" required placeholder="ex: algoritmos-e-programacao" />
-                        <span v-if="form.errors.slug" class="text-xs text-red-500 mt-1 block">{{ form.errors.slug }}</span>
+                        <label
+                            class="mb-2 block text-xs font-bold uppercase text-zinc-400"
+                            >{{ __('admin.subjects.slug_label') }}</label
+                        >
+                        <TextInput
+                            v-model="form.slug"
+                            @input="
+                                wasSlugManuallyEdited = true;
+                                form.slug = slugify($event.target.value);
+                            "
+                            type="text"
+                            required
+                            :placeholder="__('admin.subjects.slug_placeholder')"
+                        />
+                        <span
+                            v-if="form.errors.slug"
+                            class="mt-1 block text-xs text-red-500"
+                            >{{ form.errors.slug }}</span
+                        >
                     </div>
                 </div>
 
                 <div>
-                    <label class="mb-2 block text-xs font-bold uppercase text-zinc-400">Descrição</label>
-                    <TextareaInput v-model="form.description" rows="3" placeholder="Insira a ementa ou resumo da matéria..." />
-                    <span v-if="form.errors.description" class="text-xs text-red-500 mt-1 block">{{ form.errors.description }}</span>
+                    <label
+                        class="mb-2 block text-xs font-bold uppercase text-zinc-400"
+                        >{{ __('common.description') }}</label
+                    >
+                    <TextareaInput
+                        v-model="form.description"
+                        rows="3"
+                        :placeholder="
+                            __('admin.subjects.description_placeholder')
+                        "
+                    />
+                    <span
+                        v-if="form.errors.description"
+                        class="mt-1 block text-xs text-red-500"
+                        >{{ form.errors.description }}</span
+                    >
                 </div>
 
                 <div class="flex justify-end gap-3 pt-3">
-                    <button type="button" @click="isModalOpen = false" class="rounded-xl bg-zinc-800 px-5 py-2.5 text-xs font-bold text-zinc-400 transition-colors hover:bg-zinc-700">
-                        Cancelar
+                    <button
+                        type="button"
+                        @click="isModalOpen = false"
+                        class="rounded-xl bg-zinc-800 px-5 py-2.5 text-xs font-bold text-zinc-400 transition-colors hover:bg-zinc-700"
+                    >
+                        {{ __('common.cancel') }}
                     </button>
-                    <button type="submit" :disabled="form.processing" class="rounded-xl bg-indigo-600 px-5 py-2.5 text-xs font-bold text-white transition-colors hover:bg-indigo-500 disabled:opacity-50">
-                        {{ isEditing ? 'Salvar Alterações' : 'Salvar Matéria' }}
+                    <button
+                        type="submit"
+                        :disabled="form.processing"
+                        class="rounded-xl bg-indigo-600 px-5 py-2.5 text-xs font-bold text-white transition-colors hover:bg-indigo-500 disabled:opacity-50"
+                    >
+                        {{
+                            isEditing
+                                ? __('admin.subjects.confirm_save_title')
+                                : __('admin.subjects.confirm_create_title')
+                        }}
                     </button>
                 </div>
             </form>

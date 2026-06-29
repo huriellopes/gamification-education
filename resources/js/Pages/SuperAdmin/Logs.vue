@@ -1,21 +1,14 @@
 <script setup>
 import BaseModal from '@/Components/BaseModal.vue';
-import ConfirmModal from '@/Components/ConfirmModal.vue';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import DataTable from '@/Components/DataTable.vue';
 import Button from '@/Components/Button.vue';
+import ConfirmModal from '@/Components/ConfirmModal.vue';
+import DataTable from '@/Components/DataTable.vue';
 import Tooltip from '@/Components/Tooltip.vue';
-import { Head, useForm, Link, router } from '@inertiajs/vue3';
+import { __ } from '@/i18n';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { Head, router, useForm } from '@inertiajs/vue3';
+import { FileText, Play, Terminal, Trash2 } from '@lucide/vue';
 import { ref } from 'vue';
-import { 
-    Terminal, 
-    RotateCcw, 
-    Trash2, 
-    Play, 
-    FileText, 
-    AlertCircle, 
-    CheckCircle 
-} from '@lucide/vue';
 
 const props = defineProps({
     logs: {
@@ -33,18 +26,30 @@ const props = defineProps({
 });
 
 const logColumns = [
-    { key: 'name', label: 'Arquivo de Log', sortable: true },
-    { key: 'size', label: 'Tamanho', sortable: true },
-    { key: 'modified_at', label: 'Última Modificação', sortable: true },
-    { key: 'actions', label: 'Ações', align: 'right' },
+    { key: 'name', label: __('superadmin.logs.col_log_file'), sortable: true },
+    { key: 'size', label: __('superadmin.logs.col_size'), sortable: true },
+    {
+        key: 'modified_at',
+        label: __('superadmin.logs.col_last_modified'),
+        sortable: true,
+    },
+    { key: 'actions', label: __('common.actions'), align: 'right' },
 ];
 
 const failedJobColumns = [
     { key: 'id', label: 'ID', sortable: true },
-    { key: 'queue', label: 'Fila', sortable: true },
-    { key: 'failed_at', label: 'Falhou em', sortable: true },
-    { key: 'exception', label: 'Erro / Exceção', sortable: false },
-    { key: 'actions', label: 'Ações', align: 'right' },
+    { key: 'queue', label: __('superadmin.logs.col_queue'), sortable: true },
+    {
+        key: 'failed_at',
+        label: __('superadmin.logs.col_failed_at'),
+        sortable: true,
+    },
+    {
+        key: 'exception',
+        label: __('superadmin.logs.col_exception'),
+        sortable: false,
+    },
+    { key: 'actions', label: __('common.actions'), align: 'right' },
 ];
 
 const pruneForm = useForm({});
@@ -56,7 +61,7 @@ const pruneLogs = () => {
         preserveScroll: true,
         onFinish: () => {
             isPruning.value = false;
-        }
+        },
     });
 };
 
@@ -83,23 +88,23 @@ const triggerConfirm = (title, message, type, onConfirm) => {
 
 const retryJob = (jobId) => {
     triggerConfirm(
-        'Retentar Job',
-        'Deseja reinserir este job falho de volta na fila de processamento?',
+        __('superadmin.logs.confirm_retry_title'),
+        __('superadmin.logs.confirm_retry_message'),
         'info',
         () => {
             router.post(route('super-admin.failed-jobs.retry', jobId));
-        }
+        },
     );
 };
 
 const deleteJob = (jobId) => {
     triggerConfirm(
-        'Remover Job Falho',
-        'Tem certeza de que deseja excluir permanentemente este job falho?',
+        __('superadmin.logs.confirm_delete_job_title'),
+        __('superadmin.logs.confirm_delete_job_message'),
         'danger',
         () => {
             router.delete(route('super-admin.failed-jobs.destroy', jobId));
-        }
+        },
     );
 };
 
@@ -111,7 +116,7 @@ const openLogContent = (logName) => {
         preserveState: true,
         onSuccess: () => {
             isLogModalOpen.value = true;
-        }
+        },
     });
 };
 
@@ -127,71 +132,94 @@ const formatDateTime = (dateStr) => {
     if (!dateStr) return '';
     try {
         const d = new Date(dateStr);
-        if (isNaN(d.getTime())) return 'Data Inválida';
+        if (isNaN(d.getTime())) return __('superadmin.logs.invalid_date');
         return d.toLocaleString('pt-BR');
     } catch (e) {
-        return 'Data Inválida';
+        return __('superadmin.logs.invalid_date');
     }
 };
 </script>
 
 <template>
-    <Head title="Logs e Filas do Sistema" />
+    <Head :title="__('superadmin.logs.head_title')" />
 
     <AuthenticatedLayout>
         <template #header>
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div
+                class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+            >
                 <h2 class="text-xl font-bold leading-tight text-zinc-100">
-                    Logs do Laravel & Fila de Processamento
+                    {{ __('superadmin.logs.header') }}
                 </h2>
-                <Button 
-                    @click="pruneLogs" 
+                <Button
+                    @click="pruneLogs"
                     :disabled="isPruning"
-                    class="bg-amber-600 hover:bg-amber-500 font-bold flex items-center gap-2"
-                    title="Limpar Logs Antigos"
+                    class="flex items-center gap-2 bg-amber-600 font-bold hover:bg-amber-500"
+                    :title="__('superadmin.logs.prune_title')"
                 >
                     <template #icon>
-                        <span v-if="isPruning" class="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
+                        <span
+                            v-if="isPruning"
+                            class="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"
+                        ></span>
                         <Trash2 v-else class="h-4 w-4" />
                     </template>
-                    <span class="hidden md:inline">{{ isPruning ? 'Limpando...' : 'Limpar Logs Antigos' }}</span>
+                    <span class="hidden md:inline">{{
+                        isPruning
+                            ? __('superadmin.logs.pruning')
+                            : __('superadmin.logs.prune_title')
+                    }}</span>
                 </Button>
             </div>
         </template>
 
-        <div class="bg-zinc-950 py-6 text-zinc-100 space-y-8">
+        <div class="space-y-8 bg-zinc-950 py-6 text-zinc-100">
             <!-- Arquivos de Log -->
-            <div class="rounded-2xl border border-zinc-800 bg-zinc-900/30 p-6 backdrop-blur-md space-y-4">
+            <div
+                class="space-y-4 rounded-2xl border border-zinc-800 bg-zinc-900/30 p-6 backdrop-blur-md"
+            >
                 <div>
-                    <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <h3
+                        class="flex items-center gap-2 text-lg font-bold text-white"
+                    >
                         <FileText class="h-5 w-5 text-indigo-400" />
-                        Arquivos de Log Recentes
+                        {{ __('superadmin.logs.files_title') }}
                     </h3>
-                    <p class="text-xs text-zinc-400">Clique em "Visualizar" para ler as últimas 300 linhas de cada arquivo de log do Laravel.</p>
+                    <p class="text-xs text-zinc-400">
+                        {{ __('superadmin.logs.files_subtitle') }}
+                    </p>
                 </div>
 
                 <DataTable
                     :items="logs"
                     :columns="logColumns"
-                    searchPlaceholder="Buscar arquivo de log..."
+                    :searchPlaceholder="__('superadmin.logs.search_log')"
                 >
                     <template #name="{ item }">
-                        <span class="font-semibold text-zinc-200 font-mono text-xs">{{ item.name }}</span>
+                        <span
+                            class="font-mono text-xs font-semibold text-zinc-200"
+                            >{{ item.name }}</span
+                        >
                     </template>
                     <template #size="{ item }">
-                        <span class="text-zinc-400 font-medium font-mono text-xs">{{ item.size }}</span>
+                        <span
+                            class="font-mono text-xs font-medium text-zinc-400"
+                            >{{ item.size }}</span
+                        >
                     </template>
                     <template #modified_at="{ item }">
-                        <span class="text-zinc-400 font-mono text-xs">{{ item.modified_at }}</span>
+                        <span class="font-mono text-xs text-zinc-400">{{
+                            item.modified_at
+                        }}</span>
                     </template>
                     <template #actions="{ item }">
                         <div class="flex justify-end">
-                            <Button 
-                                size="sm" 
-                                variant="secondary" 
+                            <Button
+                                size="sm"
+                                variant="secondary"
                                 @click="openLogContent(item.name)"
                             >
-                                Visualizar
+                                {{ __('superadmin.logs.view') }}
                             </Button>
                         </div>
                     </template>
@@ -199,55 +227,80 @@ const formatDateTime = (dateStr) => {
             </div>
 
             <!-- Fila de Jobs Falhos -->
-            <div class="rounded-2xl border border-zinc-800 bg-zinc-900/30 p-6 backdrop-blur-md space-y-4">
+            <div
+                class="space-y-4 rounded-2xl border border-zinc-800 bg-zinc-900/30 p-6 backdrop-blur-md"
+            >
                 <div>
-                    <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <h3
+                        class="flex items-center gap-2 text-lg font-bold text-white"
+                    >
                         <Terminal class="h-5 w-5 text-indigo-400" />
-                        Fila de Jobs Falhos (`failed_jobs`)
+                        {{ __('superadmin.logs.failed_jobs_title') }}
                     </h3>
-                    <p class="text-xs text-zinc-400 font-semibold">Erros gerados durante o processamento assíncrono. Você pode reprocessar (retry) ou apagar os jobs falhos.</p>
+                    <p class="text-xs font-semibold text-zinc-400">
+                        {{ __('superadmin.logs.failed_jobs_subtitle') }}
+                    </p>
                 </div>
 
                 <DataTable
                     :items="failedJobs"
                     :columns="failedJobColumns"
-                    searchPlaceholder="Buscar na fila de erros..."
+                    :searchPlaceholder="
+                        __('superadmin.logs.search_error_queue')
+                    "
                 >
                     <template #id="{ item }">
-                        <span class="text-zinc-500 font-mono font-bold">#{{ item.id }}</span>
+                        <span class="font-mono font-bold text-zinc-500"
+                            >#{{ item.id }}</span
+                        >
                     </template>
                     <template #queue="{ item }">
-                        <span class="inline-flex items-center rounded-full bg-zinc-800 px-2.5 py-0.5 text-xs font-semibold text-zinc-300 font-mono">
+                        <span
+                            class="inline-flex items-center rounded-full bg-zinc-800 px-2.5 py-0.5 font-mono text-xs font-semibold text-zinc-300"
+                        >
                             {{ item.queue }}
                         </span>
                     </template>
                     <template #failed_at="{ item }">
-                        <span class="text-zinc-400 font-mono text-xs">{{ formatDateTime(item.failed_at) }}</span>
+                        <span class="font-mono text-xs text-zinc-400">{{
+                            formatDateTime(item.failed_at)
+                        }}</span>
                     </template>
                     <template #exception="{ item }">
-                        <div class="max-w-md truncate text-xs text-rose-455 font-mono" :title="item.exception">
+                        <div
+                            class="text-rose-455 max-w-md truncate font-mono text-xs"
+                            :title="item.exception"
+                        >
                             {{ item.exception }}
                         </div>
                     </template>
                     <template #actions="{ item }">
                         <div class="flex items-center justify-end gap-2">
-                            <Tooltip text="Retentar Job">
+                            <Tooltip
+                                :text="__('superadmin.logs.tooltip_retry')"
+                            >
                                 <Button
                                     variant="icon"
                                     @click="retryJob(item.id)"
                                     class="text-indigo-400"
                                 >
-                                    <template #icon><Play class="h-4 w-4" /></template>
+                                    <template #icon
+                                        ><Play class="h-4 w-4"
+                                    /></template>
                                 </Button>
                             </Tooltip>
 
-                            <Tooltip text="Excluir Job">
+                            <Tooltip
+                                :text="__('superadmin.logs.tooltip_delete_job')"
+                            >
                                 <Button
                                     variant="icon"
                                     @click="deleteJob(item.id)"
                                     class="text-red-500 hover:text-red-400"
                                 >
-                                    <template #icon><Trash2 class="h-4 w-4" /></template>
+                                    <template #icon
+                                        ><Trash2 class="h-4 w-4"
+                                    /></template>
                                 </Button>
                             </Tooltip>
                         </div>
@@ -259,22 +312,41 @@ const formatDateTime = (dateStr) => {
         <!-- Modal Visualizar Detalhes do Log -->
         <BaseModal
             :show="isLogModalOpen && !!selectedLog"
-            :title="selectedLog ? `Visualizando ${selectedLog.name}` : 'Log do Sistema'"
+            :title="
+                selectedLog
+                    ? __('superadmin.logs.modal_viewing', {
+                          name: selectedLog.name,
+                      })
+                    : __('superadmin.logs.modal_system_log')
+            "
             maxWidth="6xl"
             @close="closeLogModal"
         >
             <div class="space-y-4">
                 <div class="flex items-center justify-between">
-                    <p class="text-xs text-zinc-450 font-bold">
-                        Mostrando as últimas {{ selectedLog?.loaded_lines }} linhas (Total de {{ selectedLog?.total_lines }} linhas no arquivo).
+                    <p class="text-zinc-450 text-xs font-bold">
+                        {{
+                            __('superadmin.logs.showing_lines', {
+                                loaded: selectedLog?.loaded_lines,
+                                total: selectedLog?.total_lines,
+                            })
+                        }}
                     </p>
-                    <Button variant="secondary" size="sm" @click="closeLogModal">
-                        Fechar
+                    <Button
+                        variant="secondary"
+                        size="sm"
+                        @click="closeLogModal"
+                    >
+                        {{ __('superadmin.logs.close') }}
                     </Button>
                 </div>
 
-                <div class="bg-zinc-950 rounded-xl p-4 border border-zinc-800 overflow-auto max-h-[60vh] font-mono text-xs text-zinc-300 whitespace-pre scrollbar-thin">
-                    {{ selectedLog?.content || 'Arquivo de log vazio.' }}
+                <div
+                    class="scrollbar-thin max-h-[60vh] overflow-auto whitespace-pre rounded-xl border border-zinc-800 bg-zinc-950 p-4 font-mono text-xs text-zinc-300"
+                >
+                    {{
+                        selectedLog?.content || __('superadmin.logs.empty_log')
+                    }}
                 </div>
             </div>
         </BaseModal>

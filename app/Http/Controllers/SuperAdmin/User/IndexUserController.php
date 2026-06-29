@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\SuperAdmin\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\Classroom;
 use App\Services\SuperAdminDashboardService;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -19,6 +20,9 @@ class IndexUserController extends Controller
         return Inertia::render('SuperAdmin/Users', [
             'users' => $service->getUsers(),
             'institutions' => $service->getInstitutions(),
+            'classrooms' => Classroom::query()
+                ->orderBy('name')
+                ->get(['id', 'name', 'institution_id']),
         ]);
     }
 }

@@ -1,111 +1,160 @@
 # GamificaEdu 🚀
 
+🌐 **Português (Brasil)** · [English](README.en.md)
+
 > **Plataforma de Aprendizado Gamificado e Gestão de Ensino Multidisciplinar**
 
-GamificaEdu é um ecossistema moderno voltado à educação básica e superior, construído com **Laravel 11**, **InertiaJS** e **Vue 3**. A plataforma utiliza elementos avançados de gamificação para engajar alunos por meio de pontos (XP), trilhas de aprendizagem visuais, conquistas e leaderboards.
+GamificaEdu é um ecossistema moderno voltado à educação básica e superior, construído com **Laravel 13**, **InertiaJS** e **Vue 3**. A plataforma usa elementos de gamificação para engajar alunos por meio de pontos (XP), trilhas de aprendizagem, turmas e leaderboards — com suporte a **internacionalização (pt_BR / en)**.
 
 ---
 
 ## 🛠️ Stack Tecnológica
 
-- **Backend**: Laravel 11 (PHP 8.2+)
-- **Frontend**: Vue 3 (Composition API) com InertiaJS (Single Page Application)
-- **Estilização**: TailwindCSS & Custom Vanilla CSS para um visual escuro premium e responsivo
+- **Backend**: Laravel 13 (PHP 8.4+)
+- **Frontend**: Vue 3 (Composition API) com InertiaJS (SPA)
+- **Estilização**: TailwindCSS (tema escuro premium e responsivo)
+- **Validação/DTO**: Form Requests + `spatie/laravel-data`
 - **Fila/Jobs**: Laravel Queue (Banco de Dados / Redis)
-- **Bancos Suportados**: PostgreSQL / MySQL / SQLite
-- **Testes**: PestPHP (Suíte abrangente com >95 testes)
+- **Ambiente**: Docker via **Laravel Sail** (PHP 8.5, MySQL 8.4, Redis, Mailpit)
+- **Bancos Suportados**: MySQL / PostgreSQL / SQLite
+- **i18n**: arquivos `lang/` (pt_BR e en) expostos ao frontend via helper `__()`
+- **Qualidade**: Pest (113 testes), PHPStan (nível 5 / Larastan), Laravel Pint, ESLint + Prettier
+
+---
+
+## 🏛️ Arquitetura
+
+O backend segue um padrão sênior de responsabilidade única:
+
+- **Controllers single-action** (`__invoke`) — uma ação por controller.
+- **Form Requests** para validação e autorização.
+- **Resources** para a serialização das respostas (Inertia).
+- **Actions** para operações de escrita no banco (casos transacionais).
+- **Services** para integrações e orquestrações (e.g. dashboards, ranking, e-mail).
+- **Enums** (`UserRole`, `GeneralStatus`) para integridade de dados.
+- **Models enxutas** com scopes e traits reutilizáveis (e.g. `HasRoles`).
 
 ---
 
 ## 🌟 Principais Funcionalidades
 
 ### 👑 Super Administrador
-- **Multi-instituições**: Criação, edição e exclusão de escolas/universidades (com validação real de CNPJ).
-- **Gerenciamento de Administradores**: Vinculação de administradores a múltiplas instituições gerenciadas.
-- **Log Pruning em Fila**: Comando e botão visual com indicador reativo para limpar arquivos de log mantendo apenas os últimos 3 dias, processado em segundo plano por fila.
-- **Métricas de Acesso**: Captura de tráfego do site público com endereços IP criptografados de ponta a ponta no banco de dados, sendo descriptografados dinamicamente apenas na visualização administrativa.
-- **Fila e Jobs Falhos**: Visualização em tempo real de jobs com falha, com suporte para reprocessar (retry) ou apagar os registros da fila.
-- **Impersonificação**: Permite que o Super Admin acesse temporariamente a plataforma sob a identidade de qualquer usuário para suporte técnico.
+- **Multi-instituições**: CRUD de escolas/universidades (com validação de CNPJ).
+- **Gestão global**: usuários, matérias e **turmas** de todas as instituições.
+- **Vínculo aluno↔turma**: ao cadastrar/editar um aluno, pode vinculá-lo a uma turma.
+- **Log Pruning em fila**, **Métricas de Acesso** (IP criptografado), **Jobs Falhos** (retry/delete) e **Impersonificação** para suporte.
 
 ### 🏫 Administrador da Instituição
-- **Alternância de Contexto**: Admins com acesso a múltiplas instituições podem alternar o contexto ativo instantaneamente pelo cabeçalho.
-- **Gestão de Professores & Alunos**: CRUD completo com busca reativa, ordenação e filtros.
-- **Associação de Matérias**: Cadastro de disciplinas com vinculação múltipla de professores (sem duplicidades).
+- **Alternância de contexto** entre instituições gerenciadas.
+- **Gestão de Professores & Alunos** (CRUD com busca reativa por nome, e-mail e turma).
+- **Matérias** com vínculo de professores.
+- **Turmas**: cria turmas da instituição, vincula **1 professor** e várias **matérias**, e matricula alunos.
 
 ### 👨‍🏫 Professor
-- **Criador de Conteúdo**: Geração automática de materiais de estudo e questionários simulados (mock AI).
-- **Editor de Atividades**: Criação de materiais (artigos/leituras), testes (quizzes) e banco de questões associadas.
-- **Desempenho da Turma**: Painel com estatísticas de progresso e XP acumulado de cada estudante.
+- **Sidebar dedicada**: Minhas Turmas, Meus Alunos e Matérias.
+- **Dashboard com métricas reais e reativas** (turmas, alunos, matérias) + **gráficos de desempenho** (por turma e por aluno), com auto-atualização.
+- **Cadastro de alunos** e vínculo a uma de suas turmas.
+- **Gestão de Matérias**: materiais (leituras), testes (quizzes) e banco de questões, além de geração automática de conteúdo (mock AI).
 
 ### 🎓 Estudante
-- **Trilha de Estudos**: Visualizador dinâmico de progresso da disciplina.
-- **Atividades Interativas**: Realização de quizzes com correção automática e atribuição de XP proporcional aos acertos.
-- **Leaderboard (Ranking)**: Rankings reativos (Global, por Instituição e por Matéria) com paginação, ordenação e pesquisa por nome ou instituição.
+- **Trilha de Estudos**: progresso dinâmico da disciplina.
+- **Atividades Interativas**: quizzes com correção automática e XP proporcional aos acertos.
+- **Leaderboard (Ranking)**: Global, por Instituição e por Matéria, com paginação, ordenação e pesquisa.
+
+---
+
+## 🧩 Turmas (Classes)
+
+Camada que conecta professores, matérias e alunos:
+
+- Uma **turma pertence a uma instituição** e tem **no máximo um professor**.
+- Um **professor pode ter várias turmas**.
+- Uma **turma pode ter várias matérias**.
+- **Alunos são matriculados em turmas** (professor, admin ou super admin podem vincular).
 
 ---
 
 ## 🔑 Recursos Avançados de Autenticação
 
-- **Magic Login Token**: Acesso rápido via link assinado único enviado ao e-mail.
-- **Remember Me**: Opção integrada no magic link para manter a sessão ativa permanentemente no dispositivo.
-- **Controle de Sessão Única**: Conectar-se em um novo navegador desconecta automaticamente sessões anteriores ativas para segurança da conta.
-- **Forçar Alteração de Senha**: Contas recém-criadas pelos administradores são forçadas a redefinir sua senha no primeiro acesso.
+- **Magic Login Token**: acesso via link assinado único enviado ao e-mail (uso único, expira em 15 min).
+- **Remember Me** integrado ao fluxo de login.
+- **Controle de Sessão Única**: novo login encerra sessões anteriores.
+- **Forçar Alteração de Senha** no primeiro acesso de contas criadas por administradores.
 
 ---
 
-## ⚡ Instalação e Execução Local
+## ⚡ Instalação e Execução (Laravel Sail — recomendado)
 
-1. **Clonar o Repositório e Instalar Dependências PHP**:
-   ```bash
-   composer install
-   ```
+O projeto roda em contêineres Docker via Laravel Sail.
 
-2. **Instalar Dependências Node**:
-   ```bash
-   npm install
-   ```
+```bash
+# 1. Variáveis de ambiente
+cp .env.example .env
 
-3. **Configurar o Ambiente**:
-   Copie o arquivo `.env.example` para `.env` e configure suas credenciais de banco de dados e servidor de e-mail.
-   ```bash
-   cp .env.example .env
-   php artisan key:generate
-   ```
+# 2. Instalar dependências PHP (via contêiner efêmero)
+docker run --rm -v $(pwd):/var/www/html -w /var/www/html laravelsail/php84-composer:latest composer install
 
-4. **Rodar Migrações e Seeder**:
-   O seed gera aproximadamente 150 registros completos (usuários, instituições, matérias, tentativas) para testes de paginação:
-   ```bash
-   php artisan migrate --seed
-   ```
+# 3. Subir os contêineres (app, mysql, redis, mailpit)
+./vendor/bin/sail up -d
 
-5. **Iniciar a Fila de Background (Obrigatório para e-mails e logs)**:
-   ```bash
-   php artisan queue:work
-   ```
+# 4. App key, migrações e seed de demonstração
+./vendor/bin/sail artisan key:generate
+./vendor/bin/sail artisan migrate --seed
 
-6. **Iniciar os Servidores Locais**:
-   ```bash
-   php artisan serve
-   # Em outro terminal:
-   npm run dev
-   ```
+# 5. Dependências e build do frontend
+./vendor/bin/sail npm install
+./vendor/bin/sail npm run dev
+```
+
+> A fila roda via `QUEUE_CONNECTION` (database/redis). Para processar e-mails e jobs em segundo plano:
+> ```bash
+> ./vendor/bin/sail artisan queue:work
+> ```
+
+### Alternativa sem Sail (PHP 8.4+ local)
+
+```bash
+composer install
+npm install
+cp .env.example .env && php artisan key:generate
+php artisan migrate --seed
+php artisan queue:work      # em um terminal
+php artisan serve           # em outro
+npm run dev                 # em outro
+```
+
+---
+
+## 🧪 Qualidade e Testes
+
+Com Sail (prefixe `./vendor/bin/sail`) ou localmente:
+
+```bash
+# Testes (Pest)
+php artisan test
+
+# Code style (Laravel Pint)
+./vendor/bin/pint            # corrige
+./vendor/bin/pint --test     # apenas verifica
+
+# Análise estática (PHPStan / Larastan, nível 5)
+./vendor/bin/phpstan analyse
+
+# Lint do frontend (ESLint + Prettier)
+npm run lint                 # eslint --fix em resources/js
+```
+
+### Integração Contínua
+
+O workflow `.github/workflows/quality.yml` executa, a cada push/PR: instalação de dependências, **Pint**, **PHPStan**, **ESLint**, build do Vite e a **suíte Pest** (PHP 8.4).
 
 ---
 
-## 🧪 Suíte de Testes e Qualidade
+## 🌍 Internacionalização (i18n)
 
-- **Executar Testes de Unidade e Integração (Pest)**:
-  ```bash
-  php artisan test
-  ```
-- **Executar Formatação Automática (Laravel Pint)**:
-  ```bash
-  ./vendor/bin/pint
-  ```
-- **Executar Análise Estática de Código (PHPStan)**:
-  ```bash
-  ./vendor/bin/phpstan analyse
-  ```
+- Strings de interface ficam em `lang/pt_BR/*.php` e `lang/en/*.php` (grupos: `ui`, `nav`, `admin`, `teacher`, `superadmin`, `student`, `misc`, `classrooms`).
+- O backend compartilha as traduções via Inertia; o frontend usa o helper global **`__('grupo.chave')`** (espelhando o `__()` do Laravel), com suporte a placeholders (`:name`).
 
 ---
+
 Criado para revolucionar o engajamento educacional com as melhores práticas de desenvolvimento moderno. 🌟

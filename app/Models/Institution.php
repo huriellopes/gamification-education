@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\GeneralStatus;
+use Database\Factories\InstitutionFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
@@ -17,7 +19,8 @@ use Spatie\DeletedModels\Models\Concerns\KeepsDeletedModels;
 #[Fillable(['name', 'description', 'is_active', 'razao_social', 'cnpj', 'slug', 'address', 'phones'])]
 class Institution extends Model
 {
-    use KeepsDeletedModels;
+    /** @use HasFactory<InstitutionFactory> */
+    use HasFactory, KeepsDeletedModels;
 
     public function users(): HasMany
     {
@@ -27,6 +30,11 @@ class Institution extends Model
     public function subjects(): HasMany
     {
         return $this->hasMany(Subject::class);
+    }
+
+    public function classrooms(): HasMany
+    {
+        return $this->hasMany(Classroom::class);
     }
 
     protected static function booted()

@@ -1,4 +1,5 @@
 <script setup>
+import { __ } from '@/i18n';
 import BaseModal from './BaseModal.vue';
 
 defineProps({
@@ -8,19 +9,19 @@ defineProps({
     },
     title: {
         type: String,
-        default: 'Confirmar Ação',
+        default: () => __('misc.confirm.title'),
     },
     message: {
         type: String,
-        default: 'Tem certeza de que deseja prosseguir com esta ação?',
+        default: () => __('misc.confirm.message'),
     },
     confirmText: {
         type: String,
-        default: 'Confirmar',
+        default: () => __('common.confirm'),
     },
     cancelText: {
         type: String,
-        default: 'Cancelar',
+        default: () => __('common.cancel'),
     },
     type: {
         type: String,

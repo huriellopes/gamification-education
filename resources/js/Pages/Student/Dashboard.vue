@@ -2,6 +2,7 @@
 import LeaderboardWidget from '@/Components/LeaderboardWidget.vue';
 import PointsBadge from '@/Components/PointsBadge.vue';
 import SubjectCard from '@/Components/SubjectCard.vue';
+import WelcomeWidget from '@/Components/WelcomeWidget.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import { computed } from 'vue';
@@ -37,7 +38,7 @@ const levelProgress = computed(() => {
 </script>
 
 <template>
-    <Head title="Painel do Aluno" />
+    <Head :title="__('student.dashboard.title')" />
 
     <AuthenticatedLayout>
         <template #header>
@@ -46,13 +47,17 @@ const levelProgress = computed(() => {
             >
                 <div>
                     <h2 class="text-xl font-bold leading-tight text-zinc-100">
-                        Olá, {{ $page.props.auth.user.name }}!
+                        {{
+                            __('student.dashboard.greeting', {
+                                name: $page.props.auth.user.name,
+                            })
+                        }}
                     </h2>
                     <p class="text-xs text-zinc-400">
                         {{
                             $page.props.auth.user.institution
                                 ? $page.props.auth.user.institution.name
-                                : 'Nenhuma instituição associada'
+                                : __('student.dashboard.no_institution')
                         }}
                     </p>
                 </div>
@@ -63,6 +68,8 @@ const levelProgress = computed(() => {
 
         <div class="bg-zinc-955 min-h-[calc(100vh-64px)] py-12 text-zinc-100">
             <div class="mx-auto max-w-7xl space-y-8 px-4 sm:px-6 lg:px-8">
+                <WelcomeWidget />
+
                 <!-- Informações e Flash Messages -->
                 <div
                     v-if="$page.props.flash?.success"
@@ -96,12 +103,22 @@ const levelProgress = computed(() => {
                             </div>
                             <div>
                                 <h3 class="text-lg font-bold text-white">
-                                    Nível {{ currentLevel }}
+                                    {{
+                                        __('student.dashboard.level', {
+                                            level: currentLevel,
+                                        })
+                                    }}
                                 </h3>
                                 <p class="text-xs text-zinc-400">
-                                    Acumule mais
-                                    {{ 100 - levelProgress }} pontos (XP) para o
-                                    Nível {{ currentLevel + 1 }}
+                                    {{
+                                        __(
+                                            'student.dashboard.accumulate_hint',
+                                            {
+                                                points: 100 - levelProgress,
+                                                next: currentLevel + 1,
+                                            },
+                                        )
+                                    }}
                                 </p>
                             </div>
                         </div>
@@ -111,12 +128,14 @@ const levelProgress = computed(() => {
                             <div
                                 class="mb-1.5 flex justify-between text-xs font-bold"
                             >
-                                <span class="text-zinc-500"
-                                    >Progresso do Nível</span
-                                >
-                                <span class="text-indigo-400"
-                                    >{{ levelProgress }} / 100 XP</span
-                                >
+                                <span class="text-zinc-500">{{
+                                    __('student.dashboard.level_progress')
+                                }}</span>
+                                <span class="text-indigo-400">{{
+                                    __('student.dashboard.xp_count', {
+                                        current: levelProgress,
+                                    })
+                                }}</span>
                             </div>
                             <div
                                 class="h-3 w-full overflow-hidden rounded-full border border-zinc-800 bg-zinc-800"
@@ -136,20 +155,20 @@ const levelProgress = computed(() => {
                     <div class="space-y-6 lg:col-span-2">
                         <div class="flex items-center justify-between">
                             <h3 class="text-lg font-bold text-white">
-                                Minhas Trilhas de Estudo
+                                {{ __('student.dashboard.my_tracks') }}
                             </h3>
-                            <span class="text-xs font-semibold text-zinc-500"
-                                >{{ subjects.length }} matérias
-                                disponíveis</span
-                            >
+                            <span class="text-xs font-semibold text-zinc-500">{{
+                                __('student.dashboard.subjects_available', {
+                                    count: subjects.length,
+                                })
+                            }}</span>
                         </div>
 
                         <div
                             v-if="subjects.length === 0"
                             class="border-zinc-850 rounded-2xl border border-dashed p-12 text-center text-sm text-zinc-500"
                         >
-                            Nenhuma matéria disponível para a sua instituição
-                            neste momento.
+                            {{ __('student.dashboard.no_subjects') }}
                         </div>
 
                         <div
@@ -190,15 +209,14 @@ const levelProgress = computed(() => {
                                         d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
                                     />
                                 </svg>
-                                Histórico de Pontos
+                                {{ __('student.dashboard.points_history') }}
                             </h3>
 
                             <div
                                 v-if="scoreHistory.length === 0"
                                 class="py-6 text-center text-xs text-zinc-500"
                             >
-                                Nenhuma pontuação registrada. Comece a ler
-                                materiais ou fazer testes!
+                                {{ __('student.dashboard.no_history') }}
                             </div>
 
                             <ul v-else class="space-y-3">

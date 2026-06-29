@@ -11,7 +11,9 @@ defineProps({
 </script>
 
 <template>
-    <Head :title="`Desempenho - ${student.name}`" />
+    <Head
+        :title="__('teacher.performance.title').replace(':name', student.name)"
+    />
 
     <AuthenticatedLayout>
         <template #header>
@@ -37,7 +39,12 @@ defineProps({
                 </Link>
                 <div>
                     <h2 class="text-xl font-bold leading-tight text-zinc-100">
-                        Desempenho de {{ student.name }}
+                        {{
+                            __('teacher.performance.header').replace(
+                                ':name',
+                                student.name,
+                            )
+                        }}
                     </h2>
                     <p class="text-zinc-550 text-xs">
                         {{ student.email }}
@@ -46,17 +53,23 @@ defineProps({
             </div>
         </template>
 
-        <div class="min-h-[calc(100vh-64px)] bg-zinc-955 py-12 text-zinc-100">
+        <div class="bg-zinc-955 min-h-[calc(100vh-64px)] py-12 text-zinc-100">
             <div class="mx-auto max-w-7xl space-y-8 px-4 sm:px-6 lg:px-8">
                 <!-- Summary Card -->
                 <div
-                    class="rounded-2xl border border-zinc-800 bg-zinc-900/30 p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
+                    class="flex flex-col items-start justify-between gap-4 rounded-2xl border border-zinc-800 bg-zinc-900/30 p-6 sm:flex-row sm:items-center"
                 >
                     <div>
-                        <h3 class="text-lg font-bold text-white">XP Acumulado</h3>
-                        <p class="text-sm text-zinc-400">Total de pontos acumulados na plataforma.</p>
+                        <h3 class="text-lg font-bold text-white">
+                            {{ __('teacher.performance.xp_accumulated') }}
+                        </h3>
+                        <p class="text-sm text-zinc-400">
+                            {{ __('teacher.performance.xp_subtitle') }}
+                        </p>
                     </div>
-                    <span class="text-3xl font-extrabold text-indigo-400">{{ student.points }} XP</span>
+                    <span class="text-3xl font-extrabold text-indigo-400"
+                        >{{ student.points }} XP</span
+                    >
                 </div>
 
                 <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
@@ -64,7 +77,9 @@ defineProps({
                     <div
                         class="rounded-2xl border border-zinc-800 bg-zinc-900/30 p-6"
                     >
-                        <h3 class="mb-4 text-lg font-bold text-white">Histórico de Quizzes Realizados</h3>
+                        <h3 class="mb-4 text-lg font-bold text-white">
+                            {{ __('teacher.performance.attempts_title') }}
+                        </h3>
                         <div class="space-y-4">
                             <div
                                 v-for="att in student.attempts"
@@ -75,22 +90,45 @@ defineProps({
                                     <h4 class="text-sm font-bold text-zinc-100">
                                         {{ att.test_title }}
                                     </h4>
-                                    <p class="text-xs text-zinc-500 mt-1">
-                                        Data de envio: {{ att.completed_at }}
+                                    <p class="mt-1 text-xs text-zinc-500">
+                                        {{
+                                            __(
+                                                'teacher.performance.submitted_at',
+                                            ).replace(':date', att.completed_at)
+                                        }}
                                     </p>
                                 </div>
                                 <div class="text-right">
-                                    <div class="text-xs font-semibold text-zinc-300">
-                                        Acertos: {{ att.correct_answers }} / {{ att.total_questions }}
+                                    <div
+                                        class="text-xs font-semibold text-zinc-300"
+                                    >
+                                        {{
+                                            __(
+                                                'teacher.performance.correct_answers',
+                                            )
+                                                .replace(
+                                                    ':correct',
+                                                    att.correct_answers,
+                                                )
+                                                .replace(
+                                                    ':total',
+                                                    att.total_questions,
+                                                )
+                                        }}
                                     </div>
-                                    <div class="text-sm font-bold text-indigo-400 mt-0.5">
+                                    <div
+                                        class="mt-0.5 text-sm font-bold text-indigo-400"
+                                    >
                                         +{{ att.score }} XP
                                     </div>
                                 </div>
                             </div>
 
-                            <div v-if="student.attempts.length === 0" class="text-center py-8 text-zinc-500 text-sm">
-                                Nenhuma avaliação realizada por este estudante.
+                            <div
+                                v-if="student.attempts.length === 0"
+                                class="py-8 text-center text-sm text-zinc-500"
+                            >
+                                {{ __('teacher.performance.attempts_empty') }}
                             </div>
                         </div>
                     </div>
@@ -99,28 +137,51 @@ defineProps({
                     <div
                         class="rounded-2xl border border-zinc-800 bg-zinc-900/30 p-6"
                     >
-                        <h3 class="mb-4 text-lg font-bold text-white">Histórico Geral de Pontos</h3>
+                        <h3 class="mb-4 text-lg font-bold text-white">
+                            {{ __('teacher.performance.score_history_title') }}
+                        </h3>
                         <div class="space-y-4">
                             <div
                                 v-for="hist in student.score_history"
                                 :key="hist.id"
-                                class="flex items-center justify-between rounded-xl border border-zinc-800 bg-zinc-955/20 p-4"
+                                class="bg-zinc-955/20 flex items-center justify-between rounded-xl border border-zinc-800 p-4"
                             >
                                 <div>
-                                    <h4 class="text-sm font-semibold text-zinc-200">
+                                    <h4
+                                        class="text-sm font-semibold text-zinc-200"
+                                    >
                                         {{ hist.description }}
                                     </h4>
-                                    <p class="text-xs text-zinc-500 mt-1">
-                                        Concedido em: {{ hist.created_at }}
+                                    <p class="mt-1 text-xs text-zinc-500">
+                                        {{
+                                            __(
+                                                'teacher.performance.granted_at',
+                                            ).replace(':date', hist.created_at)
+                                        }}
                                     </p>
                                 </div>
-                                <span class="text-sm font-bold" :class="hist.points >= 0 ? 'text-emerald-400' : 'text-red-400'">
-                                    {{ hist.points >= 0 ? '+' : '' }}{{ hist.points }} XP
+                                <span
+                                    class="text-sm font-bold"
+                                    :class="
+                                        hist.points >= 0
+                                            ? 'text-emerald-400'
+                                            : 'text-red-400'
+                                    "
+                                >
+                                    {{ hist.points >= 0 ? '+' : ''
+                                    }}{{ hist.points }} XP
                                 </span>
                             </div>
 
-                            <div v-if="student.score_history.length === 0" class="text-center py-8 text-zinc-500 text-sm">
-                                Nenhum registro de histórico de pontuação.
+                            <div
+                                v-if="student.score_history.length === 0"
+                                class="py-8 text-center text-sm text-zinc-500"
+                            >
+                                {{
+                                    __(
+                                        'teacher.performance.score_history_empty',
+                                    )
+                                }}
                             </div>
                         </div>
                     </div>

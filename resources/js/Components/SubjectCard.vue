@@ -1,4 +1,5 @@
 <script setup>
+import { __ } from '@/i18n';
 import { Link } from '@inertiajs/vue3';
 import { computed } from 'vue';
 
@@ -37,8 +38,7 @@ const progressColor = computed(() => {
                 </h4>
                 <p class="mt-2 line-clamp-2 text-sm text-zinc-400">
                     {{
-                        subject.description ||
-                        'Sem descrição cadastrada para esta matéria.'
+                        subject.description || __('misc.subject.no_description')
                     }}
                 </p>
             </div>
@@ -47,7 +47,9 @@ const progressColor = computed(() => {
                 <!-- Barra de Progresso de Leitura -->
                 <div>
                     <div class="mb-1 flex justify-between text-xs">
-                        <span class="text-zinc-500">Materiais Lidos</span>
+                        <span class="text-zinc-500">{{
+                            __('misc.subject.materials_read')
+                        }}</span>
                         <span class="font-bold text-zinc-300"
                             >{{ subject.completed_materials }} /
                             {{ subject.total_materials }}</span
@@ -85,7 +87,7 @@ const progressColor = computed(() => {
                                 d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
                             />
                         </svg>
-                        Melhor Nota
+                        {{ __('misc.subject.best_score') }}
                     </div>
                     <span
                         class="rounded px-1.5 py-0.5 font-bold"
@@ -100,7 +102,7 @@ const progressColor = computed(() => {
                         {{
                             subject.best_test_score > 0
                                 ? `${subject.best_test_score} pts`
-                                : 'Pendente'
+                                : __('misc.subject.pending')
                         }}
                     </span>
                 </div>
@@ -110,7 +112,7 @@ const progressColor = computed(() => {
                     :href="route('student.subjects.show', subject.id)"
                     class="hover:bg-indigo-650 mt-2 block w-full rounded-xl bg-zinc-800 py-2.5 text-center text-xs font-bold text-white transition-all duration-200 hover:shadow-[0_0_15px_rgba(99,102,241,0.2)]"
                 >
-                    Acessar Trilha
+                    {{ __('misc.subject.access_track') }}
                 </Link>
             </div>
         </div>

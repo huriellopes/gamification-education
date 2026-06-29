@@ -110,7 +110,11 @@ const parseMarkdown = (text) => {
                         {{ material.title }}
                     </h2>
                     <p class="text-xs text-zinc-500">
-                        Trilha: {{ subject.name }}
+                        {{
+                            __('student.material.track', {
+                                name: subject.name,
+                            })
+                        }}
                     </p>
                 </div>
             </div>
@@ -139,13 +143,15 @@ const parseMarkdown = (text) => {
             <div class="flex flex-col">
                 <span
                     class="text-xs font-bold uppercase tracking-wider text-zinc-500"
-                    >Ações de Aprendizado</span
+                    >{{ __('student.material.learning_actions') }}</span
                 >
                 <span class="text-sm font-semibold text-zinc-200"
-                    >Recompensa da leitura:
-                    <span class="font-bold text-yellow-400"
-                        >+{{ material.points_reward }} XP</span
-                    ></span
+                    >{{ __('student.material.reading_reward') }}
+                    <span class="font-bold text-yellow-400">{{
+                        __('student.material.reward_xp', {
+                            points: material.points_reward,
+                        })
+                    }}</span></span
                 >
             </div>
 
@@ -169,7 +175,7 @@ const parseMarkdown = (text) => {
                             d="m4.5 12.75 6 6 9-13.5"
                         />
                     </svg>
-                    Você já concluiu este material!
+                    {{ __('student.material.already_completed') }}
                 </div>
 
                 <!-- Se ainda não completou -->
@@ -200,7 +206,11 @@ const parseMarkdown = (text) => {
                             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                         ></path>
                     </svg>
-                    Marcar como Lido e Ganhar +{{ material.points_reward }} XP
+                    {{
+                        __('student.material.mark_as_read', {
+                            points: material.points_reward,
+                        })
+                    }}
                 </button>
             </div>
         </div>

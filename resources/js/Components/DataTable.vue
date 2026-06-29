@@ -1,6 +1,13 @@
 <script setup>
-import { ref, computed, watch } from 'vue';
-import { ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Search } from '@lucide/vue';
+import { __ } from '@/i18n';
+import {
+    ChevronDown,
+    ChevronLeft,
+    ChevronRight,
+    ChevronUp,
+    Search,
+} from '@lucide/vue';
+import { computed, ref, watch } from 'vue';
 
 const props = defineProps({
     items: {
@@ -15,7 +22,7 @@ const props = defineProps({
     },
     searchPlaceholder: {
         type: String,
-        default: 'Pesquisar...',
+        default: () => __('misc.datatable.search_placeholder'),
     },
     pageSize: {
         type: Number,
@@ -31,7 +38,13 @@ const props = defineProps({
     },
     filterPlaceholder: {
         type: String,
-        default: 'Todos',
+        default: () => __('common.all'),
+    },
+    // Extra item keys to include in the search beyond the visible columns
+    // (e.g. an email shown inside a merged "name" column).
+    searchKeys: {
+        type: Array,
+        default: () => [],
     },
 });
 
@@ -42,9 +55,12 @@ const sortKey = ref('');
 const sortOrder = ref('asc'); // 'asc' | 'desc'
 const localPageSize = ref(props.pageSize);
 
-watch(() => props.pageSize, (newSize) => {
-    localPageSize.value = newSize;
-});
+watch(
+    () => props.pageSize,
+    (newSize) => {
+        localPageSize.value = newSize;
+    },
+);
 
 // Reset page on search, filter, or page size change
 watch([searchQuery, selectedFilter, localPageSize], () => {
@@ -52,14 +68,19 @@ watch([searchQuery, selectedFilter, localPageSize], () => {
 });
 
 // Reset page if items count drops below current page range
-watch(() => props.items, () => {
-    const totalFiltered = filteredItems.value.length;
-    const limit = localPageSize.value === -1 ? totalFiltered : localPageSize.value;
-    const maxPage = Math.ceil(totalFiltered / limit) || 1;
-    if (currentPage.value > maxPage) {
-        currentPage.value = maxPage;
-    }
-}, { deep: true });
+watch(
+    () => props.items,
+    () => {
+        const totalFiltered = filteredItems.value.length;
+        const limit =
+            localPageSize.value === -1 ? totalFiltered : localPageSize.value;
+        const maxPage = Math.ceil(totalFiltered / limit) || 1;
+        if (currentPage.value > maxPage) {
+            currentPage.value = maxPage;
+        }
+    },
+    { deep: true },
+);
 
 // Handle sorting
 const handleSort = (key, sortable) => {
@@ -79,11 +100,15 @@ const filteredItems = computed(() => {
     // Filter by search query
     if (searchQuery.value) {
         const query = searchQuery.value.toLowerCase();
-        result = result.filter(item => {
-            return props.columns.some(col => {
-                const val = item[col.key];
+        const keys = [
+            ...props.columns.map((col) => col.key),
+            ...props.searchKeys,
+        ];
+        result = result.filter((item) => {
+            return keys.some((key) => {
+                const val = item[key];
                 if (val === null || val === undefined) return false;
-                
+
                 // If value is an object or enum, resolve labels if available
                 if (typeof val === 'object' && val.label) {
                     return val.label.toLowerCase().includes(query);
@@ -95,10 +120,10 @@ const filteredItems = computed(() => {
 
     // Filter by dropdown filter
     if (props.filterKey && selectedFilter.value !== '') {
-        result = result.filter(item => {
+        result = result.filter((item) => {
             const val = item[props.filterKey];
             const filterVal = selectedFilter.value;
-            
+
             if (val === null || val === undefined) return false;
             // Check if enum or nested value
             if (typeof val === 'object') {
@@ -118,21 +143,27 @@ const filteredItems = computed(() => {
             let valB = b[sortKey.value];
 
             // Resolve enum/nested objects for sorting
-            if (valA && typeof valA === 'object' && valA.label) valA = valA.label;
-            if (valB && typeof valB === 'object' && valB.label) valB = valB.label;
+            if (valA && typeof valA === 'object' && valA.label)
+                valA = valA.label;
+            if (valB && typeof valB === 'object' && valB.label)
+                valB = valB.label;
 
             if (valA === null || valA === undefined) return 1;
             if (valB === null || valB === undefined) return -1;
 
             if (typeof valA === 'string' && typeof valB === 'string') {
-                return sortOrder.value === 'asc' 
+                return sortOrder.value === 'asc'
                     ? valA.localeCompare(valB)
                     : valB.localeCompare(valA);
             }
 
             return sortOrder.value === 'asc'
-                ? (valA > valB ? 1 : -1)
-                : (valA < valB ? 1 : -1);
+                ? valA > valB
+                    ? 1
+                    : -1
+                : valA < valB
+                  ? 1
+                  : -1;
         });
     }
 
@@ -159,21 +190,28 @@ const totalPages = computed(() => {
 <template>
     <div class="space-y-4">
         <!-- Controls: Search and Filters -->
-        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div class="relative flex-1 max-w-md">
-                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+        <div
+            class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
+        >
+            <div class="relative max-w-md flex-1">
+                <div
+                    class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"
+                >
                     <Search class="h-4 w-4 text-zinc-500" />
                 </div>
                 <input
                     v-model="searchQuery"
                     type="text"
                     :placeholder="searchPlaceholder"
-                    class="w-full rounded-xl border border-zinc-800 bg-zinc-950/50 py-2.5 pl-10 pr-4 text-sm text-zinc-150 placeholder-zinc-500 backdrop-blur-md focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    class="text-zinc-150 w-full rounded-xl border border-zinc-800 bg-zinc-950/50 py-2.5 pl-10 pr-4 text-sm placeholder-zinc-500 backdrop-blur-md focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                 />
             </div>
-            
+
             <div class="flex items-center gap-3">
-                <div v-if="filterKey && filterOptions.length > 0" class="flex items-center gap-2">
+                <div
+                    v-if="filterKey && filterOptions.length > 0"
+                    class="flex items-center gap-2"
+                >
                     <select
                         v-model="selectedFilter"
                         class="rounded-xl border border-zinc-800 bg-zinc-950/50 px-4 py-2.5 text-sm text-zinc-200 backdrop-blur-md focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
@@ -190,7 +228,9 @@ const totalPages = computed(() => {
                 </div>
 
                 <div v-if="items.length > 0" class="flex items-center gap-2">
-                    <span class="text-xs text-zinc-500 font-medium">Mostrar:</span>
+                    <span class="text-xs font-medium text-zinc-500">{{
+                        __('misc.datatable.show')
+                    }}</span>
                     <select
                         v-model.number="localPageSize"
                         class="rounded-xl border border-zinc-800 bg-zinc-950/50 px-3 py-2 text-sm text-zinc-200 backdrop-blur-md focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
@@ -200,31 +240,58 @@ const totalPages = computed(() => {
                         <option :value="30">30</option>
                         <option :value="50">50</option>
                         <option :value="100">100</option>
-                        <option :value="-1">Todos</option>
+                        <option :value="-1">{{ __('common.all') }}</option>
                     </select>
                 </div>
             </div>
         </div>
 
         <!-- Table Container -->
-        <div class="overflow-x-auto rounded-xl border border-zinc-800 bg-zinc-900/10 backdrop-blur-xl">
-            <table class="w-full border-collapse text-left text-sm text-zinc-300">
-                <thead class="border-b border-zinc-800 bg-zinc-800/40 text-xs uppercase text-zinc-400">
+        <div
+            class="overflow-x-auto rounded-xl border border-zinc-800 bg-zinc-900/10 backdrop-blur-xl"
+        >
+            <table
+                class="w-full border-collapse text-left text-sm text-zinc-300"
+            >
+                <thead
+                    class="border-b border-zinc-800 bg-zinc-800/40 text-xs uppercase text-zinc-400"
+                >
                     <tr>
                         <th
                             v-for="col in columns"
                             :key="col.key"
                             @click="handleSort(col.key, col.sortable)"
                             :class="[
-                                'px-4 py-3 font-semibold transition-colors select-none',
-                                col.sortable ? 'cursor-pointer hover:bg-zinc-800/70 hover:text-zinc-100' : '',
-                                col.align === 'right' ? 'text-right' : col.align === 'center' ? 'text-center' : 'text-left'
+                                'select-none px-4 py-3 font-semibold transition-colors',
+                                col.sortable
+                                    ? 'cursor-pointer hover:bg-zinc-800/70 hover:text-zinc-100'
+                                    : '',
+                                col.align === 'right'
+                                    ? 'text-right'
+                                    : col.align === 'center'
+                                      ? 'text-center'
+                                      : 'text-left',
                             ]"
                         >
-                            <div class="inline-flex items-center gap-1.5" :class="[col.align === 'right' ? 'justify-end w-full' : col.align === 'center' ? 'justify-center w-full' : '']">
+                            <div
+                                class="inline-flex items-center gap-1.5"
+                                :class="[
+                                    col.align === 'right'
+                                        ? 'w-full justify-end'
+                                        : col.align === 'center'
+                                          ? 'w-full justify-center'
+                                          : '',
+                                ]"
+                            >
                                 <span>{{ col.label }}</span>
-                                <span v-if="col.sortable && sortKey === col.key" class="text-indigo-400">
-                                    <ChevronUp v-if="sortOrder === 'asc'" class="h-3 w-3" />
+                                <span
+                                    v-if="col.sortable && sortKey === col.key"
+                                    class="text-indigo-400"
+                                >
+                                    <ChevronUp
+                                        v-if="sortOrder === 'asc'"
+                                        class="h-3 w-3"
+                                    />
                                     <ChevronDown v-else class="h-3 w-3" />
                                 </span>
                             </div>
@@ -235,28 +302,41 @@ const totalPages = computed(() => {
                     <tr
                         v-for="(item, index) in paginatedItems"
                         :key="item.id || index"
-                        class="group hover:bg-zinc-800/20 transition-all duration-150"
+                        class="group transition-all duration-150 hover:bg-zinc-800/20"
                     >
                         <td
                             v-for="col in columns"
                             :key="col.key"
                             :class="[
                                 'px-4 py-3 transition-colors',
-                                col.align === 'right' ? 'text-right' : col.align === 'center' ? 'text-center' : 'text-left'
+                                col.align === 'right'
+                                    ? 'text-right'
+                                    : col.align === 'center'
+                                      ? 'text-center'
+                                      : 'text-left',
                             ]"
                         >
                             <!-- Dynamic Cell Slot -->
                             <slot :name="col.key" :item="item">
                                 <span class="font-medium text-zinc-200">
-                                    {{ item[col.key] && typeof item[col.key] === 'object' && item[col.key].label !== undefined ? item[col.key].label : item[col.key] }}
+                                    {{
+                                        item[col.key] &&
+                                        typeof item[col.key] === 'object' &&
+                                        item[col.key].label !== undefined
+                                            ? item[col.key].label
+                                            : item[col.key]
+                                    }}
                                 </span>
                             </slot>
                         </td>
                     </tr>
-                    
+
                     <tr v-if="filteredItems.length === 0">
-                        <td :colspan="columns.length" class="py-8 text-center text-zinc-500 font-medium">
-                            Nenhum registro encontrado.
+                        <td
+                            :colspan="columns.length"
+                            class="py-8 text-center font-medium text-zinc-500"
+                        >
+                            {{ __('common.no_results') }}
                         </td>
                     </tr>
                 </tbody>
@@ -264,26 +344,45 @@ const totalPages = computed(() => {
         </div>
 
         <!-- Pagination Controls -->
-        <div v-if="filteredItems.length > 0" class="flex flex-col sm:flex-row gap-3 items-center justify-between border-t border-zinc-800/50 pt-4">
-            <span class="text-xs text-zinc-500 font-medium">
+        <div
+            v-if="filteredItems.length > 0"
+            class="flex flex-col items-center justify-between gap-3 border-t border-zinc-800/50 pt-4 sm:flex-row"
+        >
+            <span class="text-xs font-medium text-zinc-500">
                 <template v-if="localPageSize === -1">
-                    Mostrando todos os {{ filteredItems.length }} registros
+                    {{
+                        __('misc.datatable.showing_all', {
+                            total: filteredItems.length,
+                        })
+                    }}
                 </template>
                 <template v-else>
-                    Mostrando {{ (currentPage - 1) * localPageSize + 1 }} até {{ Math.min(currentPage * localPageSize, filteredItems.length) }} de {{ filteredItems.length }} registros
+                    {{
+                        __('misc.datatable.showing_range', {
+                            from: (currentPage - 1) * localPageSize + 1,
+                            to: Math.min(
+                                currentPage * localPageSize,
+                                filteredItems.length,
+                            ),
+                            total: filteredItems.length,
+                        })
+                    }}
                 </template>
             </span>
-            
-            <div v-if="totalPages > 1 && localPageSize !== -1" class="flex items-center gap-1.5">
+
+            <div
+                v-if="totalPages > 1 && localPageSize !== -1"
+                class="flex items-center gap-1.5"
+            >
                 <button
                     type="button"
                     :disabled="currentPage === 1"
                     @click="currentPage--"
-                    class="inline-flex rounded-lg border border-zinc-800 bg-zinc-950/40 p-2 text-zinc-400 hover:text-zinc-200 disabled:opacity-40 focus:outline-none"
+                    class="inline-flex rounded-lg border border-zinc-800 bg-zinc-950/40 p-2 text-zinc-400 hover:text-zinc-200 focus:outline-none disabled:opacity-40"
                 >
                     <ChevronLeft class="h-4 w-4" />
                 </button>
-                
+
                 <button
                     v-for="page in totalPages"
                     :key="page"
@@ -293,17 +392,17 @@ const totalPages = computed(() => {
                         'inline-flex h-8 w-8 items-center justify-center rounded-lg text-xs font-bold transition-all focus:outline-none',
                         currentPage === page
                             ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
-                            : 'border border-zinc-800 bg-zinc-950/40 text-zinc-400 hover:border-zinc-700 hover:text-zinc-250'
+                            : 'hover:text-zinc-250 border border-zinc-800 bg-zinc-950/40 text-zinc-400 hover:border-zinc-700',
                     ]"
                 >
                     {{ page }}
                 </button>
-                
+
                 <button
                     type="button"
                     :disabled="currentPage === totalPages"
                     @click="currentPage++"
-                    class="inline-flex rounded-lg border border-zinc-800 bg-zinc-950/40 p-2 text-zinc-400 hover:text-zinc-200 disabled:opacity-40 focus:outline-none"
+                    class="inline-flex rounded-lg border border-zinc-800 bg-zinc-950/40 p-2 text-zinc-400 hover:text-zinc-200 focus:outline-none disabled:opacity-40"
                 >
                     <ChevronRight class="h-4 w-4" />
                 </button>

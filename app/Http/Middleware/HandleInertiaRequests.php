@@ -51,6 +51,31 @@ class HandleInertiaRequests extends Middleware
                 'success' => fn () => $request->session()->get('success') ?? ($request->session()->get('flash')['success'] ?? null),
                 'error' => fn () => $request->session()->get('error') ?? ($request->session()->get('flash')['error'] ?? null),
             ],
+            'locale' => app()->getLocale(),
+            'translations' => fn (): array => self::translations(),
         ];
+    }
+
+    /**
+     * Build the flat translation map shared with the frontend (used by the __() helper).
+     *
+     * Exposed statically so it can also be attached when rendering error pages,
+     * where the web middleware (and thus share()) may not run (e.g. 404 on an
+     * unmatched route).
+     *
+     * @return array<string, mixed>
+     */
+    public static function translations(): array
+    {
+        $groups = ['nav', 'admin', 'teacher', 'superadmin', 'student', 'misc', 'classrooms'];
+
+        $extra = [];
+
+        foreach ($groups as $group) {
+            $messages = trans($group);
+            $extra[$group] = is_array($messages) ? $messages : [];
+        }
+
+        return array_merge((array) trans('ui'), $extra);
     }
 }

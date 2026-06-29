@@ -1,5 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
+use Diglactic\Breadcrumbs\Generator;
+use Diglactic\Breadcrumbs\Manager;
+
 return [
 
     /*
@@ -67,9 +72,9 @@ return [
     */
 
     // Manager
-    'manager-class' => Diglactic\Breadcrumbs\Manager::class,
+    'manager-class' => Manager::class,
 
     // Generator
-    'generator-class' => Diglactic\Breadcrumbs\Generator::class,
+    'generator-class' => Generator::class,
 
 ];

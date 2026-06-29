@@ -4,7 +4,7 @@ import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
-import { Lock, KeyRound } from '@lucide/vue';
+import { KeyRound, Lock } from '@lucide/vue';
 
 const form = useForm({
     password: '',
@@ -23,28 +23,39 @@ const submit = () => {
         <Head title="Alteração de Senha Obrigatória" />
 
         <div class="mb-6 text-center">
-            <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-amber-500/10 text-amber-400">
+            <div
+                class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-amber-500/10 text-amber-400"
+            >
                 <KeyRound class="h-6 w-6" />
             </div>
-            <h1 class="text-xl font-extrabold tracking-tight text-white sm:text-2xl">
+            <h1
+                class="text-xl font-extrabold tracking-tight text-white sm:text-2xl"
+            >
                 Nova Senha Obrigatória
             </h1>
             <p class="mt-2 text-sm text-zinc-400">
-                Por motivos de segurança, você deve cadastrar uma nova senha no seu primeiro acesso.
+                Por motivos de segurança, você deve cadastrar uma nova senha no
+                seu primeiro acesso.
             </p>
         </div>
 
         <form @submit.prevent="submit" class="space-y-4">
             <div>
-                <InputLabel for="password" value="Nova Senha" class="text-zinc-400 font-bold uppercase tracking-wider text-[10px]" />
+                <InputLabel
+                    for="password"
+                    value="Nova Senha"
+                    class="text-[10px] font-bold uppercase tracking-wider text-zinc-400"
+                />
                 <div class="relative mt-1">
-                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-500">
+                    <span
+                        class="absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-500"
+                    >
                         <Lock class="h-5 w-5" />
                     </span>
                     <TextInput
                         id="password"
                         type="password"
-                        class="pl-10 w-full"
+                        class="w-full pl-10"
                         v-model="form.password"
                         required
                         placeholder="••••••••"
@@ -56,22 +67,31 @@ const submit = () => {
             </div>
 
             <div>
-                <InputLabel for="password_confirmation" value="Confirmar Nova Senha" class="text-zinc-400 font-bold uppercase tracking-wider text-[10px]" />
+                <InputLabel
+                    for="password_confirmation"
+                    value="Confirmar Nova Senha"
+                    class="text-[10px] font-bold uppercase tracking-wider text-zinc-400"
+                />
                 <div class="relative mt-1">
-                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-500">
+                    <span
+                        class="absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-500"
+                    >
                         <Lock class="h-5 w-5" />
                     </span>
                     <TextInput
                         id="password_confirmation"
                         type="password"
-                        class="pl-10 w-full"
+                        class="w-full pl-10"
                         v-model="form.password_confirmation"
                         required
                         placeholder="••••••••"
                         autocomplete="new-password"
                     />
                 </div>
-                <InputError class="mt-2" :message="form.errors.password_confirmation" />
+                <InputError
+                    class="mt-2"
+                    :message="form.errors.password_confirmation"
+                />
             </div>
 
             <button

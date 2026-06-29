@@ -1,11 +1,11 @@
 <script setup>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import BaseModal from '@/Components/BaseModal.vue';
 import ConfirmModal from '@/Components/ConfirmModal.vue';
 import Tooltip from '@/Components/Tooltip.vue';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Pencil, Plus, Sparkles, Trash2 } from '@lucide/vue';
 import { ref } from 'vue';
-import { Pencil, Trash2, Plus, Sparkles } from '@lucide/vue';
 
 const props = defineProps({
     subject: {
@@ -64,12 +64,15 @@ const openEditMaterialModal = (mat) => {
 
 const submitMaterial = () => {
     if (isEditingMaterial.value) {
-        matForm.put(route('teacher.materials.update', selectedMaterialId.value), {
-            onSuccess: () => {
-                isMaterialModalOpen.value = false;
-                matForm.reset();
+        matForm.put(
+            route('teacher.materials.update', selectedMaterialId.value),
+            {
+                onSuccess: () => {
+                    isMaterialModalOpen.value = false;
+                    matForm.reset();
+                },
             },
-        });
+        );
     } else {
         matForm.post(route('teacher.materials.store', props.subject.id), {
             onSuccess: () => {
@@ -88,12 +91,15 @@ const confirmDeleteMaterial = (id) => {
 };
 const deleteMaterial = () => {
     if (materialToDelete.value) {
-        matForm.delete(route('teacher.materials.destroy', materialToDelete.value), {
-            onSuccess: () => {
-                isConfirmDeleteMatOpen.value = false;
-                materialToDelete.value = null;
+        matForm.delete(
+            route('teacher.materials.destroy', materialToDelete.value),
+            {
+                onSuccess: () => {
+                    isConfirmDeleteMatOpen.value = false;
+                    materialToDelete.value = null;
+                },
             },
-        });
+        );
     }
 };
 
@@ -202,19 +208,25 @@ const removeOption = (index) => {
 
 const submitQuestion = () => {
     if (isEditingQuestion.value) {
-        questionForm.put(route('teacher.questions.update', selectedQuestionId.value), {
-            onSuccess: () => {
-                isQuestionModalOpen.value = false;
-                questionForm.reset();
+        questionForm.put(
+            route('teacher.questions.update', selectedQuestionId.value),
+            {
+                onSuccess: () => {
+                    isQuestionModalOpen.value = false;
+                    questionForm.reset();
+                },
             },
-        });
+        );
     } else {
-        questionForm.post(route('teacher.questions.store', activeTestIdForQuestion.value), {
-            onSuccess: () => {
-                isQuestionModalOpen.value = false;
-                questionForm.reset();
+        questionForm.post(
+            route('teacher.questions.store', activeTestIdForQuestion.value),
+            {
+                onSuccess: () => {
+                    isQuestionModalOpen.value = false;
+                    questionForm.reset();
+                },
             },
-        });
+        );
     }
 };
 
@@ -226,18 +238,23 @@ const confirmDeleteQuestion = (id) => {
 };
 const deleteQuestion = () => {
     if (questionToDelete.value) {
-        questionForm.delete(route('teacher.questions.destroy', questionToDelete.value), {
-            onSuccess: () => {
-                isConfirmDeleteQuestionOpen.value = false;
-                questionToDelete.value = null;
+        questionForm.delete(
+            route('teacher.questions.destroy', questionToDelete.value),
+            {
+                onSuccess: () => {
+                    isConfirmDeleteQuestionOpen.value = false;
+                    questionToDelete.value = null;
+                },
             },
-        });
+        );
     }
 };
 </script>
 
 <template>
-    <Head :title="`Gerenciar - ${subject.name}`" />
+    <Head
+        :title="__('teacher.subject_show.title').replace(':name', subject.name)"
+    />
 
     <AuthenticatedLayout>
         <template #header>
@@ -289,16 +306,19 @@ const deleteQuestion = () => {
                     <h3
                         class="text-zinc-555 text-xs font-bold uppercase tracking-wider"
                     >
-                        Descrição da Matéria
+                        {{ __('teacher.subject_show.description_label') }}
                     </h3>
                     <p class="mt-2 text-sm text-zinc-300">
                         {{
                             subject.description ||
-                            'Sem descrição cadastrada para esta matéria.'
+                            __('teacher.subject_show.no_description')
                         }}
                     </p>
                     <p class="mt-2 text-xs text-zinc-500">
-                        Duração Estimada: <strong class="text-zinc-400">{{ subject.duration || 'N/A' }}</strong>
+                        {{ __('teacher.subject_show.estimated_duration') }}
+                        <strong class="text-zinc-400">{{
+                            subject.duration || 'N/A'
+                        }}</strong>
                     </p>
                 </div>
 
@@ -316,13 +336,10 @@ const deleteQuestion = () => {
                                 class="flex items-center gap-2 text-lg font-bold text-white"
                             >
                                 <Sparkles class="h-5 w-5 text-indigo-400" />
-                                Gerador de Conteúdo Educacional por Tema
+                                {{ __('teacher.subject_show.ai_title') }}
                             </h3>
                             <p class="mt-1 text-sm text-zinc-400">
-                                Digite um tema de estudo ou selecione um atalho
-                                abaixo. Nosso sistema gerará automaticamente um
-                                material de leitura completo e um questionário
-                                valendo pontuação para os alunos.
+                                {{ __('teacher.subject_show.ai_subtitle') }}
                             </p>
                         </div>
 
@@ -361,7 +378,11 @@ const deleteQuestion = () => {
                                     v-model="aiForm.theme"
                                     type="text"
                                     required
-                                    placeholder="Ex: Introdução ao Docker, Git & Github, REST APIs..."
+                                    :placeholder="
+                                        __(
+                                            'teacher.subject_show.ai_input_placeholder',
+                                        )
+                                    "
                                     class="w-full rounded-xl border border-zinc-800 bg-zinc-900/60 px-4 py-3 text-sm text-zinc-100 placeholder-zinc-500 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                                 />
                                 <span
@@ -398,8 +419,10 @@ const deleteQuestion = () => {
                                 </svg>
                                 {{
                                     isGenerating
-                                        ? 'Gerando Conteúdo...'
-                                        : 'Gerar Material e Atividade'
+                                        ? __(
+                                              'teacher.subject_show.ai_generating',
+                                          )
+                                        : __('teacher.subject_show.ai_generate')
                                 }}
                             </button>
                         </form>
@@ -414,14 +437,22 @@ const deleteQuestion = () => {
                             <h3
                                 class="flex items-center gap-2 text-lg font-bold text-white"
                             >
-                                <span class="text-zinc-500">📚</span> Materiais de
-                                Estudo ({{ subject.study_materials?.length || 0 }})
+                                <span class="text-zinc-500">📚</span>
+                                {{
+                                    __(
+                                        'teacher.subject_show.materials_title',
+                                    ).replace(
+                                        ':count',
+                                        subject.study_materials?.length || 0,
+                                    )
+                                }}
                             </h3>
                             <button
                                 @click="openCreateMaterialModal"
-                                class="inline-flex items-center gap-1 rounded-xl bg-zinc-800 hover:bg-zinc-700 px-3 py-1.5 text-xs font-bold text-white transition-colors"
+                                class="inline-flex items-center gap-1 rounded-xl bg-zinc-800 px-3 py-1.5 text-xs font-bold text-white transition-colors hover:bg-zinc-700"
                             >
-                                <Plus class="h-3.5 w-3.5" /> Adicionar
+                                <Plus class="h-3.5 w-3.5" />
+                                {{ __('common.add') }}
                             </button>
                         </div>
 
@@ -436,11 +467,24 @@ const deleteQuestion = () => {
                                         {{ mat.title }}
                                     </h4>
                                     <p class="text-zinc-550 mt-1 text-xs">
-                                        Concede +{{ mat.points_reward }} pontos por leitura
+                                        {{
+                                            __(
+                                                'teacher.subject_show.material_reward',
+                                            ).replace(
+                                                ':points',
+                                                mat.points_reward,
+                                            )
+                                        }}
                                     </p>
                                 </div>
                                 <div class="flex items-center gap-1">
-                                    <Tooltip text="Editar Material">
+                                    <Tooltip
+                                        :text="
+                                            __(
+                                                'teacher.subject_show.edit_material',
+                                            )
+                                        "
+                                    >
                                         <button
                                             @click="openEditMaterialModal(mat)"
                                             class="rounded-lg p-1.5 text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-white"
@@ -448,10 +492,18 @@ const deleteQuestion = () => {
                                             <Pencil class="h-4 w-4" />
                                         </button>
                                     </Tooltip>
-                                    <Tooltip text="Excluir Material">
+                                    <Tooltip
+                                        :text="
+                                            __(
+                                                'teacher.subject_show.delete_material',
+                                            )
+                                        "
+                                    >
                                         <button
-                                            @click="confirmDeleteMaterial(mat.id)"
-                                            class="rounded-lg p-1.5 text-red-500 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                                            @click="
+                                                confirmDeleteMaterial(mat.id)
+                                            "
+                                            class="rounded-lg p-1.5 text-red-500 transition-colors hover:bg-red-500/10 hover:text-red-400"
                                         >
                                             <Trash2 class="h-4 w-4" />
                                         </button>
@@ -463,7 +515,7 @@ const deleteQuestion = () => {
                                 v-if="subject.study_materials?.length === 0"
                                 class="rounded-xl border border-dashed border-zinc-800 p-8 text-center text-sm text-zinc-500"
                             >
-                                Nenhum material didático cadastrado ainda.
+                                {{ __('teacher.subject_show.materials_empty') }}
                             </div>
                         </div>
                     </div>
@@ -474,14 +526,22 @@ const deleteQuestion = () => {
                             <h3
                                 class="flex items-center gap-2 text-lg font-bold text-white"
                             >
-                                <span class="text-zinc-555">⚔️</span> Testes e
-                                Quizzes ({{ subject.tests?.length || 0 }})
+                                <span class="text-zinc-555">⚔️</span>
+                                {{
+                                    __(
+                                        'teacher.subject_show.tests_title',
+                                    ).replace(
+                                        ':count',
+                                        subject.tests?.length || 0,
+                                    )
+                                }}
                             </h3>
                             <button
                                 @click="openCreateTestModal"
-                                class="inline-flex items-center gap-1 rounded-xl bg-zinc-800 hover:bg-zinc-700 px-3 py-1.5 text-xs font-bold text-white transition-colors"
+                                class="inline-flex items-center gap-1 rounded-xl bg-zinc-800 px-3 py-1.5 text-xs font-bold text-white transition-colors hover:bg-zinc-700"
                             >
-                                <Plus class="h-3.5 w-3.5" /> Adicionar
+                                <Plus class="h-3.5 w-3.5" />
+                                {{ __('common.add') }}
                             </button>
                         </div>
 
@@ -506,20 +566,41 @@ const deleteQuestion = () => {
                                         <span
                                             class="rounded-lg bg-indigo-500/10 px-2.5 py-1 text-xs font-bold text-indigo-400"
                                         >
-                                            +{{ test.points_reward }} XP Máx
+                                            {{
+                                                __(
+                                                    'teacher.subject_show.xp_max',
+                                                ).replace(
+                                                    ':points',
+                                                    test.points_reward,
+                                                )
+                                            }}
                                         </span>
-                                        <Tooltip text="Editar Teste">
+                                        <Tooltip
+                                            :text="
+                                                __(
+                                                    'teacher.subject_show.edit_test',
+                                                )
+                                            "
+                                        >
                                             <button
                                                 @click="openEditTestModal(test)"
-                                                class="rounded-lg p-1 text-zinc-450 hover:bg-zinc-800 hover:text-white"
+                                                class="text-zinc-450 rounded-lg p-1 hover:bg-zinc-800 hover:text-white"
                                             >
                                                 <Pencil class="h-3.5 w-3.5" />
                                             </button>
                                         </Tooltip>
-                                        <Tooltip text="Excluir Teste">
+                                        <Tooltip
+                                            :text="
+                                                __(
+                                                    'teacher.subject_show.delete_test',
+                                                )
+                                            "
+                                        >
                                             <button
-                                                @click="confirmDeleteTest(test.id)"
-                                                class="rounded-lg p-1 text-red-500 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                                                @click="
+                                                    confirmDeleteTest(test.id)
+                                                "
+                                                class="rounded-lg p-1 text-red-500 transition-colors hover:bg-red-500/10 hover:text-red-400"
                                             >
                                                 <Trash2 class="h-3.5 w-3.5" />
                                             </button>
@@ -529,15 +610,33 @@ const deleteQuestion = () => {
 
                                 <!-- Questions Sublist -->
                                 <div class="border-t border-zinc-800 pt-3">
-                                    <div class="flex items-center justify-between mb-2">
-                                        <h5 class="text-zinc-550 text-xs font-bold">
-                                            Questões ({{ test.questions?.length || 0 }})
+                                    <div
+                                        class="mb-2 flex items-center justify-between"
+                                    >
+                                        <h5
+                                            class="text-zinc-550 text-xs font-bold"
+                                        >
+                                            {{
+                                                __(
+                                                    'teacher.subject_show.questions_count',
+                                                ).replace(
+                                                    ':count',
+                                                    test.questions?.length || 0,
+                                                )
+                                            }}
                                         </h5>
                                         <button
-                                            @click="openCreateQuestionModal(test.id)"
-                                            class="inline-flex items-center gap-1 rounded bg-zinc-800 hover:bg-zinc-700 px-2 py-0.5 text-[10px] font-bold text-zinc-300 transition-colors"
+                                            @click="
+                                                openCreateQuestionModal(test.id)
+                                            "
+                                            class="inline-flex items-center gap-1 rounded bg-zinc-800 px-2 py-0.5 text-[10px] font-bold text-zinc-300 transition-colors hover:bg-zinc-700"
                                         >
-                                            <Plus class="h-3 w-3" /> Add Questão
+                                            <Plus class="h-3 w-3" />
+                                            {{
+                                                __(
+                                                    'teacher.subject_show.add_question',
+                                                )
+                                            }}
                                         </button>
                                     </div>
                                     <ol
@@ -548,12 +647,31 @@ const deleteQuestion = () => {
                                             :key="q.id"
                                             class="text-zinc-300"
                                         >
-                                            <span class="font-medium">{{ q.question_text }}</span>
-                                            <div class="inline-flex items-center gap-1 ml-2">
-                                                <button @click="openEditQuestionModal(q, test.id)" class="text-zinc-550 hover:text-zinc-300 p-0.5">
+                                            <span class="font-medium">{{
+                                                q.question_text
+                                            }}</span>
+                                            <div
+                                                class="ml-2 inline-flex items-center gap-1"
+                                            >
+                                                <button
+                                                    @click="
+                                                        openEditQuestionModal(
+                                                            q,
+                                                            test.id,
+                                                        )
+                                                    "
+                                                    class="text-zinc-550 p-0.5 hover:text-zinc-300"
+                                                >
                                                     <Pencil class="h-3 w-3" />
                                                 </button>
-                                                <button @click="confirmDeleteQuestion(q.id)" class="text-red-500 hover:text-red-400 p-0.5">
+                                                <button
+                                                    @click="
+                                                        confirmDeleteQuestion(
+                                                            q.id,
+                                                        )
+                                                    "
+                                                    class="p-0.5 text-red-500 hover:text-red-400"
+                                                >
                                                     <Trash2 class="h-3 w-3" />
                                                 </button>
                                             </div>
@@ -561,11 +679,14 @@ const deleteQuestion = () => {
                                                 class="ml-4 mt-1 flex flex-wrap gap-2"
                                             >
                                                 <span
-                                                    v-for="(opt, oIdx) in q.options"
+                                                    v-for="(
+                                                        opt, oIdx
+                                                    ) in q.options"
                                                     :key="oIdx"
                                                     class="rounded px-2 py-0.5 text-[10px]"
                                                     :class="
-                                                        oIdx === q.correct_option_index
+                                                        oIdx ===
+                                                        q.correct_option_index
                                                             ? 'border border-emerald-500/20 bg-emerald-500/10 font-semibold text-emerald-400'
                                                             : 'text-zinc-550 border-zinc-850 border bg-zinc-950'
                                                     "
@@ -581,7 +702,7 @@ const deleteQuestion = () => {
                                 v-if="subject.tests?.length === 0"
                                 class="rounded-xl border border-dashed border-zinc-800 p-8 text-center text-sm text-zinc-500"
                             >
-                                Nenhum teste cadastrado ainda.
+                                {{ __('teacher.subject_show.tests_empty') }}
                             </div>
                         </div>
                     </div>
@@ -592,35 +713,94 @@ const deleteQuestion = () => {
         <!-- Study Material Modal -->
         <BaseModal
             :show="isMaterialModalOpen"
-            :title="isEditingMaterial ? 'Editar Material de Estudo' : 'Novo Material de Estudo'"
+            :title="
+                isEditingMaterial
+                    ? __('teacher.material_form.edit_title')
+                    : __('teacher.material_form.new_title')
+            "
             maxWidth="xl"
             @close="isMaterialModalOpen = false"
         >
             <form @submit.prevent="submitMaterial" class="space-y-4">
                 <div>
-                    <label class="mb-2 block text-xs font-bold uppercase text-zinc-400">Título do Material</label>
-                    <input v-model="matForm.title" type="text" required placeholder="Ex: Fundamentos de Git" class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-2.5 text-sm text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500" />
-                    <span v-if="matForm.errors.title" class="text-xs text-red-500 mt-1 block">{{ matForm.errors.title }}</span>
+                    <label
+                        class="mb-2 block text-xs font-bold uppercase text-zinc-400"
+                        >{{ __('teacher.material_form.title_label') }}</label
+                    >
+                    <input
+                        v-model="matForm.title"
+                        type="text"
+                        required
+                        :placeholder="
+                            __('teacher.material_form.title_placeholder')
+                        "
+                        class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-2.5 text-sm text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    />
+                    <span
+                        v-if="matForm.errors.title"
+                        class="mt-1 block text-xs text-red-500"
+                        >{{ matForm.errors.title }}</span
+                    >
                 </div>
 
                 <div>
-                    <label class="mb-2 block text-xs font-bold uppercase text-zinc-400">Recompensa (XP)</label>
-                    <input v-model="matForm.points_reward" type="number" required min="1" class="w-full rounded-xl border border-zinc-800 bg-zinc-955 px-4 py-2.5 text-sm text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500" />
-                    <span v-if="matForm.errors.points_reward" class="text-xs text-red-500 mt-1 block">{{ matForm.errors.points_reward }}</span>
+                    <label
+                        class="mb-2 block text-xs font-bold uppercase text-zinc-400"
+                        >{{ __('teacher.material_form.reward_label') }}</label
+                    >
+                    <input
+                        v-model="matForm.points_reward"
+                        type="number"
+                        required
+                        min="1"
+                        class="bg-zinc-955 w-full rounded-xl border border-zinc-800 px-4 py-2.5 text-sm text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    />
+                    <span
+                        v-if="matForm.errors.points_reward"
+                        class="mt-1 block text-xs text-red-500"
+                        >{{ matForm.errors.points_reward }}</span
+                    >
                 </div>
 
                 <div>
-                    <label class="mb-2 block text-xs font-bold uppercase text-zinc-400">Conteúdo do Material</label>
-                    <textarea v-model="matForm.content" rows="6" required placeholder="Insira o texto explicativo ou tutorial..." class="w-full rounded-xl border border-zinc-800 bg-zinc-955 px-4 py-2.5 text-sm text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"></textarea>
-                    <span v-if="matForm.errors.content" class="text-xs text-red-500 mt-1 block">{{ matForm.errors.content }}</span>
+                    <label
+                        class="mb-2 block text-xs font-bold uppercase text-zinc-400"
+                        >{{ __('teacher.material_form.content_label') }}</label
+                    >
+                    <textarea
+                        v-model="matForm.content"
+                        rows="6"
+                        required
+                        :placeholder="
+                            __('teacher.material_form.content_placeholder')
+                        "
+                        class="bg-zinc-955 w-full rounded-xl border border-zinc-800 px-4 py-2.5 text-sm text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    ></textarea>
+                    <span
+                        v-if="matForm.errors.content"
+                        class="mt-1 block text-xs text-red-500"
+                        >{{ matForm.errors.content }}</span
+                    >
                 </div>
 
                 <div class="flex justify-end gap-3 pt-3">
-                    <button type="button" @click="isMaterialModalOpen = false" class="rounded-xl bg-zinc-800 px-5 py-2.5 text-xs font-bold text-zinc-400 transition-colors hover:bg-zinc-700">
-                        Cancelar
+                    <button
+                        type="button"
+                        @click="isMaterialModalOpen = false"
+                        class="rounded-xl bg-zinc-800 px-5 py-2.5 text-xs font-bold text-zinc-400 transition-colors hover:bg-zinc-700"
+                    >
+                        {{ __('common.cancel') }}
                     </button>
-                    <button type="submit" :disabled="matForm.processing" class="rounded-xl bg-indigo-600 px-5 py-2.5 text-xs font-bold text-white transition-colors hover:bg-indigo-500 disabled:opacity-50">
-                        {{ isEditingMaterial ? 'Salvar Alterações' : 'Criar Material' }}
+                    <button
+                        type="submit"
+                        :disabled="matForm.processing"
+                        class="rounded-xl bg-indigo-600 px-5 py-2.5 text-xs font-bold text-white transition-colors hover:bg-indigo-500 disabled:opacity-50"
+                    >
+                        {{
+                            isEditingMaterial
+                                ? __('teacher.material_form.save_changes')
+                                : __('teacher.material_form.create')
+                        }}
                     </button>
                 </div>
             </form>
@@ -629,35 +809,92 @@ const deleteQuestion = () => {
         <!-- Test Modal -->
         <BaseModal
             :show="isTestModalOpen"
-            :title="isEditingTest ? 'Editar Teste' : 'Novo Teste'"
+            :title="
+                isEditingTest
+                    ? __('teacher.test_form.edit_title')
+                    : __('teacher.test_form.new_title')
+            "
             maxWidth="xl"
             @close="isTestModalOpen = false"
         >
             <form @submit.prevent="submitTest" class="space-y-4">
                 <div>
-                    <label class="mb-2 block text-xs font-bold uppercase text-zinc-400">Título do Teste</label>
-                    <input v-model="testForm.title" type="text" required placeholder="Ex: Quiz Prático sobre Git" class="w-full rounded-xl border border-zinc-800 bg-zinc-955 px-4 py-2.5 text-sm text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500" />
-                    <span v-if="testForm.errors.title" class="text-xs text-red-500 mt-1 block">{{ testForm.errors.title }}</span>
+                    <label
+                        class="mb-2 block text-xs font-bold uppercase text-zinc-400"
+                        >{{ __('teacher.test_form.title_label') }}</label
+                    >
+                    <input
+                        v-model="testForm.title"
+                        type="text"
+                        required
+                        :placeholder="__('teacher.test_form.title_placeholder')"
+                        class="bg-zinc-955 w-full rounded-xl border border-zinc-800 px-4 py-2.5 text-sm text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    />
+                    <span
+                        v-if="testForm.errors.title"
+                        class="mt-1 block text-xs text-red-500"
+                        >{{ testForm.errors.title }}</span
+                    >
                 </div>
 
                 <div>
-                    <label class="mb-2 block text-xs font-bold uppercase text-zinc-400">Recompensa Máxima (XP)</label>
-                    <input v-model="testForm.points_reward" type="number" required min="1" class="w-full rounded-xl border border-zinc-800 bg-zinc-955 px-4 py-2.5 text-sm text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500" />
-                    <span v-if="testForm.errors.points_reward" class="text-xs text-red-500 mt-1 block">{{ testForm.errors.points_reward }}</span>
+                    <label
+                        class="mb-2 block text-xs font-bold uppercase text-zinc-400"
+                        >{{ __('teacher.test_form.reward_label') }}</label
+                    >
+                    <input
+                        v-model="testForm.points_reward"
+                        type="number"
+                        required
+                        min="1"
+                        class="bg-zinc-955 w-full rounded-xl border border-zinc-800 px-4 py-2.5 text-sm text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    />
+                    <span
+                        v-if="testForm.errors.points_reward"
+                        class="mt-1 block text-xs text-red-500"
+                        >{{ testForm.errors.points_reward }}</span
+                    >
                 </div>
 
                 <div>
-                    <label class="mb-2 block text-xs font-bold uppercase text-zinc-400">Descrição do Teste</label>
-                    <textarea v-model="testForm.description" rows="3" required placeholder="Insira as instruções ou descrição deste teste..." class="w-full rounded-xl border border-zinc-800 bg-zinc-955 px-4 py-2.5 text-sm text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"></textarea>
-                    <span v-if="testForm.errors.description" class="text-xs text-red-500 mt-1 block">{{ testForm.errors.description }}</span>
+                    <label
+                        class="mb-2 block text-xs font-bold uppercase text-zinc-400"
+                        >{{ __('teacher.test_form.description_label') }}</label
+                    >
+                    <textarea
+                        v-model="testForm.description"
+                        rows="3"
+                        required
+                        :placeholder="
+                            __('teacher.test_form.description_placeholder')
+                        "
+                        class="bg-zinc-955 w-full rounded-xl border border-zinc-800 px-4 py-2.5 text-sm text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    ></textarea>
+                    <span
+                        v-if="testForm.errors.description"
+                        class="mt-1 block text-xs text-red-500"
+                        >{{ testForm.errors.description }}</span
+                    >
                 </div>
 
                 <div class="flex justify-end gap-3 pt-3">
-                    <button type="button" @click="isTestModalOpen = false" class="rounded-xl bg-zinc-800 px-5 py-2.5 text-xs font-bold text-zinc-400 transition-colors hover:bg-zinc-700">
-                        Cancelar
+                    <button
+                        type="button"
+                        @click="isTestModalOpen = false"
+                        class="rounded-xl bg-zinc-800 px-5 py-2.5 text-xs font-bold text-zinc-400 transition-colors hover:bg-zinc-700"
+                    >
+                        {{ __('common.cancel') }}
                     </button>
-                    <button type="submit" :disabled="testForm.processing" class="rounded-xl bg-indigo-600 px-5 py-2.5 text-xs font-bold text-white transition-colors hover:bg-indigo-500 disabled:opacity-50">
-                        {{ isEditingTest ? 'Salvar Alterações' : 'Criar Teste' }}
+                    <button
+                        type="submit"
+                        :disabled="testForm.processing"
+                        class="rounded-xl bg-indigo-600 px-5 py-2.5 text-xs font-bold text-white transition-colors hover:bg-indigo-500 disabled:opacity-50"
+                    >
+                        {{
+                            isEditingTest
+                                ? __('teacher.test_form.save_changes')
+                                : __('teacher.test_form.create')
+                        }}
                     </button>
                 </div>
             </form>
@@ -666,45 +903,113 @@ const deleteQuestion = () => {
         <!-- Question Modal -->
         <BaseModal
             :show="isQuestionModalOpen"
-            :title="isEditingQuestion ? 'Editar Questão' : 'Nova Questão'"
+            :title="
+                isEditingQuestion
+                    ? __('teacher.question_form.edit_title')
+                    : __('teacher.question_form.new_title')
+            "
             maxWidth="xl"
             @close="isQuestionModalOpen = false"
         >
             <form @submit.prevent="submitQuestion" class="space-y-4">
                 <div>
-                    <label class="mb-2 block text-xs font-bold uppercase text-zinc-400">Texto da Questão</label>
-                    <textarea v-model="questionForm.question_text" rows="3" required placeholder="Digite a pergunta da questão..." class="w-full rounded-xl border border-zinc-800 bg-zinc-955 px-4 py-2.5 text-sm text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"></textarea>
-                    <span v-if="questionForm.errors.question_text" class="text-xs text-red-500 mt-1 block">{{ questionForm.errors.question_text }}</span>
+                    <label
+                        class="mb-2 block text-xs font-bold uppercase text-zinc-400"
+                        >{{ __('teacher.question_form.text_label') }}</label
+                    >
+                    <textarea
+                        v-model="questionForm.question_text"
+                        rows="3"
+                        required
+                        :placeholder="
+                            __('teacher.question_form.text_placeholder')
+                        "
+                        class="bg-zinc-955 w-full rounded-xl border border-zinc-800 px-4 py-2.5 text-sm text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    ></textarea>
+                    <span
+                        v-if="questionForm.errors.question_text"
+                        class="mt-1 block text-xs text-red-500"
+                        >{{ questionForm.errors.question_text }}</span
+                    >
                 </div>
 
                 <div>
-                    <div class="flex items-center justify-between mb-2">
-                        <label class="block text-xs font-bold uppercase text-zinc-400">Opções de Resposta</label>
-                        <button type="button" @click="addOption" class="text-[10px] font-bold text-indigo-400 hover:text-indigo-300">
-                            + Adicionar Opção
+                    <div class="mb-2 flex items-center justify-between">
+                        <label
+                            class="block text-xs font-bold uppercase text-zinc-400"
+                            >{{
+                                __('teacher.question_form.options_label')
+                            }}</label
+                        >
+                        <button
+                            type="button"
+                            @click="addOption"
+                            class="text-[10px] font-bold text-indigo-400 hover:text-indigo-300"
+                        >
+                            {{ __('teacher.question_form.add_option') }}
                         </button>
                     </div>
                     <div class="space-y-2">
-                        <div v-for="(opt, idx) in questionForm.options" :key="idx" class="flex items-center gap-2">
-                            <input type="radio" :value="idx" v-model="questionForm.correct_option_index" class="h-4 w-4 border-zinc-800 bg-zinc-950 text-indigo-600 focus:ring-indigo-500" />
-                            <input v-model="questionForm.options[idx]" type="text" required :placeholder="`Opção ${idx + 1}`" class="flex-grow rounded-xl border border-zinc-800 bg-zinc-955 px-4 py-2 text-xs text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500" />
-                            <button v-if="questionForm.options.length > 2" type="button" @click="removeOption(idx)" class="text-red-500 hover:text-red-400 p-1">
+                        <div
+                            v-for="(opt, idx) in questionForm.options"
+                            :key="idx"
+                            class="flex items-center gap-2"
+                        >
+                            <input
+                                type="radio"
+                                :value="idx"
+                                v-model="questionForm.correct_option_index"
+                                class="h-4 w-4 border-zinc-800 bg-zinc-950 text-indigo-600 focus:ring-indigo-500"
+                            />
+                            <input
+                                v-model="questionForm.options[idx]"
+                                type="text"
+                                required
+                                :placeholder="
+                                    __(
+                                        'teacher.question_form.option_placeholder',
+                                    ).replace(':number', idx + 1)
+                                "
+                                class="bg-zinc-955 flex-grow rounded-xl border border-zinc-800 px-4 py-2 text-xs text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                            />
+                            <button
+                                v-if="questionForm.options.length > 2"
+                                type="button"
+                                @click="removeOption(idx)"
+                                class="p-1 text-red-500 hover:text-red-400"
+                            >
                                 <Trash2 class="h-4 w-4" />
                             </button>
                         </div>
                     </div>
-                    <span v-if="questionForm.errors.options" class="text-xs text-red-500 mt-1 block">{{ questionForm.errors.options }}</span>
-                    <p class="text-[10px] text-zinc-500 mt-2">
-                        * Selecione a bolinha correspondente à opção correta.
+                    <span
+                        v-if="questionForm.errors.options"
+                        class="mt-1 block text-xs text-red-500"
+                        >{{ questionForm.errors.options }}</span
+                    >
+                    <p class="mt-2 text-[10px] text-zinc-500">
+                        {{ __('teacher.question_form.correct_hint') }}
                     </p>
                 </div>
 
                 <div class="flex justify-end gap-3 pt-3">
-                    <button type="button" @click="isQuestionModalOpen = false" class="rounded-xl bg-zinc-800 px-5 py-2.5 text-xs font-bold text-zinc-400 transition-colors hover:bg-zinc-700">
-                        Cancelar
+                    <button
+                        type="button"
+                        @click="isQuestionModalOpen = false"
+                        class="rounded-xl bg-zinc-800 px-5 py-2.5 text-xs font-bold text-zinc-400 transition-colors hover:bg-zinc-700"
+                    >
+                        {{ __('common.cancel') }}
                     </button>
-                    <button type="submit" :disabled="questionForm.processing" class="rounded-xl bg-indigo-600 px-5 py-2.5 text-xs font-bold text-white transition-colors hover:bg-indigo-500 disabled:opacity-50">
-                        {{ isEditingQuestion ? 'Salvar Alterações' : 'Criar Questão' }}
+                    <button
+                        type="submit"
+                        :disabled="questionForm.processing"
+                        class="rounded-xl bg-indigo-600 px-5 py-2.5 text-xs font-bold text-white transition-colors hover:bg-indigo-500 disabled:opacity-50"
+                    >
+                        {{
+                            isEditingQuestion
+                                ? __('teacher.question_form.save_changes')
+                                : __('teacher.question_form.create')
+                        }}
                     </button>
                 </div>
             </form>
@@ -713,24 +1018,24 @@ const deleteQuestion = () => {
         <!-- Deletion Confirmation Modals -->
         <ConfirmModal
             :show="isConfirmDeleteMatOpen"
-            title="Excluir Material?"
-            message="Tem certeza que deseja excluir permanentemente este material de estudo?"
+            :title="__('teacher.material_delete.title')"
+            :message="__('teacher.material_delete.message')"
             @close="isConfirmDeleteMatOpen = false"
             @confirm="deleteMaterial"
         />
 
         <ConfirmModal
             :show="isConfirmDeleteTestOpen"
-            title="Excluir Teste?"
-            message="Tem certeza que deseja excluir permanentemente este teste? Todas as questões associadas e tentativas de alunos serão removidas."
+            :title="__('teacher.test_delete.title')"
+            :message="__('teacher.test_delete.message')"
             @close="isConfirmDeleteTestOpen = false"
             @confirm="deleteTest"
         />
 
         <ConfirmModal
             :show="isConfirmDeleteQuestionOpen"
-            title="Excluir Questão?"
-            message="Tem certeza que deseja remover esta questão deste quiz?"
+            :title="__('teacher.question_delete.title')"
+            :message="__('teacher.question_delete.message')"
             @close="isConfirmDeleteQuestionOpen = false"
             @confirm="deleteQuestion"
         />

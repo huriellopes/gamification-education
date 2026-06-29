@@ -3,12 +3,13 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\DashboardRedirectController;
+use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\WelcomeController;
 use Illuminate\Support\Facades\Route;
 
 // Rota Inicial (Site Público)
 Route::get('/', WelcomeController::class);
-Route::get('/sitemap.xml', \App\Http\Controllers\SitemapController::class);
+Route::get('/sitemap.xml', SitemapController::class);
 
 // Redirecionamento de Dashboard por Role
 Route::get('/dashboard', DashboardRedirectController::class)

@@ -1,6 +1,6 @@
 <script setup>
-import Tooltip from './Tooltip.vue';
 import { HelpCircle } from '@lucide/vue';
+import Tooltip from './Tooltip.vue';
 
 defineProps({
     text: {
@@ -16,6 +16,8 @@ defineProps({
 
 <template>
     <Tooltip :text="text" :position="position">
-        <HelpCircle class="h-4 w-4 text-zinc-500 hover:text-zinc-350 cursor-help transition-colors" />
+        <HelpCircle
+            class="hover:text-zinc-350 h-4 w-4 cursor-help text-zinc-500 transition-colors"
+        />
     </Tooltip>
 </template>
