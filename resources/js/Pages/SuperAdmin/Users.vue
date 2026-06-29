@@ -1,21 +1,22 @@
 <script setup>
 import BaseModal from '@/Components/BaseModal.vue';
-import ConfirmModal from '@/Components/ConfirmModal.vue';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import DataTable from '@/Components/DataTable.vue';
 import Button from '@/Components/Button.vue';
+import ConfirmModal from '@/Components/ConfirmModal.vue';
+import DataTable from '@/Components/DataTable.vue';
 import Tooltip from '@/Components/Tooltip.vue';
-import { Head, useForm, router } from '@inertiajs/vue3';
-import { ref, computed } from 'vue';
+import { __ } from '@/i18n';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { Head, router, useForm } from '@inertiajs/vue3';
 import {
+    CheckCircle,
     Pencil,
     Plus,
     Power,
     Trash2,
-    CheckCircle,
+    UserCheck,
     XCircle,
-    UserCheck
 } from '@lucide/vue';
+import { computed, ref } from 'vue';
 
 const props = defineProps({
     users: {
@@ -26,17 +27,43 @@ const props = defineProps({
         type: Array,
         default: () => [],
     },
+    classrooms: {
+        type: Array,
+        default: () => [],
+    },
 });
 
 const userColumns = [
     { key: 'id', label: 'ID', sortable: true },
-    { key: 'name', label: 'Nome / E-mail', sortable: true },
-    { key: 'role', label: 'Papel', sortable: true },
-    { key: 'institution', label: 'Instituição(ões)', sortable: false },
-    { key: 'points', label: 'XP', sortable: true, align: 'center' },
-    { key: 'last_login_at', label: 'Último Acesso', sortable: true },
-    { key: 'is_active', label: 'Status', sortable: true, align: 'center' },
-    { key: 'actions', label: 'Ações', align: 'right' },
+    {
+        key: 'name',
+        label: __('superadmin.users.col_name_email'),
+        sortable: true,
+    },
+    { key: 'role', label: __('superadmin.users.col_role'), sortable: true },
+    {
+        key: 'institution',
+        label: __('superadmin.users.col_institution'),
+        sortable: false,
+    },
+    {
+        key: 'points',
+        label: __('superadmin.users.col_xp'),
+        sortable: true,
+        align: 'center',
+    },
+    {
+        key: 'last_login_at',
+        label: __('superadmin.users.col_last_login'),
+        sortable: true,
+    },
+    {
+        key: 'is_active',
+        label: __('common.status'),
+        sortable: true,
+        align: 'center',
+    },
+    { key: 'actions', label: __('common.actions'), align: 'right' },
 ];
 
 const confirmState = ref({
@@ -72,12 +99,21 @@ const userForm = useForm({
     role: 'student',
     institution_id: '',
     institution_ids: [],
+    classroom_id: '',
 });
+
+// Turmas da instituição selecionada (para vincular um aluno).
+const availableClassrooms = computed(() =>
+    props.classrooms.filter(
+        (c) => String(c.institution_id) === String(userForm.institution_id),
+    ),
+);
 
 const openCreateUser = () => {
     isEditingUser.value = false;
     userForm.reset();
     userForm.institution_ids = [];
+    userForm.classroom_id = '';
     isUserModalOpen.value = true;
 };
 
@@ -90,6 +126,7 @@ const openEditUser = (user) => {
     userForm.role = user.role;
     userForm.institution_id = user.institution_id || '';
     userForm.institution_ids = user.institution_ids || [];
+    userForm.classroom_id = user.classroom_ids?.[0] ?? '';
     isUserModalOpen.value = true;
 };
 
@@ -119,11 +156,19 @@ const submitUser = () => {
 };
 
 const confirmToggleUser = (user) => {
-    const activeVal = user.is_active === 1 || user.is_active?.value === 1 || user.is_active === 'active';
-    const actionText = activeVal ? 'desativar' : 'ativar';
+    const activeVal =
+        user.is_active === 1 ||
+        user.is_active?.value === 1 ||
+        user.is_active === 'active';
+    const actionText = activeVal
+        ? __('superadmin.users.action_deactivate')
+        : __('superadmin.users.action_activate');
     triggerConfirm(
-        'Confirmar Alteração de Status',
-        `Tem certeza de que deseja ${actionText} o usuário "${user.name}"?`,
+        __('superadmin.users.confirm_status_title'),
+        __('superadmin.users.confirm_status_message', {
+            action: actionText,
+            name: user.name,
+        }),
         'warning',
         () => {
             router.post(route('super-admin.users.toggle', user.id));
@@ -133,8 +178,8 @@ const confirmToggleUser = (user) => {
 
 const confirmDeleteUser = (user) => {
     triggerConfirm(
-        'Excluir Usuário',
-        `Tem certeza de que deseja excluir o usuário "${user.name}"? Ele será enviado para a lixeira.`,
+        __('superadmin.users.confirm_delete_title'),
+        __('superadmin.users.confirm_delete_message', { name: user.name }),
         'danger',
         () => {
             router.delete(route('super-admin.users.destroy', user.id));
@@ -144,8 +189,8 @@ const confirmDeleteUser = (user) => {
 
 const confirmImpersonate = (user) => {
     triggerConfirm(
-        'Personificar Usuário',
-        `Deseja iniciar a personificação da conta de "${user.name}"? Você acessará temporariamente o painel com as permissões dele.`,
+        __('superadmin.users.confirm_impersonate_title'),
+        __('superadmin.users.confirm_impersonate_message', { name: user.name }),
         'info',
         () => {
             router.post(route('super-admin.impersonate', user.id));
@@ -155,127 +200,203 @@ const confirmImpersonate = (user) => {
 
 const roleLabel = (role) => {
     switch (role) {
-        case 'super_admin': return 'Super Admin';
-        case 'admin': return 'Gestor';
-        case 'teacher': return 'Professor';
-        case 'student': return 'Estudante';
-        default: return role;
+        case 'super_admin':
+            return __('superadmin.users.role_super_admin');
+        case 'admin':
+            return __('superadmin.users.role_admin');
+        case 'teacher':
+            return __('superadmin.users.role_teacher');
+        case 'student':
+            return __('superadmin.users.role_student');
+        default:
+            return role;
     }
 };
 
 const formatDateTime = (dateStr) => {
-    if (!dateStr) return 'Nunca acessou';
+    if (!dateStr) return __('superadmin.users.never_logged_in');
     try {
         const d = new Date(dateStr);
-        if (isNaN(d.getTime())) return 'Data Inválida';
+        if (isNaN(d.getTime())) return __('superadmin.users.invalid_date');
         return d.toLocaleString('pt-BR');
     } catch (e) {
-        return 'Data Inválida';
+        return __('superadmin.users.invalid_date');
     }
 };
 </script>
 
 <template>
-    <Head title="Gerenciar Usuários" />
+    <Head :title="__('superadmin.users.head_title')" />
 
     <AuthenticatedLayout>
         <template #header>
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-bold leading-tight text-zinc-100">
-                    Gerenciamento de Usuários
+                    {{ __('superadmin.users.header') }}
                 </h2>
                 <Button @click="openCreateUser">
                     <template #icon><Plus class="h-4 w-4" /></template>
-                    <span class="hidden md:inline">Cadastrar</span>
+                    <span class="hidden md:inline">{{
+                        __('superadmin.users.register')
+                    }}</span>
                 </Button>
             </div>
         </template>
 
         <div class="bg-zinc-950 py-6 text-zinc-100">
-            <div class="rounded-2xl border border-zinc-800 bg-zinc-900/30 p-6 backdrop-blur-md">
+            <div
+                class="rounded-2xl border border-zinc-800 bg-zinc-900/30 p-6 backdrop-blur-md"
+            >
                 <DataTable
                     :items="users"
                     :columns="userColumns"
-                    searchPlaceholder="Buscar por nome, e-mail ou instituição..."
+                    :searchPlaceholder="
+                        __('superadmin.users.search_placeholder')
+                    "
                 >
                     <template #id="{ item }">
-                        <span class="text-zinc-500 font-mono">#{{ item.id }}</span>
+                        <span class="font-mono text-zinc-500"
+                            >#{{ item.id }}</span
+                        >
                     </template>
                     <template #name="{ item }">
-                        <div class="font-semibold text-zinc-150">{{ item.name }}</div>
-                        <div class="text-xs text-zinc-500">{{ item.email }}</div>
+                        <div class="text-zinc-150 font-semibold">
+                            {{ item.name }}
+                        </div>
+                        <div class="text-xs text-zinc-500">
+                            {{ item.email }}
+                        </div>
                     </template>
                     <template #role="{ item }">
-                        <span class="inline-flex items-center rounded-full bg-zinc-800 px-2.5 py-0.5 text-xs font-semibold text-zinc-300 border border-zinc-700">
+                        <span
+                            class="inline-flex items-center rounded-full border border-zinc-700 bg-zinc-800 px-2.5 py-0.5 text-xs font-semibold text-zinc-300"
+                        >
                             {{ roleLabel(item.role) }}
                         </span>
                     </template>
                     <template #institution="{ item }">
-                        <div v-if="item.role === 'admin' && item.institutions?.length" class="space-y-0.5 max-w-xs">
-                            <span 
-                                v-for="inst in item.institutions" 
+                        <div
+                            v-if="
+                                item.role === 'admin' &&
+                                item.institutions?.length
+                            "
+                            class="max-w-xs space-y-0.5"
+                        >
+                            <span
+                                v-for="inst in item.institutions"
                                 :key="inst.id"
-                                class="inline-block text-[10px] bg-indigo-950/40 text-indigo-400 border border-indigo-900/40 rounded px-1.5 py-0.5 mr-1 mb-1 font-semibold"
+                                class="mb-1 mr-1 inline-block rounded border border-indigo-900/40 bg-indigo-950/40 px-1.5 py-0.5 text-[10px] font-semibold text-indigo-400"
                             >
                                 {{ inst.name }}
                             </span>
                         </div>
                         <div v-else class="text-xs text-zinc-400">
-                            {{ item.institution?.name || 'Nenhuma' }}
+                            {{
+                                item.institution?.name ||
+                                __('superadmin.users.none')
+                            }}
                         </div>
                     </template>
                     <template #points="{ item }">
-                        <span class="font-bold text-indigo-400">{{ item.points ?? 0 }} XP</span>
+                        <span class="font-bold text-indigo-400"
+                            >{{ item.points ?? 0 }} XP</span
+                        >
                     </template>
                     <template #last_login_at="{ item }">
-                        <span class="text-xs font-mono text-zinc-450">{{ formatDateTime(item.last_login_at) }}</span>
+                        <span class="text-zinc-450 font-mono text-xs">{{
+                            formatDateTime(item.last_login_at)
+                        }}</span>
                     </template>
                     <template #is_active="{ item }">
-                        <span v-if="item.is_active === 1 || item.is_active?.value === 1" class="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-bold text-emerald-400">
-                            <CheckCircle class="h-3 w-3" /> Ativo
+                        <span
+                            v-if="
+                                item.is_active === 1 ||
+                                item.is_active?.value === 1
+                            "
+                            class="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-bold text-emerald-400"
+                        >
+                            <CheckCircle class="h-3 w-3" />
+                            {{ __('superadmin.users.active') }}
                         </span>
-                        <span v-else class="inline-flex items-center gap-1 rounded-full bg-rose-500/10 px-2.5 py-1 text-xs font-bold text-rose-400">
-                            <XCircle class="h-3 w-3" /> Inativo
+                        <span
+                            v-else
+                            class="inline-flex items-center gap-1 rounded-full bg-rose-500/10 px-2.5 py-1 text-xs font-bold text-rose-400"
+                        >
+                            <XCircle class="h-3 w-3" />
+                            {{ __('superadmin.users.inactive') }}
                         </span>
                     </template>
                     <template #actions="{ item }">
                         <div class="flex items-center justify-end gap-2">
                             <!-- Impersonate Button (Only for roles other than super_admin and if it is active) -->
-                            <Tooltip text="Personificar" v-if="item.role !== 'super_admin' && (item.is_active === 1 || item.is_active?.value === 1)">
+                            <Tooltip
+                                :text="
+                                    __('superadmin.users.tooltip_impersonate')
+                                "
+                                v-if="
+                                    item.role !== 'super_admin' &&
+                                    (item.is_active === 1 ||
+                                        item.is_active?.value === 1)
+                                "
+                            >
                                 <Button
                                     variant="icon"
                                     @click="confirmImpersonate(item)"
                                     class="text-amber-500 hover:text-amber-400"
                                 >
-                                    <template #icon><UserCheck class="h-4 w-4" /></template>
+                                    <template #icon
+                                        ><UserCheck class="h-4 w-4"
+                                    /></template>
                                 </Button>
                             </Tooltip>
 
-                            <Tooltip :text="(item.is_active === 1 || item.is_active?.value === 1) ? 'Desativar' : 'Ativar'">
+                            <Tooltip
+                                :text="
+                                    item.is_active === 1 ||
+                                    item.is_active?.value === 1
+                                        ? __(
+                                              'superadmin.users.tooltip_deactivate',
+                                          )
+                                        : __(
+                                              'superadmin.users.tooltip_activate',
+                                          )
+                                "
+                            >
                                 <button
                                     @click="confirmToggleUser(item)"
-                                    class="rounded-lg p-1.5 transition-colors border border-zinc-800 bg-zinc-900/50"
-                                    :class="(item.is_active === 1 || item.is_active?.value === 1) ? 'text-red-500 hover:text-red-400 hover:bg-red-500/10' : 'text-emerald-500 hover:text-emerald-400 hover:bg-emerald-500/10'"
+                                    class="rounded-lg border border-zinc-800 bg-zinc-900/50 p-1.5 transition-colors"
+                                    :class="
+                                        item.is_active === 1 ||
+                                        item.is_active?.value === 1
+                                            ? 'text-red-500 hover:bg-red-500/10 hover:text-red-400'
+                                            : 'text-emerald-500 hover:bg-emerald-500/10 hover:text-emerald-400'
+                                    "
                                     type="button"
                                 >
                                     <Power class="h-4 w-4" />
                                 </button>
                             </Tooltip>
 
-                            <Tooltip text="Editar">
+                            <Tooltip
+                                :text="__('superadmin.users.tooltip_edit')"
+                            >
                                 <Button
                                     variant="icon"
                                     @click="openEditUser(item)"
                                     class="text-indigo-400"
                                 >
-                                    <template #icon><Pencil class="h-4 w-4" /></template>
+                                    <template #icon
+                                        ><Pencil class="h-4 w-4"
+                                    /></template>
                                 </Button>
                             </Tooltip>
 
-                            <Tooltip text="Excluir">
+                            <Tooltip
+                                :text="__('superadmin.users.tooltip_delete')"
+                            >
                                 <button
                                     @click="confirmDeleteUser(item)"
-                                    class="rounded-lg p-1.5 text-red-500 hover:text-red-400 hover:bg-red-500/10 border border-zinc-800 bg-zinc-900/50 transition-colors"
+                                    class="rounded-lg border border-zinc-800 bg-zinc-900/50 p-1.5 text-red-500 transition-colors hover:bg-red-500/10 hover:text-red-400"
                                     type="button"
                                 >
                                     <Trash2 class="h-4 w-4" />
@@ -290,13 +411,20 @@ const formatDateTime = (dateStr) => {
         <!-- Base Modal: Cadastro / Edição de Usuário -->
         <BaseModal
             :show="isUserModalOpen"
-            :title="isEditingUser ? 'Editar Usuário' : 'Novo Usuário'"
+            :title="
+                isEditingUser
+                    ? __('superadmin.users.modal_edit_title')
+                    : __('superadmin.users.modal_new_title')
+            "
             maxWidth="2xl"
             @close="isUserModalOpen = false"
         >
             <form @submit.prevent="submitUser" class="space-y-4">
                 <div>
-                    <label class="mb-2 block text-xs font-bold uppercase text-zinc-400">Nome Completo</label>
+                    <label
+                        class="mb-2 block text-xs font-bold uppercase text-zinc-400"
+                        >{{ __('superadmin.users.label_full_name') }}</label
+                    >
                     <input
                         v-model="userForm.name"
                         type="text"
@@ -306,7 +434,10 @@ const formatDateTime = (dateStr) => {
                 </div>
 
                 <div>
-                    <label class="mb-2 block text-xs font-bold uppercase text-zinc-400">Endereço de E-mail</label>
+                    <label
+                        class="mb-2 block text-xs font-bold uppercase text-zinc-400"
+                        >{{ __('superadmin.users.label_email') }}</label
+                    >
                     <input
                         v-model="userForm.email"
                         type="email"
@@ -316,8 +447,15 @@ const formatDateTime = (dateStr) => {
                 </div>
 
                 <div>
-                    <label class="mb-2 block text-xs font-bold uppercase text-zinc-400">
-                        Senha {{ isEditingUser ? '(Deixe em branco para manter a atual)' : '' }}
+                    <label
+                        class="mb-2 block text-xs font-bold uppercase text-zinc-400"
+                    >
+                        {{ __('superadmin.users.label_password') }}
+                        {{
+                            isEditingUser
+                                ? __('superadmin.users.label_password_keep')
+                                : ''
+                        }}
                     </label>
                     <input
                         v-model="userForm.password"
@@ -328,41 +466,90 @@ const formatDateTime = (dateStr) => {
                 </div>
 
                 <div>
-                    <label class="mb-2 block text-xs font-bold uppercase text-zinc-400">Perfil / Papel</label>
+                    <label
+                        class="mb-2 block text-xs font-bold uppercase text-zinc-400"
+                        >{{ __('superadmin.users.label_role') }}</label
+                    >
                     <select
                         v-model="userForm.role"
                         required
                         class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-sm text-white focus:border-indigo-500 focus:outline-none"
                     >
-                        <option value="student">Estudante</option>
-                        <option value="teacher">Professor</option>
-                        <option value="admin">Gestor de Instituição (Admin)</option>
+                        <option value="student">
+                            {{ __('superadmin.users.option_student') }}
+                        </option>
+                        <option value="teacher">
+                            {{ __('superadmin.users.option_teacher') }}
+                        </option>
+                        <option value="admin">
+                            {{ __('superadmin.users.option_admin') }}
+                        </option>
                     </select>
                 </div>
 
                 <!-- Single Institution (Student/Teacher) -->
                 <div v-if="userForm.role !== 'admin'">
-                    <label class="mb-2 block text-xs font-bold uppercase text-zinc-400">Instituição</label>
+                    <label
+                        class="mb-2 block text-xs font-bold uppercase text-zinc-400"
+                        >{{ __('superadmin.users.label_institution') }}</label
+                    >
                     <select
                         v-model="userForm.institution_id"
                         required
                         class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-sm text-white focus:border-indigo-500 focus:outline-none"
                     >
-                        <option value="" disabled>Selecione uma instituição</option>
-                        <option v-for="inst in institutions" :key="inst.id" :value="inst.id">
+                        <option value="" disabled>
+                            {{ __('superadmin.users.select_institution') }}
+                        </option>
+                        <option
+                            v-for="inst in institutions"
+                            :key="inst.id"
+                            :value="inst.id"
+                        >
                             {{ inst.name }}
+                        </option>
+                    </select>
+                </div>
+
+                <!-- Turma do aluno (vínculo opcional) -->
+                <div v-if="userForm.role === 'student'">
+                    <label
+                        class="mb-2 block text-xs font-bold uppercase text-zinc-400"
+                        >{{ __('classrooms.enroll_label') }}</label
+                    >
+                    <select
+                        v-model="userForm.classroom_id"
+                        :disabled="!userForm.institution_id"
+                        class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-sm text-white focus:border-indigo-500 focus:outline-none disabled:opacity-50"
+                    >
+                        <option value="">
+                            {{ __('classrooms.enroll_none') }}
+                        </option>
+                        <option
+                            v-for="c in availableClassrooms"
+                            :key="c.id"
+                            :value="c.id"
+                        >
+                            {{ c.name }}
                         </option>
                     </select>
                 </div>
 
                 <!-- Multi-institution (Admin) -->
                 <div v-else>
-                    <label class="mb-2 block text-xs font-bold uppercase text-zinc-400">Associar Instituições</label>
-                    <div class="rounded-xl border border-zinc-800 bg-zinc-950 p-4 max-h-48 overflow-y-auto space-y-2">
-                        <label 
-                            v-for="inst in institutions" 
-                            :key="inst.id" 
-                            class="flex items-center gap-2 text-sm text-zinc-300 hover:text-white cursor-pointer"
+                    <label
+                        class="mb-2 block text-xs font-bold uppercase text-zinc-400"
+                        >{{
+                            __('superadmin.users.label_associate_institutions')
+                        }}</label
+                    >
+                    <div
+                        class="max-h-48 space-y-2 overflow-y-auto rounded-xl border border-zinc-800 bg-zinc-950 p-4"
+                    >
+                        <label
+                            v-for="inst in institutions"
+                            :key="inst.id"
+                            class="flex cursor-pointer items-center gap-2 text-sm text-zinc-300 hover:text-white"
                         >
                             <input
                                 type="checkbox"
@@ -375,12 +562,22 @@ const formatDateTime = (dateStr) => {
                     </div>
                 </div>
 
-                <div class="flex justify-end gap-3 pt-4 border-t border-zinc-850">
-                    <Button variant="secondary" type="button" @click="isUserModalOpen = false">
-                        Cancelar
+                <div
+                    class="border-zinc-850 flex justify-end gap-3 border-t pt-4"
+                >
+                    <Button
+                        variant="secondary"
+                        type="button"
+                        @click="isUserModalOpen = false"
+                    >
+                        {{ __('common.cancel') }}
                     </Button>
                     <Button type="submit" :disabled="userForm.processing">
-                        {{ userForm.processing ? 'Salvando...' : 'Salvar Usuário' }}
+                        {{
+                            userForm.processing
+                                ? __('superadmin.users.saving')
+                                : __('superadmin.users.save_user')
+                        }}
                     </Button>
                 </div>
             </form>

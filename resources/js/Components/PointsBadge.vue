@@ -1,4 +1,5 @@
 <script setup>
+import { __ } from '@/i18n';
 import { computed } from 'vue';
 
 const props = defineProps({
@@ -48,7 +49,7 @@ const sizeClasses = computed(() => {
             >{{ points.toLocaleString() }}
             <span
                 class="text-xs font-medium uppercase tracking-wider text-yellow-500/70"
-                >PTS</span
+                >{{ __('misc.points.unit') }}</span
             ></span
         >
     </div>

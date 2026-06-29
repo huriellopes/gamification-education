@@ -44,14 +44,20 @@ return Application::configure(basePath: dirname(__DIR__))
         );
 
         $exceptions->respond(function (Response $response, Throwable $exception, Request $request) {
+            $renderError = fn () => Inertia::render('Error', [
+                'status' => $response->getStatusCode(),
+                // The web middleware (HandleInertiaRequests::share) does not run for
+                // unmatched routes (404), so attach translations/locale explicitly.
+                'locale' => app()->getLocale(),
+                'translations' => HandleInertiaRequests::translations(),
+            ])
+                ->toResponse($request)
+                ->setStatusCode($response->getStatusCode());
+
             if (!app()->environment(['local', 'testing']) && in_array($response->getStatusCode(), [401, 403, 404, 500, 503, 419], true)) {
-                return Inertia::render('Error', ['status' => $response->getStatusCode()])
-                    ->toResponse($request)
-                    ->setStatusCode($response->getStatusCode());
+                return $renderError();
             } elseif (in_array($response->getStatusCode(), [401, 403, 404, 419], true)) {
-                return Inertia::render('Error', ['status' => $response->getStatusCode()])
-                    ->toResponse($request)
-                    ->setStatusCode($response->getStatusCode());
+                return $renderError();
             }
 
             return $response;

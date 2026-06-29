@@ -2,26 +2,29 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\ImpersonateController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\RankingController;
-use App\Http\Controllers\ReportController;
-use App\Http\Controllers\SupportController;
+use App\Http\Controllers\Impersonate\LeaveImpersonationController;
+use App\Http\Controllers\Profile\DestroyProfileController;
+use App\Http\Controllers\Profile\EditProfileController;
+use App\Http\Controllers\Profile\UpdateProfileController;
+use App\Http\Controllers\Ranking\IndexRankingController;
+use App\Http\Controllers\Report\DownloadReportController;
+use App\Http\Controllers\Support\IndexSupportController;
+use App\Http\Controllers\Support\SendSupportController;
 use Illuminate\Support\Facades\Route;
 
 // Rotas de Perfil, Ranking e Suporte
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/profile', EditProfileController::class)->name('profile.edit');
+    Route::patch('/profile', UpdateProfileController::class)->name('profile.update');
+    Route::delete('/profile', DestroyProfileController::class)->name('profile.destroy');
 
-    Route::get('/ranking', RankingController::class)->name('ranking.index');
-    Route::get('/support', [SupportController::class, 'index'])->name('support.index');
-    Route::post('/support/send', [SupportController::class, 'send'])->name('support.send');
+    Route::get('/ranking', IndexRankingController::class)->name('ranking.index');
+    Route::get('/support', IndexSupportController::class)->name('support.index');
+    Route::post('/support/send', SendSupportController::class)->name('support.send');
 
     // Download de Relatórios
-    Route::get('/reports/{report}/download', [ReportController::class, 'download'])->name('reports.download');
+    Route::get('/reports/{report}/download', DownloadReportController::class)->name('reports.download');
 
     // Sair da Impersonificação
-    Route::post('/impersonate/leave', [ImpersonateController::class, 'leave'])->name('impersonate.leave');
+    Route::post('/impersonate/leave', LeaveImpersonationController::class)->name('impersonate.leave');
 });

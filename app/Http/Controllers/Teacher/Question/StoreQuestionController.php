@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Teacher\Question;
 
-use App\Data\Teacher\QuestionData;
+use App\Actions\Teacher\CreateQuestionAction;
 use App\Http\Controllers\Controller;
-use App\Models\Question;
+use App\Http\Requests\Teacher\Question\StoreQuestionRequest;
 use App\Models\Subject;
 use App\Models\Test;
 use Illuminate\Http\RedirectResponse;
@@ -17,16 +17,13 @@ class StoreQuestionController extends Controller
     /**
      * Cadastra uma nova questão no teste.
      */
-    public function __invoke(QuestionData $data, Test $test): RedirectResponse
+    public function __invoke(StoreQuestionRequest $request, Test $test, CreateQuestionAction $createQuestion): RedirectResponse
     {
         /** @var Subject $subject */
         $subject = $test->subject;
         Gate::authorize('manageContent', $subject);
 
-        $attributes = $data->toArray();
-        $attributes['test_id'] = $test->id;
-
-        Question::create($attributes);
+        $createQuestion($request->validated(), $test);
 
         return redirect()->back()->with('success', 'Questão cadastrada com sucesso!');
     }

@@ -1,7 +1,7 @@
 <script setup>
-import { ref, watch } from 'vue';
 import { usePage } from '@inertiajs/vue3';
-import { CheckCircle, XCircle, X } from '@lucide/vue';
+import { CheckCircle, X, XCircle } from '@lucide/vue';
+import { ref, watch } from 'vue';
 
 const page = usePage();
 const toasts = ref([]);
@@ -10,14 +10,14 @@ const addToast = (message, type = 'success') => {
     if (!message) return;
     const id = Date.now() + Math.random();
     toasts.value.push({ id, message, type });
-    
+
     setTimeout(() => {
         removeToast(id);
     }, 4000);
 };
 
 const removeToast = (id) => {
-    toasts.value = toasts.value.filter(t => t.id !== id);
+    toasts.value = toasts.value.filter((t) => t.id !== id);
 };
 
 // Monitora mensagens flash do Inertia
@@ -33,12 +33,14 @@ watch(
             page.props.flash.error = null;
         }
     },
-    { deep: true, immediate: true }
+    { deep: true, immediate: true },
 );
 </script>
 
 <template>
-    <div class="fixed right-4 top-4 z-50 flex w-full max-w-sm flex-col gap-3 sm:right-6 sm:top-6">
+    <div
+        class="fixed right-4 top-4 z-50 flex w-full max-w-sm flex-col gap-3 sm:right-6 sm:top-6"
+    >
         <TransitionGroup
             enter-active-class="transform ease-out duration-300 transition"
             enter-from-class="translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2"
@@ -58,14 +60,17 @@ watch(
                 "
             >
                 <div class="flex-shrink-0">
-                    <CheckCircle v-if="toast.type === 'success'" class="h-5 w-5 text-emerald-400" />
+                    <CheckCircle
+                        v-if="toast.type === 'success'"
+                        class="h-5 w-5 text-emerald-400"
+                    />
                     <XCircle v-else class="h-5 w-5 text-rose-400" />
                 </div>
-                
+
                 <div class="flex-1 text-sm font-semibold text-zinc-100">
                     {{ toast.message }}
                 </div>
-                
+
                 <button
                     type="button"
                     @click="removeToast(toast.id)"

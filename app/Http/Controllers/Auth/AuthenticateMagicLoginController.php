@@ -1,0 +1,29 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Http\Controllers\Auth;
+
+use App\Http\Controllers\Controller;
+use App\Services\MagicLoginService;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+
+class AuthenticateMagicLoginController extends Controller
+{
+    /**
+     * Autentica o usuário a partir do link mágico.
+     */
+    public function __invoke(Request $request, MagicLoginService $service, string $token): RedirectResponse
+    {
+        $authenticated = $service->authenticate($token, $request->boolean('remember'));
+
+        if (!$authenticated) {
+            return redirect()->route('login')->withErrors([
+                'email' => 'Este link de login mágico é inválido ou já expirou.',
+            ]);
+        }
+
+        return redirect()->route('dashboard')->with('success', 'Login realizado com sucesso via Link Mágico!');
+    }
+}

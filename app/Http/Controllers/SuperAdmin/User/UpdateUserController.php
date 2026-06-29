@@ -6,6 +6,7 @@ namespace App\Http\Controllers\SuperAdmin\User;
 
 use App\Data\SuperAdmin\User\UserData;
 use App\Http\Controllers\Controller;
+use App\Models\Classroom;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 
@@ -17,7 +18,7 @@ class UpdateUserController extends Controller
     public function __invoke(UserData $data, User $user): RedirectResponse
     {
         $attributes = $data->toArray();
-        unset($attributes['institution_ids']);
+        unset($attributes['institution_ids'], $attributes['classroom_id']);
 
         if (empty($attributes['password'])) {
             unset($attributes['password']);
@@ -27,10 +28,12 @@ class UpdateUserController extends Controller
 
         // Se for admin, garante que o contexto ativo seja válido dentro das selecionadas
         $institutionIds = $data->institution_ids;
+
         if ($data->role === 'admin') {
             if (empty($institutionIds) && !empty($data->institution_id)) {
                 $institutionIds = [$data->institution_id];
             }
+
             if (!empty($institutionIds)) {
                 if (!in_array($user->institution_id, $institutionIds, true)) {
                     $attributes['institution_id'] = $institutionIds[0];
@@ -45,6 +48,17 @@ class UpdateUserController extends Controller
             $user->institutions()->sync($institutionIds);
         } elseif (!empty($user->institution_id)) {
             $user->institutions()->sync([$user->institution_id]);
+        }
+
+        // Sincroniza a turma do estudante (dentro da sua instituição).
+        if ($user->isStudent()) {
+            $classroomId = $data->classroom_id;
+
+            if ($classroomId !== null && Classroom::query()->whereKey($classroomId)->where('institution_id', $user->institution_id)->exists()) {
+                $user->enrolledClassrooms()->sync([$classroomId]);
+            } else {
+                $user->enrolledClassrooms()->sync([]);
+            }
         }
 
         return redirect()->back()->with('success', 'Usuário atualizado com sucesso!');

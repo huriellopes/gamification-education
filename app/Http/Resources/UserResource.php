@@ -37,6 +37,8 @@ class UserResource extends JsonResource
                 ];
             }),
             'institution_ids' => $this->institutions()->pluck('institution_id')->all(),
+            'classroom_ids' => $this->whenLoaded('enrolledClassrooms', fn () => $this->enrolledClassrooms->pluck('id')->all()),
+            'classroom' => $this->whenLoaded('enrolledClassrooms', fn () => $this->enrolledClassrooms->pluck('name')->join(', ')),
             'points' => $this->points,
             'is_active' => $this->is_active,
             'last_login_at' => $this->last_login_at,

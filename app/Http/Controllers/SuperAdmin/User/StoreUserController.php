@@ -7,6 +7,7 @@ namespace App\Http\Controllers\SuperAdmin\User;
 use App\Data\SuperAdmin\User\UserData;
 use App\Http\Controllers\Controller;
 use App\Mail\WelcomeUserMail;
+use App\Models\Classroom;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Mail;
@@ -20,7 +21,7 @@ class StoreUserController extends Controller
     public function __invoke(UserData $data): RedirectResponse
     {
         $attributes = $data->toArray();
-        unset($attributes['institution_ids']);
+        unset($attributes['institution_ids'], $attributes['classroom_id']);
 
         $password = $attributes['password'] ?? null;
         $tempPassword = null;
@@ -37,10 +38,12 @@ class StoreUserController extends Controller
 
         // Se for admin, o primeiro ID do array de instituição é o seu contexto inicial ativo
         $institutionIds = $data->institution_ids;
+
         if ($data->role === 'admin') {
             if (empty($institutionIds) && !empty($data->institution_id)) {
                 $institutionIds = [$data->institution_id];
             }
+
             if (!empty($institutionIds)) {
                 $attributes['institution_id'] = $institutionIds[0];
             }
@@ -53,6 +56,18 @@ class StoreUserController extends Controller
             $user->institutions()->sync($institutionIds);
         } elseif (!empty($user->institution_id)) {
             $user->institutions()->sync([$user->institution_id]);
+        }
+
+        // Vincula o estudante a uma turma da sua instituição, se informado.
+        if ($data->role === 'student' && $data->classroom_id !== null) {
+            $belongs = Classroom::query()
+                ->whereKey($data->classroom_id)
+                ->where('institution_id', $user->institution_id)
+                ->exists();
+
+            if ($belongs) {
+                $user->enrolledClassrooms()->syncWithoutDetaching([$data->classroom_id]);
+            }
         }
 
         Mail::to($user->email)->send(new WelcomeUserMail($user, $tempPassword));

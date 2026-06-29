@@ -4,47 +4,29 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Admin\User;
 
-use App\Data\SuperAdmin\User\UserData;
-use App\Enums\GeneralStatus;
+use App\Actions\Admin\CreateInstitutionUserAction;
 use App\Http\Controllers\Controller;
-use App\Mail\WelcomeUserMail;
+use App\Http\Requests\Admin\User\StoreInstitutionUserRequest;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Str;
 
 class StoreInstitutionUserController extends Controller
 {
     /**
      * Cadastra um novo membro (professor ou estudante) na instituição.
      */
-    public function __invoke(UserData $data): RedirectResponse
-    {
+    public function __invoke(
+        StoreInstitutionUserRequest $request,
+        CreateInstitutionUserAction $createUser,
+    ): RedirectResponse {
         /** @var User $admin */
         $admin = auth()->user();
 
-        $attributes = $data->toArray();
-        $attributes['institution_id'] = $admin->institution_id;
-        $attributes['is_active'] = GeneralStatus::ACTIVE;
+        $attributes = $request->validated();
 
-        $password = $attributes['password'] ?? null;
-        $tempPassword = null;
+        $createUser($attributes, (int) $admin->institution_id);
 
-        if (empty($password)) {
-            $tempPassword = Str::random(12);
-            $attributes['password'] = bcrypt($tempPassword);
-            $attributes['must_change_password'] = true;
-        } else {
-            $attributes['password'] = bcrypt($password);
-            $attributes['must_change_password'] = true;
-            $tempPassword = $password;
-        }
-
-        $user = User::create($attributes);
-
-        Mail::to($user->email)->send(new WelcomeUserMail($user, $tempPassword));
-
-        $roleText = $attributes['role'] === 'teacher' ? 'Professor' : 'Estudante';
+        $roleText = ($attributes['role'] ?? null) === 'teacher' ? 'Professor' : 'Estudante';
 
         return redirect()->back()->with('success', "{$roleText} cadastrado com sucesso!");
     }

@@ -33,6 +33,9 @@ class UserData extends Data
 
         #[Nullable]
         public ?array $institution_ids = null,
+
+        #[Nullable]
+        public ?int $classroom_id = null,
     ) {}
 
     public static function rules(): array
@@ -61,6 +64,7 @@ class UserData extends Data
             'institution_ids.*' => [
                 'exists:institutions,id',
             ],
+            'classroom_id' => ['nullable', 'exists:classrooms,id'],
         ];
     }
 }

@@ -31,15 +31,21 @@ const isHovered = ref(false);
     >
         <slot />
         <div
-            class="pointer-events-none absolute z-50 transition-all duration-150 ease-out whitespace-nowrap rounded-lg border border-zinc-850 bg-zinc-950 px-2.5 py-1.5 text-xs font-semibold text-zinc-150 shadow-2xl backdrop-blur-md"
+            class="border-zinc-850 text-zinc-150 pointer-events-none absolute z-50 whitespace-nowrap rounded-lg border bg-zinc-950 px-2.5 py-1.5 text-xs font-semibold shadow-2xl backdrop-blur-md transition-all duration-150 ease-out"
             :class="[
-                isHovered && !disabled ? 'scale-100 opacity-100 visible' : 'scale-95 opacity-0 invisible',
+                isHovered && !disabled
+                    ? 'visible scale-100 opacity-100'
+                    : 'invisible scale-95 opacity-0',
                 {
-                    'bottom-full left-1/2 -translate-x-1/2 mb-2': position === 'top',
-                    'top-full left-1/2 -translate-x-1/2 mt-2': position === 'bottom',
-                    'right-full top-1/2 -translate-y-1/2 mr-2': position === 'left',
-                    'left-full top-1/2 -translate-y-1/2 ml-2': position === 'right',
-                }
+                    'bottom-full left-1/2 mb-2 -translate-x-1/2':
+                        position === 'top',
+                    'left-1/2 top-full mt-2 -translate-x-1/2':
+                        position === 'bottom',
+                    'right-full top-1/2 mr-2 -translate-y-1/2':
+                        position === 'left',
+                    'left-full top-1/2 ml-2 -translate-y-1/2':
+                        position === 'right',
+                },
             ]"
         >
             {{ text }}

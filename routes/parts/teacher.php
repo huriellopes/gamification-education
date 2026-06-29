@@ -2,9 +2,12 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Teacher\Classroom\IndexClassroomController;
+use App\Http\Controllers\Teacher\GenerateContentController;
 use App\Http\Controllers\Teacher\Question\DestroyQuestionController;
 use App\Http\Controllers\Teacher\Question\StoreQuestionController;
 use App\Http\Controllers\Teacher\Question\UpdateQuestionController;
+use App\Http\Controllers\Teacher\ShowSubjectContentController;
 use App\Http\Controllers\Teacher\Student\DestroyStudentController;
 use App\Http\Controllers\Teacher\Student\IndexStudentController;
 use App\Http\Controllers\Teacher\Student\ShowStudentPerformanceController;
@@ -15,9 +18,9 @@ use App\Http\Controllers\Teacher\StudyMaterial\DestroyStudyMaterialController;
 use App\Http\Controllers\Teacher\StudyMaterial\StoreStudyMaterialController;
 use App\Http\Controllers\Teacher\StudyMaterial\UpdateStudyMaterialController;
 use App\Http\Controllers\Teacher\Subject\DestroySubjectController as TeacherDestroySubjectController;
+use App\Http\Controllers\Teacher\Subject\IndexSubjectController as TeacherIndexSubjectController;
 use App\Http\Controllers\Teacher\Subject\StoreSubjectController as TeacherStoreSubjectController;
 use App\Http\Controllers\Teacher\Subject\UpdateSubjectController as TeacherUpdateSubjectController;
-use App\Http\Controllers\Teacher\TeacherContentController;
 use App\Http\Controllers\Teacher\TeacherDashboardController;
 use App\Http\Controllers\Teacher\Test\DestroyTestController;
 use App\Http\Controllers\Teacher\Test\StoreTestController;
@@ -25,9 +28,15 @@ use App\Http\Controllers\Teacher\Test\UpdateTestController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'role.teacher'])->prefix('teacher')->name('teacher.')->group(function () {
-    Route::get('/dashboard', [TeacherDashboardController::class, 'index'])->name('dashboard');
-    Route::get('/subjects/{subject}', [TeacherContentController::class, 'show'])->name('subjects.show');
-    Route::post('/subjects/{subject}/generate', [TeacherContentController::class, 'generate'])->name('subjects.generate');
+    Route::get('/dashboard', TeacherDashboardController::class)->name('dashboard');
+
+    // Minhas Classrooms
+    Route::get('/classrooms', IndexClassroomController::class)->name('classrooms.index');
+
+    // Matérias do professor
+    Route::get('/subjects', TeacherIndexSubjectController::class)->name('subjects.index');
+    Route::get('/subjects/{subject}', ShowSubjectContentController::class)->name('subjects.show');
+    Route::post('/subjects/{subject}/generate', GenerateContentController::class)->name('subjects.generate');
 
     // CRUD de Matérias
     Route::post('/subjects', TeacherStoreSubjectController::class)->name('subjects.store');

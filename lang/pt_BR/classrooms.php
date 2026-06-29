@@ -1,0 +1,44 @@
+<?php
+
+declare(strict_types=1);
+
+return [
+    'title' => 'Turmas',
+    'admin_header' => 'Gerenciar Turmas da Instituição',
+    'super_header' => 'Gerenciar Turmas (Todas as Instituições)',
+    'teacher_header' => 'Minhas Turmas',
+    'new' => 'Nova Turma',
+    'edit' => 'Editar Turma',
+    'empty' => 'Nenhuma turma cadastrada ainda.',
+    'teacher_empty' => 'Você ainda não foi vinculado a nenhuma turma.',
+    'search' => 'Buscar turmas...',
+
+    'col_name' => 'Turma',
+    'col_teacher' => 'Professor',
+    'col_institution' => 'Instituição',
+    'col_subjects' => 'Matérias',
+    'no_teacher' => 'Sem professor',
+    'no_subjects' => 'Nenhuma matéria vinculada',
+    'subjects_count' => ':count matéria(s)',
+
+    'form_name' => 'Nome da Turma',
+    'form_name_placeholder' => 'Ex.: 3º Ano A - Manhã',
+    'form_description' => 'Descrição',
+    'form_institution' => 'Instituição',
+    'form_select_institution' => 'Selecione a instituição',
+    'form_teacher' => 'Professor responsável',
+    'form_no_teacher' => 'Sem professor',
+    'form_subjects' => 'Matérias da turma',
+    'form_subjects_hint' => 'Selecione as matérias que pertencem a esta turma.',
+    'form_no_subjects_available' => 'Nenhuma matéria disponível nesta instituição.',
+
+    'enroll_label' => 'Turma do aluno',
+    'enroll_none' => 'Sem turma',
+
+    'confirm_delete_title' => 'Excluir turma',
+    'confirm_delete_message' => 'Tem certeza que deseja excluir a turma ":name"? As matérias serão desvinculadas.',
+    'confirm_toggle_title' => 'Alterar status',
+    'confirm_toggle_message' => 'Deseja :action a turma ":name"?',
+    'action_activate' => 'ativar',
+    'action_deactivate' => 'desativar',
+];

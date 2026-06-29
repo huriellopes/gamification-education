@@ -69,12 +69,24 @@ test('guest, student and admin cannot access teacher routes', function () {
         ->assertForbidden();
 });
 
-test('teacher can access dashboard and view assigned subjects', function () {
+test('teacher can access dashboard with metrics and performance', function () {
     $this->actingAs($this->teacher)
         ->get(route('teacher.dashboard'))
         ->assertOk()
         ->assertInertia(fn (Assert $page) => $page
             ->component('Teacher/Dashboard')
+            ->has('metrics')
+            ->has('classroomPerformance')
+            ->has('studentPerformance'),
+        );
+});
+
+test('teacher can list their subjects on the subjects screen', function () {
+    $this->actingAs($this->teacher)
+        ->get(route('teacher.subjects.index'))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('Teacher/Subjects/Index')
             ->has('subjects', 1),
         );
 });

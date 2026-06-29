@@ -1,4 +1,5 @@
 <script setup>
+import { __ } from '@/i18n';
 import { Head, Link } from '@inertiajs/vue3';
 import { computed } from 'vue';
 
@@ -9,27 +10,26 @@ const props = defineProps({
 const title = computed(() => {
     return (
         {
-            503: '503: Serviço Indisponível',
-            500: '500: Erro no Servidor',
-            404: '404: Página não encontrada',
-            403: '403: Acesso Negado',
-            401: '401: Não Autorizado',
-            419: '419: Página Expirada',
-        }[props.status] || 'Erro Desconhecido'
+            503: __('misc.error.title_503'),
+            500: __('misc.error.title_500'),
+            404: __('misc.error.title_404'),
+            403: __('misc.error.title_403'),
+            401: __('misc.error.title_401'),
+            419: __('misc.error.title_419'),
+        }[props.status] || __('misc.error.title_default')
     );
 });
 
 const description = computed(() => {
     return (
         {
-            503: 'Desculpe, estamos em manutenção no momento. Volte em breve.',
-            500: 'Ops, algo deu errado em nossos servidores. Nossa equipe já foi notificada.',
-            404: 'Desculpe, a página que você está procurando não existe ou foi movida.',
-            403: 'Desculpe, você não tem permissão para acessar esta página.',
-            401: 'Desculpe, você precisa estar autenticado para acessar esta página.',
-            419: 'Sua sessão expirou. Por favor, atualize a página e tente novamente.',
-        }[props.status] ||
-        'Um erro inesperado ocorreu. Por favor, tente novamente.'
+            503: __('misc.error.desc_503'),
+            500: __('misc.error.desc_500'),
+            404: __('misc.error.desc_404'),
+            403: __('misc.error.desc_403'),
+            401: __('misc.error.desc_401'),
+            419: __('misc.error.desc_419'),
+        }[props.status] || __('misc.error.desc_default')
     );
 });
 
@@ -174,7 +174,7 @@ const goBack = () => {
                                     d="M10 19l-7-7m0 0l7-7m-7 7h18"
                                 />
                             </svg>
-                            Voltar
+                            {{ __('common.back') }}
                         </button>
 
                         <Link
@@ -195,7 +195,7 @@ const goBack = () => {
                                     d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
                                 />
                             </svg>
-                            Página Inicial
+                            {{ __('common.back_home') }}
                         </Link>
                     </div>
                 </div>

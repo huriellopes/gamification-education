@@ -7,6 +7,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Enums\GeneralStatus;
 use App\Enums\UserRole;
+use App\Traits\HasRoles;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
@@ -27,8 +28,11 @@ use Spatie\DeletedModels\Models\Concerns\KeepsDeletedModels;
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, KeepsDeletedModels, Notifiable;
+    use HasFactory, HasRoles, KeepsDeletedModels, Notifiable;
 
+    /**
+     * @return BelongsTo<Institution, $this>
+     */
     public function institution(): BelongsTo
     {
         return $this->belongsTo(Institution::class);
@@ -46,9 +50,37 @@ class User extends Authenticatable
             ->withTimestamps();
     }
 
+    public function hasCompletedMaterial(int $materialId): bool
+    {
+        return $this->completedMaterials()
+            ->where('study_material_id', $materialId)
+            ->exists();
+    }
+
     public function scoreHistories(): HasMany
     {
         return $this->hasMany(ScoreHistory::class);
+    }
+
+    /**
+     * Classrooms the user is responsible for (as a teacher).
+     *
+     * @return HasMany<Classroom, $this>
+     */
+    public function classrooms(): HasMany
+    {
+        return $this->hasMany(Classroom::class, 'teacher_id');
+    }
+
+    /**
+     * Classrooms the user is enrolled in (as a student).
+     *
+     * @return BelongsToMany<Classroom, $this>
+     */
+    public function enrolledClassrooms(): BelongsToMany
+    {
+        return $this->belongsToMany(Classroom::class, 'classroom_student')
+            ->withTimestamps();
     }
 
     public function subjects(): BelongsToMany
@@ -63,49 +95,14 @@ class User extends Authenticatable
             ->withTimestamps();
     }
 
-    public function isSuperAdmin(): bool
-    {
-        return $this->role === UserRole::SUPER_ADMIN;
-    }
-
-    public function isInstitutionAdmin(): bool
-    {
-        return $this->role === UserRole::ADMIN;
-    }
-
-    public function isTeacher(): bool
-    {
-        return $this->role === UserRole::TEACHER;
-    }
-
-    public function isStudent(): bool
-    {
-        return $this->role === UserRole::STUDENT;
-    }
-
-    public function isAdmin(): bool
-    {
-        return $this->role === UserRole::ADMIN;
-    }
-
-    public function scopeStudents($query)
-    {
-        return $query->where('role', UserRole::STUDENT);
-    }
-
-    public function scopeActive($query)
-    {
-        return $query->where('is_active', GeneralStatus::ACTIVE);
-    }
-
     public static function activeStudentsCount(): int
     {
         return self::students()->active()->count();
     }
 
-    public static function studentsTotalXp(): int|float|string
+    public static function studentsTotalXp(): int
     {
-        return self::students()->sum('points');
+        return (int) self::students()->sum('points');
     }
 
     public static function getSuperAdmin(): ?self

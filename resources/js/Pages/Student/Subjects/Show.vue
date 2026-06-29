@@ -47,7 +47,9 @@ defineProps({
                     <h2 class="text-xl font-bold leading-tight text-zinc-100">
                         {{ subject.name }}
                     </h2>
-                    <p class="text-xs text-zinc-500">Trilha de Aprendizado</p>
+                    <p class="text-xs text-zinc-500">
+                        {{ __('student.subject.learning_track') }}
+                    </p>
                 </div>
             </div>
         </template>
@@ -69,10 +71,13 @@ defineProps({
                     <h3
                         class="mb-1 text-xs font-bold uppercase tracking-wider text-zinc-500"
                     >
-                        Ementa / Detalhes
+                        {{ __('student.subject.syllabus') }}
                     </h3>
                     <p class="text-sm leading-relaxed text-zinc-300">
-                        {{ subject.description || 'Sem descrição cadastrada.' }}
+                        {{
+                            subject.description ||
+                            __('student.subject.no_description')
+                        }}
                     </p>
                 </div>
 
@@ -81,8 +86,8 @@ defineProps({
                     <h3
                         class="flex items-center gap-2 text-lg font-bold text-white"
                     >
-                        <span class="text-indigo-400">🔥</span> Sua Jornada de
-                        Aprendizado
+                        <span class="text-indigo-400">🔥</span>
+                        {{ __('student.subject.your_journey') }}
                     </h3>
 
                     <div
@@ -116,14 +121,18 @@ defineProps({
                                     <div class="flex items-center gap-2">
                                         <span
                                             class="text-xs font-bold uppercase tracking-wider text-indigo-400"
-                                            >Passo {{ index + 1 }}:
-                                            Leitura</span
+                                            >{{
+                                                __(
+                                                    'student.subject.step_reading',
+                                                    { step: index + 1 },
+                                                )
+                                            }}</span
                                         >
                                         <span
                                             v-if="material.completed"
                                             class="flex items-center gap-0.5 text-xs font-bold text-emerald-400"
                                         >
-                                            ✓ Lido
+                                            {{ __('student.subject.read') }}
                                         </span>
                                     </div>
                                     <h4
@@ -132,10 +141,14 @@ defineProps({
                                         {{ material.title }}
                                     </h4>
                                     <p class="mt-0.5 text-xs text-zinc-500">
-                                        Recompensa: +{{
-                                            material.points_reward
+                                        {{
+                                            __(
+                                                'student.subject.reward_points',
+                                                {
+                                                    points: material.points_reward,
+                                                },
+                                            )
                                         }}
-                                        pontos XP
                                     </p>
                                 </div>
 
@@ -155,8 +168,12 @@ defineProps({
                                 >
                                     {{
                                         material.completed
-                                            ? 'Rever Material'
-                                            : 'Iniciar Leitura'
+                                            ? __(
+                                                  'student.subject.review_material',
+                                              )
+                                            : __(
+                                                  'student.subject.start_reading',
+                                              )
                                     }}
                                 </Link>
                             </div>
@@ -185,14 +202,22 @@ defineProps({
                                     <div class="flex items-center gap-2">
                                         <span
                                             class="text-xs font-bold uppercase tracking-wider text-yellow-500"
-                                            >Desafio Avaliativo</span
+                                            >{{
+                                                __(
+                                                    'student.subject.graded_challenge',
+                                                )
+                                            }}</span
                                         >
                                         <span
                                             v-if="test.best_score !== null"
                                             class="text-xs font-bold text-yellow-400"
                                         >
-                                            ★ Realizado (Nota Máxima:
-                                            {{ test.best_score }} pts)
+                                            {{
+                                                __(
+                                                    'student.subject.completed_max_score',
+                                                    { score: test.best_score },
+                                                )
+                                            }}
                                         </span>
                                     </div>
                                     <h4
@@ -212,26 +237,38 @@ defineProps({
                                         class="mt-2 flex items-center gap-2 text-xs text-zinc-500"
                                     >
                                         <span
-                                            >Último Rendimento:
+                                            >{{
+                                                __(
+                                                    'student.subject.last_performance',
+                                                )
+                                            }}
                                             <strong
                                                 >{{ test.correct_answers }} /
                                                 {{
                                                     test.total_questions
                                                 }}</strong
                                             >
-                                            acertos</span
+                                            {{
+                                                __(
+                                                    'student.subject.correct_answers',
+                                                )
+                                            }}</span
                                         >
                                         <span
                                             class="h-1 w-1 rounded-full bg-zinc-700"
                                         ></span>
                                         <span class="text-yellow-500"
-                                            >XP Recebido:
-                                            <strong
-                                                >+{{
-                                                    test.best_score
-                                                }}
-                                                pts</strong
-                                            ></span
+                                            >{{
+                                                __(
+                                                    'student.subject.xp_received',
+                                                )
+                                            }}
+                                            <strong>{{
+                                                __(
+                                                    'student.subject.xp_received_value',
+                                                    { score: test.best_score },
+                                                )
+                                            }}</strong></span
                                         >
                                     </div>
                                 </div>
@@ -252,8 +289,12 @@ defineProps({
                                 >
                                     {{
                                         test.best_score !== null
-                                            ? 'Refazer Desafio'
-                                            : 'Fazer Desafio'
+                                            ? __(
+                                                  'student.subject.retake_challenge',
+                                              )
+                                            : __(
+                                                  'student.subject.take_challenge',
+                                              )
                                     }}
                                 </Link>
                             </div>
@@ -263,8 +304,7 @@ defineProps({
                             v-if="materials.length === 0 && tests.length === 0"
                             class="border-zinc-850 rounded-xl border border-dashed p-8 pl-0 text-center text-sm text-zinc-500"
                         >
-                            Nenhum material de estudo ou atividade publicada
-                            para esta trilha ainda. Retorne em breve!
+                            {{ __('student.subject.empty') }}
                         </div>
                     </div>
                 </div>

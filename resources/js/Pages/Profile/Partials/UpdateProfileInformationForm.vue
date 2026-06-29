@@ -1,9 +1,10 @@
 <script setup>
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
+import { __ } from '@/i18n';
 import { Link, useForm, usePage } from '@inertiajs/vue3';
+import { User } from '@lucide/vue';
 
 defineProps({
     mustVerifyEmail: {
@@ -24,14 +25,22 @@ const form = useForm({
 
 <template>
     <section>
-        <header>
-            <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-                Profile Information
-            </h2>
-
-            <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                Update your account's profile information and email address.
-            </p>
+        <header class="flex items-start gap-3">
+            <div
+                class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-400"
+            >
+                <User class="h-5 w-5" />
+            </div>
+            <div>
+                <h2
+                    class="text-lg font-semibold text-gray-900 dark:text-gray-100"
+                >
+                    {{ __('profile.info_title') }}
+                </h2>
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                    {{ __('profile.info_subtitle') }}
+                </p>
+            </div>
         </header>
 
         <form
@@ -39,7 +48,7 @@ const form = useForm({
             class="mt-6 space-y-6"
         >
             <div>
-                <InputLabel for="name" value="Name" />
+                <InputLabel for="name" :value="__('profile.name')" />
 
                 <TextInput
                     id="name"
@@ -55,7 +64,7 @@ const form = useForm({
             </div>
 
             <div>
-                <InputLabel for="email" value="Email" />
+                <InputLabel for="email" :value="__('profile.email')" />
 
                 <TextInput
                     id="email"
@@ -71,14 +80,14 @@ const form = useForm({
 
             <div v-if="mustVerifyEmail && user.email_verified_at === null">
                 <p class="mt-2 text-sm text-gray-800 dark:text-gray-200">
-                    Your email address is unverified.
+                    {{ __('profile.email_unverified') }}
                     <Link
                         :href="route('verification.send')"
                         method="post"
                         as="button"
                         class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:text-gray-400 dark:hover:text-gray-100 dark:focus:ring-offset-gray-800"
                     >
-                        Click here to re-send the verification email.
+                        {{ __('profile.resend_verification_link') }}
                     </Link>
                 </p>
 
@@ -86,12 +95,18 @@ const form = useForm({
                     v-show="status === 'verification-link-sent'"
                     class="mt-2 text-sm font-medium text-green-600 dark:text-green-400"
                 >
-                    A new verification link has been sent to your email address.
+                    {{ __('profile.verification_sent') }}
                 </div>
             </div>
 
             <div class="flex items-center gap-4">
-                <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
+                <button
+                    type="submit"
+                    :disabled="form.processing"
+                    class="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-5 py-2.5 text-sm font-bold text-white transition-all hover:brightness-110 disabled:opacity-50"
+                >
+                    {{ __('common.save') }}
+                </button>
 
                 <Transition
                     enter-active-class="transition ease-in-out"
@@ -101,9 +116,9 @@ const form = useForm({
                 >
                     <p
                         v-if="form.recentlySuccessful"
-                        class="text-sm text-gray-600 dark:text-gray-400"
+                        class="text-sm text-gray-500 dark:text-gray-400"
                     >
-                        Saved.
+                        {{ __('common.saved') }}
                     </p>
                 </Transition>
             </div>
