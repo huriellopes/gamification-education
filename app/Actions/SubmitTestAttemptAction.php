@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions;
 
+use App\Enums\ScoreSource;
 use App\Models\Question;
 use App\Models\Test;
 use App\Models\TestAttempt;
@@ -67,7 +68,7 @@ class SubmitTestAttemptAction
                 $this->addPointsAction->execute(
                     $user,
                     $pointsDiff,
-                    'test',
+                    ScoreSource::TEST,
                     $attempt->id,
                     $description,
                 );

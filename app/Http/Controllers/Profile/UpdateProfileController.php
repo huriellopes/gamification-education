@@ -9,7 +9,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Profile\UpdateProfileRequest;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Redirect;
 
 class UpdateProfileController extends Controller
 {
@@ -23,6 +22,6 @@ class UpdateProfileController extends Controller
 
         $updateProfile($user, $request->validated());
 
-        return Redirect::route('profile.edit');
+        return to_route('profile.edit');
     }
 }

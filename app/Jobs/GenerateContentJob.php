@@ -18,6 +18,18 @@ class GenerateContentJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
+     * Número de tentativas antes de falhar.
+     */
+    public int $tries = 3;
+
+    /**
+     * Backoff (segundos) entre tentativas.
+     *
+     * @var array<int, int>
+     */
+    public array $backoff = [10, 30, 60];
+
+    /**
      * Create a new job instance.
      */
     public function __construct(

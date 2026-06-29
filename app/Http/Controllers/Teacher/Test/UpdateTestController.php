@@ -23,6 +23,6 @@ class UpdateTestController extends Controller
 
         $updateTest($test, $request->validated());
 
-        return redirect()->back()->with('success', 'Teste atualizado com sucesso!');
+        return back()->with('success', 'Teste atualizado com sucesso!');
     }
 }

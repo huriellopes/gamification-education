@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Traits;
 
-use App\Enums\GeneralStatus;
 use App\Enums\UserRole;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -44,7 +43,7 @@ trait HasRoles
      * @param  Builder<static>  $query
      * @return Builder<static>
      */
-    public function scopeRole(Builder $query, UserRole $role): Builder
+    protected function scopeRole(Builder $query, UserRole $role): Builder
     {
         return $query->where('role', $role);
     }
@@ -53,7 +52,7 @@ trait HasRoles
      * @param  Builder<static>  $query
      * @return Builder<static>
      */
-    public function scopeStudents(Builder $query): Builder
+    protected function scopeStudents(Builder $query): Builder
     {
         return $query->where('role', UserRole::STUDENT);
     }
@@ -62,26 +61,8 @@ trait HasRoles
      * @param  Builder<static>  $query
      * @return Builder<static>
      */
-    public function scopeTeachers(Builder $query): Builder
+    protected function scopeTeachers(Builder $query): Builder
     {
         return $query->where('role', UserRole::TEACHER);
-    }
-
-    /**
-     * @param  Builder<static>  $query
-     * @return Builder<static>
-     */
-    public function scopeActive(Builder $query): Builder
-    {
-        return $query->where('is_active', GeneralStatus::ACTIVE);
-    }
-
-    /**
-     * @param  Builder<static>  $query
-     * @return Builder<static>
-     */
-    public function scopeForInstitution(Builder $query, int $institutionId): Builder
-    {
-        return $query->where('institution_id', $institutionId);
     }
 }

@@ -15,9 +15,9 @@ class PruneLogController extends Controller
      */
     public function __invoke(): RedirectResponse
     {
-        PruneLogsJob::dispatch();
+        dispatch(new PruneLogsJob());
 
-        return redirect()->back()->with('flash', [
+        return back()->with('flash', [
             'success' => 'O job de limpeza de logs antigos foi enviado para a fila de processamento!',
         ]);
     }

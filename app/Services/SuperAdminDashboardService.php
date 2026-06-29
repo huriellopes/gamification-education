@@ -176,7 +176,7 @@ class SuperAdminDashboardService
     public function getFailedJobs(): array
     {
         return DB::table('failed_jobs')
-            ->orderByDesc('failed_at')
+            ->latest('failed_at')
             ->get()
             ->map(function ($job) {
                 $payload = json_decode($job->payload, true);

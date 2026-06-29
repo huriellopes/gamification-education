@@ -23,7 +23,7 @@ class RetryFailedJobController extends Controller
             $msg = "Job falho ID #{$id} foi colocado de volta na fila com sucesso!";
         }
 
-        return redirect()->back()->with('flash', [
+        return back()->with('flash', [
             'success' => $msg,
         ]);
     }

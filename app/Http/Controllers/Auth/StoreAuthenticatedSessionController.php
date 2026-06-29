@@ -30,6 +30,6 @@ class StoreAuthenticatedSessionController extends Controller
                 ->delete();
         }
 
-        return redirect()->route('dashboard');
+        return to_route('dashboard');
     }
 }

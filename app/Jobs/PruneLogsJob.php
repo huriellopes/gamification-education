@@ -17,6 +17,11 @@ class PruneLogsJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
+     * Número de tentativas antes de falhar.
+     */
+    public int $tries = 3;
+
+    /**
      * Execute the job.
      */
     public function handle(): void

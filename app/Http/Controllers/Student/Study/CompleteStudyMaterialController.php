@@ -29,11 +29,11 @@ class CompleteStudyMaterialController extends Controller
         $success = $action->execute($user, $material);
 
         if ($success) {
-            return redirect()->route('student.subjects.show', $subject)
+            return to_route('student.subjects.show', $subject)
                 ->with('success', "Leitura concluída! Você ganhou +{$material->points_reward} pontos!");
         }
 
-        return redirect()->route('student.subjects.show', $subject)
+        return to_route('student.subjects.show', $subject)
             ->with('info', 'Você já havia concluído este material anteriormente.');
     }
 }

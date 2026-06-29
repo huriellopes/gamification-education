@@ -17,6 +17,6 @@ class DestroySubjectController extends Controller
     {
         $subject->delete();
 
-        return redirect()->back()->with('success', __('messages.subject_deleted'));
+        return back()->with('success', __('messages.subject_deleted'));
     }
 }

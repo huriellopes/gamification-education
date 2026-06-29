@@ -27,7 +27,7 @@ class EnsureUserIsActive
                 $request->session()->invalidate();
                 $request->session()->regenerateToken();
 
-                return redirect()->route('login')->withErrors([
+                return to_route('login')->withErrors([
                     'email' => 'Sua conta está desativada. Entre em contato com o administrador.',
                 ]);
             }
@@ -37,7 +37,7 @@ class EnsureUserIsActive
                 $request->session()->invalidate();
                 $request->session()->regenerateToken();
 
-                return redirect()->route('login')->withErrors([
+                return to_route('login')->withErrors([
                     'email' => 'A instituição associada à sua conta está desativada.',
                 ]);
             }

@@ -25,6 +25,6 @@ class StoreQuestionController extends Controller
 
         $createQuestion($request->validated(), $test);
 
-        return redirect()->back()->with('success', 'Questão cadastrada com sucesso!');
+        return back()->with('success', 'Questão cadastrada com sucesso!');
     }
 }

@@ -29,7 +29,7 @@ class EnsurePasswordIsChanged
             ];
 
             if (!in_array($routeName, $allowedRoutes, true)) {
-                return redirect()->route('password.force-change');
+                return to_route('password.force-change');
             }
         }
 

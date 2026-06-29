@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Report;
 
+use App\Enums\ReportStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Report;
-use App\Models\User;
+use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class DownloadReportController extends Controller
@@ -16,15 +17,9 @@ class DownloadReportController extends Controller
      */
     public function __invoke(Report $report): BinaryFileResponse
     {
-        /** @var User $user */
-        $user = auth()->user();
+        Gate::authorize('download', $report);
 
-        // Garante que o relatório pertence ao usuário autenticado ou é super admin
-        if ($report->user_id !== $user->id && !$user->isSuperAdmin()) {
-            abort(403);
-        }
-
-        if ($report->status !== 'completed' || !$report->file_path || !file_exists($report->file_path)) {
+        if ($report->status !== ReportStatus::COMPLETED || !$report->file_path || !file_exists($report->file_path)) {
             abort(404, 'Relatório não disponível ou ainda processando.');
         }
 

@@ -6,6 +6,7 @@ namespace App\Jobs;
 
 use App\Actions\GetMembersReportDataAction;
 use App\Actions\GetPerformanceReportDataAction;
+use App\Enums\ReportStatus;
 use App\Models\Report;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -13,10 +14,23 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Shuchkin\SimpleXLSXGen;
+use Throwable;
 
 class GenerateReportJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    /**
+     * Número de tentativas antes de marcar o job como falho.
+     */
+    public int $tries = 3;
+
+    /**
+     * Backoff (segundos) entre tentativas.
+     *
+     * @var array<int, int>
+     */
+    public array $backoff = [10, 30, 60];
 
     /**
      * Create a new job instance.
@@ -56,7 +70,17 @@ class GenerateReportJob implements ShouldQueue
 
         $this->report->update([
             'file_path' => $filePath,
-            'status' => 'completed',
+            'status' => ReportStatus::COMPLETED,
+        ]);
+    }
+
+    /**
+     * Marca o relatório como falho quando o job esgota as tentativas.
+     */
+    public function failed(?Throwable $exception): void
+    {
+        $this->report->update([
+            'status' => ReportStatus::FAILED,
         ]);
     }
 }

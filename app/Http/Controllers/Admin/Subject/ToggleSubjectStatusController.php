@@ -24,6 +24,6 @@ class ToggleSubjectStatusController extends Controller
 
         $statusText = $newStatus === GeneralStatus::ACTIVE ? 'ativada' : 'desativada';
 
-        return redirect()->back()->with('success', "Matéria {$statusText} com sucesso!");
+        return back()->with('success', "Matéria {$statusText} com sucesso!");
     }
 }

@@ -19,11 +19,11 @@ class AuthenticateMagicLoginController extends Controller
         $authenticated = $service->authenticate($token, $request->boolean('remember'));
 
         if (!$authenticated) {
-            return redirect()->route('login')->withErrors([
+            return to_route('login')->withErrors([
                 'email' => 'Este link de login mágico é inválido ou já expirou.',
             ]);
         }
 
-        return redirect()->route('dashboard')->with('success', 'Login realizado com sucesso via Link Mágico!');
+        return to_route('dashboard')->with('success', 'Login realizado com sucesso via Link Mágico!');
     }
 }

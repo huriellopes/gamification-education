@@ -20,6 +20,6 @@ class RequestMembersReportController extends Controller
     ): RedirectResponse {
         $requestReport('Relatório de Membros', 'members');
 
-        return redirect()->back()->with('success', __('messages.report_generation_queued'));
+        return back()->with('success', __('messages.report_generation_queued'));
     }
 }

@@ -23,6 +23,6 @@ class UpdateStudentController extends Controller
 
         $updateStudent($student, $request->validated());
 
-        return redirect()->back()->with('success', 'Estudante atualizado com sucesso!');
+        return back()->with('success', 'Estudante atualizado com sucesso!');
     }
 }

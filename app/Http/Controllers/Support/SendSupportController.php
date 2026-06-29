@@ -32,7 +32,7 @@ class SendSupportController extends Controller
 
         $supportMail->notifySuperAdmin($user, $subject, $message);
 
-        return redirect()->back()->with('flash', [
+        return back()->with('flash', [
             'success' => 'Mensagem de suporte enviada com sucesso! O chamado foi registrado e o administrador foi notificado por e-mail.',
         ]);
     }

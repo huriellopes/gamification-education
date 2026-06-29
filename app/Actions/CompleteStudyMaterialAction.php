@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions;
 
+use App\Enums\ScoreSource;
 use App\Models\StudyMaterial;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -42,7 +43,7 @@ class CompleteStudyMaterialAction
             $this->addPointsAction->execute(
                 $user,
                 $material->points_reward,
-                'material',
+                ScoreSource::MATERIAL,
                 $material->id,
                 $description,
             );

@@ -30,6 +30,6 @@ class SwitchInstitutionController extends Controller
 
         $switchInstitution($user, $institution);
 
-        return redirect()->back()->with('success', "Contexto alterado para {$institution->name}!");
+        return back()->with('success', "Contexto alterado para {$institution->name}!");
     }
 }

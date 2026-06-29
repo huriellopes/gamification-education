@@ -28,6 +28,6 @@ class StoreConfirmablePasswordController extends Controller
 
         $request->session()->put('auth.password_confirmed_at', time());
 
-        return redirect()->route('dashboard');
+        return to_route('dashboard');
     }
 }

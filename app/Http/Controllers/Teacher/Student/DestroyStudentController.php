@@ -22,6 +22,6 @@ class DestroyStudentController extends Controller
 
         $deleteStudent($student);
 
-        return redirect()->back()->with('success', 'Estudante excluído com sucesso!');
+        return back()->with('success', 'Estudante excluído com sucesso!');
     }
 }

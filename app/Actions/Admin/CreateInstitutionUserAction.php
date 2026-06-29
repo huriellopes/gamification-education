@@ -9,6 +9,7 @@ use App\Enums\UserRole;
 use App\Models\Classroom;
 use App\Models\User;
 use App\Services\InstitutionUserMailService;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class CreateInstitutionUserAction
@@ -42,10 +43,15 @@ class CreateInstitutionUserAction
             $attributes['must_change_password'] = true;
         }
 
-        $user = User::create($attributes);
+        $user = DB::transaction(function () use ($attributes, $classroomId, $institutionId) {
+            $user = User::create($attributes);
 
-        $this->enrollInClassroom($user, $classroomId, $institutionId);
+            $this->enrollInClassroom($user, $classroomId, $institutionId);
 
+            return $user;
+        });
+
+        // E-mail fora da transação (mailable é ShouldQueue).
         $this->mailService->sendWelcome($user, $tempPassword);
 
         return $user;

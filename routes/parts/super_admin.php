@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\ImpersonateController;
+use App\Http\Controllers\Impersonate\ImpersonateUserController;
 use App\Http\Controllers\SuperAdmin\Classroom\DestroyClassroomController;
 use App\Http\Controllers\SuperAdmin\Classroom\IndexClassroomController;
 use App\Http\Controllers\SuperAdmin\Classroom\StoreClassroomController;
@@ -24,6 +24,7 @@ use App\Http\Controllers\SuperAdmin\Institution\UpdateInstitutionController;
 use App\Http\Controllers\SuperAdmin\PruneLogController;
 use App\Http\Controllers\SuperAdmin\RequestMembersReportController;
 use App\Http\Controllers\SuperAdmin\RequestPerformanceReportController;
+use App\Http\Controllers\SuperAdmin\RestoreDeletedModelController;
 use App\Http\Controllers\SuperAdmin\RetryFailedJobController;
 use App\Http\Controllers\SuperAdmin\Subject\DestroySubjectController;
 use App\Http\Controllers\SuperAdmin\Subject\IndexSubjectController;
@@ -31,7 +32,6 @@ use App\Http\Controllers\SuperAdmin\Subject\StoreSubjectController;
 use App\Http\Controllers\SuperAdmin\Subject\ToggleSubjectStatusController;
 use App\Http\Controllers\SuperAdmin\Subject\UpdateSubjectController;
 use App\Http\Controllers\SuperAdmin\SuperAdminDashboardController;
-use App\Http\Controllers\SuperAdmin\SuperAdminDeletedModelController;
 use App\Http\Controllers\SuperAdmin\Support\ReplySupportController;
 use App\Http\Controllers\SuperAdmin\User\DestroyUserController;
 use App\Http\Controllers\SuperAdmin\User\IndexUserController;
@@ -62,10 +62,10 @@ Route::middleware(['auth', 'role.super_admin'])->prefix('super-admin')->name('su
 
     // Lixeira
     Route::get('/trash', IndexTrashController::class)->name('trash.index');
-    Route::post('/deleted-models/{id}/restore', [SuperAdminDeletedModelController::class, 'restore'])->name('deleted-models.restore');
+    Route::post('/deleted-models/{id}/restore', RestoreDeletedModelController::class)->name('deleted-models.restore');
 
     // Impersonate
-    Route::post('/impersonate/{user}', [ImpersonateController::class, 'impersonate'])->name('impersonate');
+    Route::post('/impersonate/{user}', ImpersonateUserController::class)->name('impersonate');
 
     // Relatórios
     Route::get('/reports', IndexReportController::class)->name('reports.index');

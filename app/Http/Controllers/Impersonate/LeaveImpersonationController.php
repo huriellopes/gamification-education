@@ -28,12 +28,12 @@ class LeaveImpersonationController extends Controller
             Session::forget('impersonator_id');
             Auth::logout();
 
-            return redirect()->route('login');
+            return to_route('login');
         }
 
         Auth::login($originalUser);
         Session::forget('impersonator_id');
 
-        return redirect()->route('super-admin.dashboard');
+        return to_route('super-admin.dashboard');
     }
 }

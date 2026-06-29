@@ -20,6 +20,6 @@ class RequestPerformanceReportController extends Controller
     ): RedirectResponse {
         $requestReport('Relatório de Desempenho Global', 'performance');
 
-        return redirect()->back()->with('success', __('messages.report_generation_queued'));
+        return back()->with('success', __('messages.report_generation_queued'));
     }
 }

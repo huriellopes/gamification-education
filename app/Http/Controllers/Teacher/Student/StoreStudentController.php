@@ -22,6 +22,6 @@ class StoreStudentController extends Controller
 
         $createStudent($request->validated(), $user);
 
-        return redirect()->back()->with('success', 'Estudante cadastrado com sucesso!');
+        return back()->with('success', 'Estudante cadastrado com sucesso!');
     }
 }

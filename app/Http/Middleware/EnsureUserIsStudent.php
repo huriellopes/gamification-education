@@ -19,15 +19,15 @@ class EnsureUserIsStudent
     {
         if ($request->user()) {
             if ($request->user()->isSuperAdmin()) {
-                return redirect()->route('super-admin.dashboard');
+                return to_route('super-admin.dashboard');
             }
 
             if ($request->user()->isInstitutionAdmin()) {
-                return redirect()->route('admin.dashboard');
+                return to_route('admin.dashboard');
             }
 
             if ($request->user()->isTeacher()) {
-                return redirect()->route('teacher.dashboard');
+                return to_route('teacher.dashboard');
             }
 
             if ($request->user()->isStudent()) {

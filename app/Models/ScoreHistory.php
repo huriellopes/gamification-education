@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\ScoreSource;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
@@ -19,15 +20,6 @@ class ScoreHistory extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
-    }
-
-    /**
-     * @param  Builder<static>  $query
-     * @return Builder<static>
-     */
-    public function scopeForInstitution(Builder $query, int $institutionId): Builder
-    {
-        return $query->whereHas('user', fn (Builder $userQuery) => $userQuery->where('institution_id', $institutionId));
     }
 
     /**
@@ -49,11 +41,21 @@ class ScoreHistory extends Model
             ->all();
     }
 
+    /**
+     * @param  Builder<static>  $query
+     * @return Builder<static>
+     */
+    protected function scopeForInstitution(Builder $query, int $institutionId): Builder
+    {
+        return $query->whereHas('user', fn (Builder $userQuery) => $userQuery->where('institution_id', $institutionId));
+    }
+
     protected function casts(): array
     {
         return [
             'points' => 'integer',
             'source_id' => 'integer',
+            'source_type' => ScoreSource::class,
         ];
     }
 }

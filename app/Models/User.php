@@ -7,6 +7,8 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Enums\GeneralStatus;
 use App\Enums\UserRole;
+use App\Traits\Activatable;
+use App\Traits\BelongsToInstitution;
 use App\Traits\HasRoles;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -28,7 +30,7 @@ use Spatie\DeletedModels\Models\Concerns\KeepsDeletedModels;
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, HasRoles, KeepsDeletedModels, Notifiable;
+    use Activatable, BelongsToInstitution, HasFactory, HasRoles, KeepsDeletedModels, Notifiable;
 
     /**
      * @return BelongsTo<Institution, $this>

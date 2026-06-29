@@ -4,20 +4,17 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\SuperAdmin\Subject;
 
-use App\Data\SuperAdmin\Subject\SubjectData;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\SuperAdmin\Subject\StoreSubjectRequest;
 use App\Models\Subject;
 use Illuminate\Http\RedirectResponse;
 
 class StoreSubjectController extends Controller
 {
-    /**
-     * Handle the incoming request.
-     */
-    public function __invoke(SubjectData $data): RedirectResponse
+    public function __invoke(StoreSubjectRequest $request): RedirectResponse
     {
-        Subject::create($data->toArray());
+        Subject::create($request->validated());
 
-        return redirect()->back()->with('success', __('messages.subject_created'));
+        return back()->with('success', __('messages.subject_created'));
     }
 }

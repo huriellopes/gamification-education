@@ -16,11 +16,11 @@ class DestroyUserController extends Controller
     public function __invoke(User $user): RedirectResponse
     {
         if ($user->isSuperAdmin()) {
-            return redirect()->back()->with('error', 'Não é possível excluir um Super Administrador.');
+            return back()->with('error', 'Não é possível excluir um Super Administrador.');
         }
 
         $user->delete();
 
-        return redirect()->back()->with('success', 'Usuário enviado para a lixeira com sucesso!');
+        return back()->with('success', 'Usuário enviado para a lixeira com sucesso!');
     }
 }

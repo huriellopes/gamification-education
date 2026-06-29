@@ -22,6 +22,6 @@ class DestroyTestController extends Controller
 
         $deleteTest($test);
 
-        return redirect()->back()->with('success', 'Teste excluído com sucesso!');
+        return back()->with('success', 'Teste excluído com sucesso!');
     }
 }

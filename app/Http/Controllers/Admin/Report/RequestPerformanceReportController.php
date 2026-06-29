@@ -24,6 +24,6 @@ class RequestPerformanceReportController extends Controller
 
         $requestReport((int) $user->id, (int) $user->institution_id);
 
-        return redirect()->back()->with('success', __('messages.report_generation_queued'));
+        return back()->with('success', __('messages.report_generation_queued'));
     }
 }

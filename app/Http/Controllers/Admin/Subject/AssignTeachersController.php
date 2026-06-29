@@ -28,6 +28,6 @@ class AssignTeachersController extends Controller
 
         $assignTeachers($subject, $teacherIds);
 
-        return redirect()->back()->with('success', 'Professores associados com sucesso!');
+        return back()->with('success', 'Professores associados com sucesso!');
     }
 }

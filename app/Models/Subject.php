@@ -6,8 +6,9 @@ namespace App\Models;
 
 use App\Enums\GeneralStatus;
 use App\Enums\UserRole;
+use App\Traits\Activatable;
+use App\Traits\BelongsToInstitution;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -22,7 +23,7 @@ use Spatie\DeletedModels\Models\Concerns\KeepsDeletedModels;
 #[Fillable(['institution_id', 'classroom_id', 'name', 'slug', 'description', 'duration', 'is_active'])]
 class Subject extends Model
 {
-    use KeepsDeletedModels;
+    use Activatable, BelongsToInstitution, KeepsDeletedModels;
 
     public function institution(): BelongsTo
     {
@@ -58,24 +59,6 @@ class Subject extends Model
         return $this->belongsToMany(User::class, 'subject_user')
             ->where('users.role', UserRole::TEACHER)
             ->withTimestamps();
-    }
-
-    /**
-     * @param  Builder<static>  $query
-     * @return Builder<static>
-     */
-    public function scopeActive(Builder $query): Builder
-    {
-        return $query->where('is_active', GeneralStatus::ACTIVE);
-    }
-
-    /**
-     * @param  Builder<static>  $query
-     * @return Builder<static>
-     */
-    public function scopeForInstitution(Builder $query, int $institutionId): Builder
-    {
-        return $query->where('institution_id', $institutionId);
     }
 
     public static function activeCount(): int

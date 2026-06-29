@@ -22,6 +22,6 @@ class DestroyStudyMaterialController extends Controller
 
         $deleteStudyMaterial($material);
 
-        return redirect()->back()->with('success', 'Material de estudo excluído com sucesso!');
+        return back()->with('success', 'Material de estudo excluído com sucesso!');
     }
 }

@@ -28,6 +28,6 @@ class UpdateQuestionController extends Controller
 
         $updateQuestion($question, $request->validated());
 
-        return redirect()->back()->with('success', 'Questão atualizada com sucesso!');
+        return back()->with('success', 'Questão atualizada com sucesso!');
     }
 }

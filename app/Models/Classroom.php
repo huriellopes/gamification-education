@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\GeneralStatus;
+use App\Traits\Activatable;
+use App\Traits\BelongsToInstitution;
 use Database\Factories\ClassroomFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -22,7 +23,7 @@ use Spatie\DeletedModels\Models\Concerns\KeepsDeletedModels;
 class Classroom extends Model
 {
     /** @use HasFactory<ClassroomFactory> */
-    use HasFactory, KeepsDeletedModels;
+    use Activatable, BelongsToInstitution, HasFactory, KeepsDeletedModels;
 
     /**
      * @return BelongsTo<Institution, $this>
@@ -59,24 +60,6 @@ class Classroom extends Model
     {
         return $this->belongsToMany(User::class, 'classroom_student')
             ->withTimestamps();
-    }
-
-    /**
-     * @param  Builder<static>  $query
-     * @return Builder<static>
-     */
-    public function scopeForInstitution(Builder $query, int $institutionId): Builder
-    {
-        return $query->where('institution_id', $institutionId);
-    }
-
-    /**
-     * @param  Builder<static>  $query
-     * @return Builder<static>
-     */
-    public function scopeActive(Builder $query): Builder
-    {
-        return $query->where('is_active', GeneralStatus::ACTIVE);
     }
 
     protected function casts(): array

@@ -66,6 +66,9 @@ jobs:
       - name: Run PHPStan (Static Analysis)
         run: ./vendor/bin/phpstan analyse --no-progress --memory-limit=1G
 
+      - name: Run Rector (Automated Refactoring — check only)
+        run: ./vendor/bin/rector process --dry-run
+
       - name: Run ESLint (Vue/JS Linter)
         # No --fix in CI: lint should report, not rewrite files. Errors fail the build;
         # prettier-style warnings are reported but non-blocking (run `npm run lint` locally to fix).

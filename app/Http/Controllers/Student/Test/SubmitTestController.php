@@ -42,7 +42,7 @@ class SubmitTestController extends Controller
         $total = $attempt->total_questions;
         $score = $attempt->score; // Pontos obtidos
 
-        return redirect()->route('student.subjects.show', $subject)
+        return to_route('student.subjects.show', $subject)
             ->with('success', "Atividade enviada! Você acertou {$correct} de {$total} questões e obteve {$score} pontos nesta tentativa.");
     }
 }

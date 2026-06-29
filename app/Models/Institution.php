@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Str;
 use Spatie\DeletedModels\Models\Concerns\KeepsDeletedModels;
 
 /**
@@ -35,26 +34,6 @@ class Institution extends Model
     public function classrooms(): HasMany
     {
         return $this->hasMany(Classroom::class);
-    }
-
-    protected static function booted()
-    {
-        static::creating(function ($institution) {
-            if (empty($institution->razao_social)) {
-                $institution->razao_social = $institution->name . ' Ltda';
-            }
-
-            if (empty($institution->slug)) {
-                $institution->slug = Str::slug($institution->name) ?: 'inst-' . Str::random(6);
-
-                $originalSlug = $institution->slug;
-                $count = 1;
-
-                while (static::where('slug', $institution->slug)->exists()) {
-                    $institution->slug = $originalSlug . '-' . $count++;
-                }
-            }
-        });
     }
 
     protected function casts(): array

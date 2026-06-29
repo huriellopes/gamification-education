@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\Admin;
 
+use App\Enums\ReportStatus;
 use App\Jobs\GenerateReportJob;
 use App\Models\Report;
 
@@ -17,10 +18,10 @@ class RequestPerformanceReportAction
         $report = Report::create([
             'user_id' => $userId,
             'name' => 'Relatório de Desempenho da Instituição',
-            'status' => 'pending',
+            'status' => ReportStatus::PENDING,
         ]);
 
-        GenerateReportJob::dispatch($report, 'performance', $institutionId);
+        dispatch(new GenerateReportJob($report, 'performance', $institutionId));
 
         return $report;
     }

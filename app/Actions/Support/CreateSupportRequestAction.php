@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\Support;
 
+use App\Enums\SupportStatus;
 use App\Models\Support;
 use App\Models\User;
 
@@ -14,6 +15,11 @@ class CreateSupportRequestAction
      */
     public function __invoke(User $user, string $subject, string $message): Support
     {
-        return Support::createRequest($user, $subject, $message);
+        return Support::create([
+            'user_id' => $user->id,
+            'subject' => $subject,
+            'message' => $message,
+            'status' => SupportStatus::PENDING,
+        ]);
     }
 }

@@ -25,6 +25,6 @@ class ToggleStudentStatusController extends Controller
 
         $statusText = $newStatus === GeneralStatus::ACTIVE ? 'ativado' : 'desativado';
 
-        return redirect()->back()->with('success', "Estudante {$statusText} com sucesso!");
+        return back()->with('success', "Estudante {$statusText} com sucesso!");
     }
 }
