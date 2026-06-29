@@ -1,34 +1,42 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, router, Link } from '@inertiajs/vue3';
-import { ref, watch, computed } from 'vue';
+import DataTable from '@/Components/DataTable.vue';
+import { Head, router } from '@inertiajs/vue3';
+import { computed, ref, watch } from 'vue';
 
 const props = defineProps({
     globalRanking: {
         type: Array,
-        default: () => []
+        default: () => [],
     },
     institutionRanking: {
         type: Array,
-        default: () => []
+        default: () => [],
     },
     subjectRanking: {
         type: Array,
-        default: () => []
+        default: () => [],
     },
     subjects: {
         type: Array,
-        default: () => []
+        default: () => [],
     },
     selectedSubjectId: {
         type: Number,
-        default: null
+        default: null,
     },
     selectedSubject: {
         type: Object,
-        default: null
-    }
+        default: null,
+    },
 });
+
+const rankingHeaders = [
+    { key: 'position', label: 'Posição', sortable: true },
+    { key: 'name', label: 'Estudante', sortable: true },
+    { key: 'institution', label: 'Instituição', sortable: true },
+    { key: 'points', label: 'Pontuação (XP)', sortable: true, align: 'right' },
+];
 
 // Abas de ranking: 'global', 'institution', 'subject'
 const activeTab = ref(props.selectedSubjectId ? 'subject' : 'global');
@@ -45,26 +53,30 @@ const currentRanking = computed(() => {
 const podium = computed(() => {
     const list = currentRanking.value;
     const top3 = { first: null, second: null, third: null };
-    
-    list.forEach(user => {
+
+    list.forEach((user) => {
         if (user.position === 1) top3.first = user;
         else if (user.position === 2) top3.second = user;
         else if (user.position === 3) top3.third = user;
     });
-    
+
     return top3;
 });
 
 // Lista dos restantes (posição 4 em diante)
 const remainingRanks = computed(() => {
-    return currentRanking.value.filter(user => user.position > 3);
+    return currentRanking.value.filter((user) => user.position > 3);
 });
 
 // Observa alteração de matéria para disparar filtro via Inertia
 watch(localSelectedSubjectId, (newId) => {
     if (newId) {
         activeTab.value = 'subject';
-        router.get(route('ranking.index'), { subject_id: newId }, { preserveState: true });
+        router.get(
+            route('ranking.index'),
+            { subject_id: newId },
+            { preserveState: true },
+        );
     }
 });
 
@@ -89,16 +101,23 @@ const setTab = (tabName) => {
             </h2>
         </template>
 
-        <div class="py-12 bg-zinc-955 min-h-[calc(100vh-64px)] text-zinc-100 pb-20">
-            <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 space-y-10">
-                
+        <div
+            class="bg-zinc-955 min-h-[calc(100vh-64px)] py-12 pb-20 text-zinc-100"
+        >
+            <div class="mx-auto max-w-5xl space-y-10 px-4 sm:px-6 lg:px-8">
                 <!-- Abas de Navegação (Tabs Premium) -->
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-zinc-800 pb-4 gap-4">
+                <div
+                    class="flex flex-col items-start justify-between gap-4 border-b border-zinc-800 pb-4 sm:flex-row sm:items-center"
+                >
                     <div class="flex flex-wrap gap-2">
                         <button
                             @click="setTab('global')"
                             class="rounded-xl px-4 py-2 text-xs font-bold transition-all"
-                            :class="activeTab === 'global' ? 'bg-indigo-600 text-white shadow-[0_0_15px_rgba(99,102,241,0.3)]' : 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:text-white'"
+                            :class="
+                                activeTab === 'global'
+                                    ? 'bg-indigo-600 text-white shadow-[0_0_15px_rgba(99,102,241,0.3)]'
+                                    : 'border border-zinc-800 bg-zinc-900 text-zinc-400 hover:text-white'
+                            "
                         >
                             Global
                         </button>
@@ -106,7 +125,11 @@ const setTab = (tabName) => {
                             v-if="$page.props.auth.user.institution_id"
                             @click="setTab('institution')"
                             class="rounded-xl px-4 py-2 text-xs font-bold transition-all"
-                            :class="activeTab === 'institution' ? 'bg-indigo-600 text-white shadow-[0_0_15px_rgba(99,102,241,0.3)]' : 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:text-white'"
+                            :class="
+                                activeTab === 'institution'
+                                    ? 'bg-indigo-600 text-white shadow-[0_0_15px_rgba(99,102,241,0.3)]'
+                                    : 'border border-zinc-800 bg-zinc-900 text-zinc-400 hover:text-white'
+                            "
                         >
                             Minha Instituição
                         </button>
@@ -119,7 +142,11 @@ const setTab = (tabName) => {
                             class="w-full rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-2 text-xs text-zinc-300 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                         >
                             <option value="">Filtrar por Matéria...</option>
-                            <option v-for="subj in subjects" :key="subj.id" :value="subj.id">
+                            <option
+                                v-for="subj in subjects"
+                                :key="subj.id"
+                                :value="subj.id"
+                            >
                                 {{ subj.name }}
                             </option>
                         </select>
@@ -128,91 +155,172 @@ const setTab = (tabName) => {
 
                 <!-- Título Informativo do Ranking Selecionado -->
                 <div class="text-center">
-                    <h3 class="text-xl font-extrabold text-white tracking-tight">
-                        <span v-if="activeTab === 'global'">🏆 Classificação Geral</span>
-                        <span v-else-if="activeTab === 'institution'">🏫 Ranking da {{ $page.props.auth.user.institution?.name }}</span>
-                        <span v-else-if="activeTab === 'subject'">📚 Desempenho em: {{ selectedSubject?.name }}</span>
+                    <h3
+                        class="text-xl font-extrabold tracking-tight text-white"
+                    >
+                        <span v-if="activeTab === 'global'"
+                            >🏆 Classificação Geral</span
+                        >
+                        <span v-else-if="activeTab === 'institution'"
+                            >🏫 Ranking da
+                            {{ $page.props.auth.user.institution?.name }}</span
+                        >
+                        <span v-else-if="activeTab === 'subject'"
+                            >📚 Desempenho em: {{ selectedSubject?.name }}</span
+                        >
                     </h3>
-                    <p class="text-xs text-zinc-500 mt-1">Os melhores estudantes baseados em XP e desempenho.</p>
+                    <p class="mt-1 text-xs text-zinc-500">
+                        Os melhores estudantes baseados em XP e desempenho.
+                    </p>
                 </div>
 
-                <div v-if="currentRanking.length === 0" class="rounded-2xl border border-dashed border-zinc-850 p-16 text-center text-zinc-500 text-sm">
+                <div
+                    v-if="currentRanking.length === 0"
+                    class="border-zinc-850 rounded-2xl border border-dashed p-16 text-center text-sm text-zinc-500"
+                >
                     Nenhuma pontuação registrada nesta modalidade ainda.
                 </div>
 
                 <div v-else class="space-y-12">
                     <!-- PODIUM 3D / VISUAL (Exibe apenas se tiver posições de pódio) -->
-                    <div v-if="podium.first || podium.second || podium.third" class="flex items-end justify-center gap-4 sm:gap-8 pt-8 max-w-2xl mx-auto min-h-[300px]">
-                        
+                    <div
+                        v-if="podium.first || podium.second || podium.third"
+                        class="mx-auto flex min-h-[300px] max-w-2xl items-end justify-center gap-4 pt-8 sm:gap-8"
+                    >
                         <!-- 2º LUGAR (Prata) -->
-                        <div v-if="podium.second" class="flex flex-col items-center w-28 sm:w-36 text-center">
-                            <span class="text-4xl mb-1">🥈</span>
-                            <div class="text-xs font-bold text-zinc-200 truncate w-full px-1">{{ podium.second.name }}</div>
-                            <div class="text-[9px] text-zinc-500 truncate w-full mb-2">{{ podium.second.institution }}</div>
+                        <div
+                            v-if="podium.second"
+                            class="flex w-28 flex-col items-center text-center sm:w-36"
+                        >
+                            <span class="mb-1 text-4xl">🥈</span>
+                            <div
+                                class="w-full truncate px-1 text-xs font-bold text-zinc-200"
+                            >
+                                {{ podium.second.name }}
+                            </div>
+                            <div
+                                class="mb-2 w-full truncate text-[9px] text-zinc-500"
+                            >
+                                {{ podium.second.institution }}
+                            </div>
                             <!-- Pilar -->
-                            <div class="w-full bg-gradient-to-t from-zinc-900 to-zinc-800 border-x border-t border-zinc-700/50 rounded-t-2xl h-28 flex flex-col justify-center items-center shadow-lg">
-                                <span class="text-2xl font-black text-zinc-400">2º</span>
-                                <span class="text-[10px] font-bold text-yellow-500 mt-1">{{ podium.second.points.toLocaleString() }} XP</span>
+                            <div
+                                class="flex h-28 w-full flex-col items-center justify-center rounded-t-2xl border-x border-t border-zinc-700/50 bg-gradient-to-t from-zinc-900 to-zinc-800 shadow-lg"
+                            >
+                                <span class="text-2xl font-black text-zinc-400"
+                                    >2º</span
+                                >
+                                <span
+                                    class="mt-1 text-[10px] font-bold text-yellow-500"
+                                    >{{
+                                        podium.second.points.toLocaleString()
+                                    }}
+                                    XP</span
+                                >
                             </div>
                         </div>
                         <div v-else class="w-28 sm:w-36"></div>
 
                         <!-- 1º LUGAR (Ouro) -->
-                        <div v-if="podium.first" class="flex flex-col items-center w-32 sm:w-44 text-center">
-                            <span class="text-5xl mb-2 animate-bounce">🥇</span>
-                            <div class="text-sm font-black text-white truncate w-full px-1">{{ podium.first.name }}</div>
-                            <div class="text-[9px] text-indigo-400 truncate w-full mb-3">{{ podium.first.institution }}</div>
+                        <div
+                            v-if="podium.first"
+                            class="flex w-32 flex-col items-center text-center sm:w-44"
+                        >
+                            <span class="mb-2 animate-bounce text-5xl">🥇</span>
+                            <div
+                                class="w-full truncate px-1 text-sm font-black text-white"
+                            >
+                                {{ podium.first.name }}
+                            </div>
+                            <div
+                                class="mb-3 w-full truncate text-[9px] text-indigo-400"
+                            >
+                                {{ podium.first.institution }}
+                            </div>
                             <!-- Pilar -->
-                            <div class="w-full bg-gradient-to-t from-indigo-950/80 to-indigo-900 border-x border-t border-indigo-500/30 rounded-t-2xl h-40 flex flex-col justify-center items-center shadow-2xl relative border-indigo-500/20">
-                                <div class="absolute inset-0 bg-yellow-500/5 rounded-t-2xl animate-pulse"></div>
-                                <span class="text-3xl font-black text-yellow-400 relative z-10">1º</span>
-                                <span class="text-xs font-extrabold text-yellow-400 mt-1 relative z-10">{{ podium.first.points.toLocaleString() }} XP</span>
+                            <div
+                                class="relative flex h-40 w-full flex-col items-center justify-center rounded-t-2xl border-x border-t border-indigo-500/20 border-indigo-500/30 bg-gradient-to-t from-indigo-950/80 to-indigo-900 shadow-2xl"
+                            >
+                                <div
+                                    class="absolute inset-0 animate-pulse rounded-t-2xl bg-yellow-500/5"
+                                ></div>
+                                <span
+                                    class="relative z-10 text-3xl font-black text-yellow-400"
+                                    >1º</span
+                                >
+                                <span
+                                    class="relative z-10 mt-1 text-xs font-extrabold text-yellow-400"
+                                    >{{
+                                        podium.first.points.toLocaleString()
+                                    }}
+                                    XP</span
+                                >
                             </div>
                         </div>
 
                         <!-- 3º LUGAR (Bronze) -->
-                        <div v-if="podium.third" class="flex flex-col items-center w-28 sm:w-36 text-center">
-                            <span class="text-4xl mb-1">🥉</span>
-                            <div class="text-xs font-bold text-zinc-200 truncate w-full px-1">{{ podium.third.name }}</div>
-                            <div class="text-[9px] text-zinc-500 truncate w-full mb-2">{{ podium.third.institution }}</div>
+                        <div
+                            v-if="podium.third"
+                            class="flex w-28 flex-col items-center text-center sm:w-36"
+                        >
+                            <span class="mb-1 text-4xl">🥉</span>
+                            <div
+                                class="w-full truncate px-1 text-xs font-bold text-zinc-200"
+                            >
+                                {{ podium.third.name }}
+                            </div>
+                            <div
+                                class="mb-2 w-full truncate text-[9px] text-zinc-500"
+                            >
+                                {{ podium.third.institution }}
+                            </div>
                             <!-- Pilar -->
-                            <div class="w-full bg-gradient-to-t from-zinc-900 to-amber-950/40 border-x border-t border-zinc-800 rounded-t-2xl h-20 flex flex-col justify-center items-center shadow-md">
-                                <span class="text-2xl font-black text-amber-600">3º</span>
-                                <span class="text-[10px] font-bold text-yellow-500 mt-1">{{ podium.third.points.toLocaleString() }} XP</span>
+                            <div
+                                class="flex h-20 w-full flex-col items-center justify-center rounded-t-2xl border-x border-t border-zinc-800 bg-gradient-to-t from-zinc-900 to-amber-950/40 shadow-md"
+                            >
+                                <span class="text-2xl font-black text-amber-600"
+                                    >3º</span
+                                >
+                                <span
+                                    class="mt-1 text-[10px] font-bold text-yellow-500"
+                                    >{{
+                                        podium.third.points.toLocaleString()
+                                    }}
+                                    XP</span
+                                >
                             </div>
                         </div>
                         <div v-else class="w-28 sm:w-36"></div>
                     </div>
 
                     <!-- TABELA PARA O RESTO DOS INTEGRANTES (Posição 4 em diante) -->
-                    <div v-if="remainingRanks.length > 0" class="rounded-2xl border border-zinc-800 bg-zinc-900/30 overflow-hidden shadow-xl">
-                        <table class="min-w-full text-left text-sm">
-                            <thead class="bg-zinc-900/60 text-xs font-bold uppercase tracking-wider text-zinc-500 border-b border-zinc-850">
-                                <tr>
-                                    <th scope="col" class="px-6 py-4">Posição</th>
-                                    <th scope="col" class="px-6 py-4">Estudante</th>
-                                    <th scope="col" class="px-6 py-4">Instituição</th>
-                                    <th scope="col" class="px-6 py-4 text-right">Pontuação (XP)</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-zinc-850/50 text-zinc-300">
-                                <tr
-                                    v-for="user in remainingRanks"
-                                    :key="user.position"
-                                    class="transition-colors hover:bg-zinc-800/10"
-                                >
-                                    <td class="whitespace-nowrap px-6 py-4 font-bold text-zinc-400">#{{ user.position }}</td>
-                                    <td class="whitespace-nowrap px-6 py-4 font-semibold text-white">{{ user.name }}</td>
-                                    <td class="whitespace-nowrap px-6 py-4 text-zinc-450">{{ user.institution }}</td>
-                                    <td class="whitespace-nowrap px-6 py-4 text-right font-bold text-yellow-400">
-                                        {{ user.points.toLocaleString() }} <span class="text-[10px] text-zinc-500 font-semibold uppercase">xp</span>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <div
+                        v-if="remainingRanks.length > 0"
+                        class="rounded-2xl border border-zinc-800 bg-zinc-900/10 p-6 shadow-xl"
+                    >
+                        <DataTable
+                            :items="remainingRanks"
+                            :columns="rankingHeaders"
+                            searchPlaceholder="Buscar por estudante ou instituição..."
+                        >
+                            <template #position="{ item }">
+                                <span class="font-bold text-zinc-400">#{{ item.position }}</span>
+                            </template>
+                            <template #name="{ item }">
+                                <span class="font-semibold text-white">{{ item.name }}</span>
+                            </template>
+                            <template #institution="{ item }">
+                                <span class="text-zinc-400">{{ item.institution }}</span>
+                            </template>
+                            <template #points="{ item }">
+                                <span class="font-bold text-yellow-400">
+                                    {{ item.points.toLocaleString() }}
+                                    <span class="text-[10px] font-semibold uppercase text-zinc-500">xp</span>
+                                </span>
+                            </template>
+                        </DataTable>
                     </div>
                 </div>
-
             </div>
         </div>
     </AuthenticatedLayout>

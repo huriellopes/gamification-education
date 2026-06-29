@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Actions;
 
+use App\Models\Question;
 use App\Models\Subject;
 use App\Models\Test;
-use App\Models\Question;
 use App\Services\MaterialGenerationService;
 use Illuminate\Support\Facades\DB;
 
@@ -19,10 +21,6 @@ class GenerateTestForSubjectAction
 
     /**
      * Gera um teste e suas questões a partir de um tema.
-     *
-     * @param Subject $subject
-     * @param string $theme
-     * @return Test
      */
     public function execute(Subject $subject, string $theme): Test
     {
