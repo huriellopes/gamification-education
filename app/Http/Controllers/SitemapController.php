@@ -26,6 +26,18 @@ class SitemapController extends Controller
                 'changefreq' => 'monthly',
                 'priority' => '0.8',
             ],
+            [
+                'loc' => route('legal.privacy'),
+                'lastmod' => today()->toAtomString(),
+                'changefreq' => 'yearly',
+                'priority' => '0.5',
+            ],
+            [
+                'loc' => route('legal.guidelines'),
+                'lastmod' => today()->toAtomString(),
+                'changefreq' => 'yearly',
+                'priority' => '0.5',
+            ],
         ];
 
         $xml = '<?xml version="1.0" encoding="UTF-8"?>';

@@ -25,8 +25,17 @@ class StudentDashboardService
             return [];
         }
 
+        // O aluno só enxerga as matérias (ativas) das turmas em que está matriculado.
+        $classroomIds = $user->enrolledClassrooms()->pluck('classrooms.id');
+
+        if ($classroomIds->isEmpty()) {
+            return [];
+        }
+
         return Subject::query()
+            ->active()
             ->forInstitution($user->institution_id)
+            ->whereIn('classroom_id', $classroomIds)
             ->with(['studyMaterials', 'tests'])
             ->get()
             ->map(function (Subject $subject) use ($user) {

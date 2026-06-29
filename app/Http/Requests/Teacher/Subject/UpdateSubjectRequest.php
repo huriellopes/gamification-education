@@ -6,6 +6,7 @@ namespace App\Http\Requests\Teacher\Subject;
 
 use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateSubjectRequest extends FormRequest
 {
@@ -30,6 +31,13 @@ class UpdateSubjectRequest extends FormRequest
             'institution_id' => [
                 $user?->isSuperAdmin() ? 'required' : 'nullable',
                 'exists:institutions,id',
+            ],
+            // O professor só pode vincular a matéria a uma turma sob sua responsabilidade.
+            'classroom_id' => [
+                'nullable',
+                Rule::exists('classrooms', 'id')->where(
+                    fn ($query) => $query->where('teacher_id', $user?->id),
+                ),
             ],
         ];
     }

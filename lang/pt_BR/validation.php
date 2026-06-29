@@ -34,4 +34,5 @@ return [
     'string' => 'O campo :attribute deve ser uma string.',
     'unique' => 'O campo :attribute já está sendo utilizado.',
     'url' => 'O campo :attribute deve ser uma URL válida.',
+    'correct_option_out_of_range' => 'A resposta correta deve ser uma das opções informadas.',
 ];

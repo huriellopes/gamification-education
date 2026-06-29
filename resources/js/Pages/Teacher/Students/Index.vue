@@ -2,6 +2,7 @@
 import BaseModal from '@/Components/BaseModal.vue';
 import ConfirmModal from '@/Components/ConfirmModal.vue';
 import DataTable from '@/Components/DataTable.vue';
+import SelectInput from '@/Components/SelectInput.vue';
 import TextInput from '@/Components/TextInput.vue';
 import Tooltip from '@/Components/Tooltip.vue';
 import { __ } from '@/i18n';
@@ -201,7 +202,7 @@ const toggleStatus = (student) => {
             </div>
         </template>
 
-        <div class="bg-zinc-955 min-h-[calc(100vh-64px)] py-12 text-zinc-100">
+        <div class="bg-zinc-955 min-h-[calc(100vh-80px)] py-12 text-zinc-100">
             <div class="mx-auto max-w-7xl space-y-8 px-4 sm:px-6 lg:px-8">
                 <!-- Toast/Flash Message -->
                 <div
@@ -422,10 +423,7 @@ const toggleStatus = (student) => {
                         class="mb-2 block text-xs font-bold uppercase text-zinc-400"
                         >{{ __('classrooms.enroll_label') }}</label
                     >
-                    <select
-                        v-model="form.classroom_id"
-                        class="block w-full rounded-xl border-zinc-700 bg-zinc-900 text-sm text-zinc-200 focus:border-indigo-500 focus:ring-indigo-500"
-                    >
+                    <SelectInput v-model="form.classroom_id">
                         <option value="">
                             {{ __('classrooms.enroll_none') }}
                         </option>
@@ -436,7 +434,7 @@ const toggleStatus = (student) => {
                         >
                             {{ c.name }}
                         </option>
-                    </select>
+                    </SelectInput>
                     <span
                         v-if="form.errors.classroom_id"
                         class="mt-1 block text-xs text-red-500"

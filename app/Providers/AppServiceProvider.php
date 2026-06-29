@@ -8,8 +8,10 @@ use App\Events\MilestoneReached;
 use App\Listeners\SendMilestoneReachedEmail;
 use App\Listeners\UpdateLastLoginAt;
 use App\Models\Institution;
+use App\Models\Subject;
 use App\Models\User;
 use App\Observers\InstitutionObserver;
+use App\Observers\SubjectObserver;
 use App\Observers\UserObserver;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -35,6 +37,7 @@ class AppServiceProvider extends ServiceProvider
         Vite::prefetch(concurrency: 3);
         User::observe(UserObserver::class);
         Institution::observe(InstitutionObserver::class);
+        Subject::observe(SubjectObserver::class);
         JsonResource::withoutWrapping();
 
         Event::listen(Login::class, UpdateLastLoginAt::class);

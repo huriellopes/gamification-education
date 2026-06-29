@@ -180,6 +180,8 @@ return [
     |
     */
 
+    'correct_option_out_of_range' => 'The correct answer must be one of the provided options.',
+
     'custom' => [
         'attribute-name' => [
             'rule-name' => 'custom-message',

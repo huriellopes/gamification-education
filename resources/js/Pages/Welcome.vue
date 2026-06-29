@@ -4,6 +4,7 @@ import {
     ArrowRight,
     BookOpen,
     CheckCircle2,
+    Cookie,
     GraduationCap,
     LogIn,
     Menu,
@@ -596,8 +597,23 @@ const enableAds = () => {
 
         <!-- Footer -->
         <footer
-            class="mx-auto max-w-7xl px-4 py-12 text-center font-mono text-xs text-zinc-600 sm:px-6 lg:px-8"
+            class="mx-auto flex max-w-7xl flex-col items-center gap-4 px-4 py-12 text-center font-mono text-xs text-zinc-600 sm:px-6 lg:px-8"
         >
+            <div class="flex items-center gap-4">
+                <Link
+                    :href="route('legal.privacy')"
+                    class="font-semibold transition-colors hover:text-indigo-400"
+                >
+                    {{ __('welcome.legal.privacy') }}
+                </Link>
+                <span class="text-zinc-800" aria-hidden="true">/</span>
+                <Link
+                    :href="route('legal.guidelines')"
+                    class="font-semibold transition-colors hover:text-indigo-400"
+                >
+                    {{ __('welcome.legal.guidelines') }}
+                </Link>
+            </div>
             <span>{{
                 __('welcome.footer', { year: new Date().getFullYear() })
             }}</span>
@@ -614,31 +630,65 @@ const enableAds = () => {
         >
             <div
                 v-if="showCookieConsent"
-                class="fixed inset-x-0 bottom-0 z-50 border-t border-zinc-800 bg-zinc-950/90 p-4 shadow-2xl backdrop-blur-xl sm:p-6"
+                class="fixed inset-x-0 bottom-0 z-50 px-3 pb-3 sm:px-4 sm:pb-4"
+                role="dialog"
+                aria-modal="false"
+                :aria-label="__('welcome.cookie.title')"
             >
                 <div
-                    class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 md:flex-row"
+                    class="mx-auto flex max-w-5xl flex-col gap-5 rounded-2xl border border-zinc-800 bg-zinc-900/95 p-5 shadow-2xl shadow-black/40 backdrop-blur-xl sm:p-6 lg:flex-row lg:items-center lg:justify-between"
                 >
-                    <div
-                        class="max-w-4xl text-center text-sm font-medium text-zinc-300 md:text-left"
-                    >
-                        <span class="mb-1 block font-bold text-indigo-400">{{
-                            __('welcome.cookie.title')
-                        }}</span>
-                        {{ __('welcome.cookie.body') }}
+                    <div class="flex items-start gap-4">
+                        <span
+                            class="hidden shrink-0 rounded-xl border border-indigo-500/20 bg-indigo-500/10 p-2.5 text-indigo-400 sm:inline-flex"
+                            aria-hidden="true"
+                        >
+                            <Cookie class="h-6 w-6" />
+                        </span>
+                        <div
+                            class="max-w-2xl text-center text-sm font-medium text-zinc-300 sm:text-left"
+                        >
+                            <span
+                                class="mb-1 block text-base font-bold text-white"
+                                >{{ __('welcome.cookie.title') }}</span
+                            >
+                            {{ __('welcome.cookie.body') }}
+                            <span
+                                class="mt-2 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-xs text-zinc-500 sm:justify-start"
+                            >
+                                <span>{{
+                                    __('welcome.cookie.learn_more')
+                                }}</span>
+                                <Link
+                                    :href="route('legal.privacy')"
+                                    class="font-semibold text-indigo-400 underline-offset-2 hover:underline"
+                                    >{{ __('welcome.legal.privacy') }}</Link
+                                >
+                                <span class="text-zinc-700" aria-hidden="true"
+                                    >·</span
+                                >
+                                <Link
+                                    :href="route('legal.guidelines')"
+                                    class="font-semibold text-indigo-400 underline-offset-2 hover:underline"
+                                    >{{ __('welcome.legal.guidelines') }}</Link
+                                >
+                            </span>
+                        </div>
                     </div>
                     <div
-                        class="flex w-full items-center justify-center gap-3 md:w-auto"
+                        class="flex w-full shrink-0 items-center justify-center gap-3 lg:w-auto"
                     >
                         <button
+                            type="button"
                             @click="declineCookies"
-                            class="flex-1 rounded-xl border border-zinc-800 px-5 py-2.5 text-xs font-bold text-zinc-400 transition-all hover:bg-zinc-900 hover:text-white focus:outline-none md:flex-none"
+                            class="flex-1 rounded-xl border border-zinc-800 px-5 py-2.5 text-xs font-bold text-zinc-400 transition-all hover:bg-zinc-800 hover:text-white focus:outline-none focus:ring-2 focus:ring-zinc-700 lg:flex-none"
                         >
                             {{ __('welcome.cookie.decline') }}
                         </button>
                         <button
+                            type="button"
                             @click="acceptCookies"
-                            class="flex-1 rounded-xl bg-indigo-600 px-5 py-2.5 text-xs font-bold text-white shadow-lg shadow-indigo-600/25 transition-all hover:bg-indigo-500 focus:outline-none md:flex-none"
+                            class="flex-1 rounded-xl bg-indigo-600 px-5 py-2.5 text-xs font-bold text-white shadow-lg shadow-indigo-600/25 transition-all hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-400 lg:flex-none"
                         >
                             {{ __('welcome.cookie.accept') }}
                         </button>

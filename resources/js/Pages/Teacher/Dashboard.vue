@@ -66,7 +66,7 @@ onUnmounted(() => {
             </h2>
         </template>
 
-        <div class="min-h-[calc(100vh-64px)] bg-zinc-950 py-12 text-zinc-100">
+        <div class="min-h-[calc(100vh-80px)] bg-zinc-950 py-12 text-zinc-100">
             <div class="mx-auto max-w-7xl space-y-8 px-4 sm:px-6 lg:px-8">
                 <WelcomeWidget />
 

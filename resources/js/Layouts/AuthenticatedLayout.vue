@@ -69,7 +69,7 @@ const switchInstitution = (id) => {
 </script>
 
 <template>
-    <div>
+    <div class="flex h-screen flex-col overflow-hidden">
         <Toast />
         <!-- Impersonation Banner -->
         <div
@@ -96,18 +96,18 @@ const switchInstitution = (id) => {
         </div>
 
         <div
-            class="relative flex min-h-screen overflow-hidden bg-zinc-950 text-zinc-100"
+            class="relative flex min-h-0 flex-1 overflow-hidden bg-zinc-950 text-zinc-100"
         >
             <!-- Left Sidebar (Desktop Only) -->
             <aside
                 :class="isSidebarCollapsed ? 'w-20 overflow-visible' : 'w-64'"
-                class="no-scrollbar hidden shrink-0 select-none flex-col border-r border-zinc-800/80 bg-zinc-900/60 backdrop-blur-xl transition-all duration-300 md:flex"
+                class="no-scrollbar relative z-30 hidden h-full shrink-0 select-none flex-col border-r border-zinc-800/80 bg-zinc-900/60 backdrop-blur-xl transition-all duration-300 md:flex"
                 :aria-label="__('nav.aria.main_nav')"
                 role="complementary"
             >
                 <!-- Sidebar Header / Logo -->
                 <div
-                    class="flex h-16 items-center justify-between border-b border-zinc-800/80 px-4"
+                    class="flex h-20 items-center justify-between border-b border-zinc-800/80 px-4"
                 >
                     <!-- Collapsed Version (Clicking expands sidebar) -->
                     <div
@@ -764,16 +764,23 @@ const switchInstitution = (id) => {
                             </Link>
                         </Tooltip>
                     </div>
+
+                    <div
+                        v-if="$page.props.version"
+                        class="mt-3 text-center font-mono text-[10px] text-zinc-600"
+                    >
+                        v{{ $page.props.version }}
+                    </div>
                 </div>
             </aside>
 
             <!-- Main Content Area -->
             <div
-                class="flex min-h-screen flex-1 flex-col overflow-hidden bg-zinc-950"
+                class="flex min-h-0 flex-1 flex-col overflow-hidden bg-zinc-950"
             >
                 <!-- Top Navbar -->
                 <nav
-                    class="relative z-40 flex h-16 items-center justify-between border-b border-zinc-800 bg-zinc-900 px-4 sm:px-6 lg:px-8"
+                    class="relative z-40 flex h-20 items-center justify-between border-b border-zinc-800 bg-zinc-900 px-4 sm:px-6 lg:px-8"
                     role="navigation"
                     :aria-label="__('nav.aria.top_nav')"
                 >
@@ -792,16 +799,18 @@ const switchInstitution = (id) => {
 
                     <!-- Right Controls -->
                     <div class="flex items-center gap-3">
-                        <Link
+                        <a
                             href="/"
-                            class="inline-flex items-center justify-center rounded-xl border border-zinc-700/50 bg-zinc-800 px-3 py-2.5 text-xs font-bold text-zinc-300 transition-all hover:bg-zinc-700 md:px-3.5 md:py-1.5"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="inline-flex items-center justify-center rounded-xl border border-zinc-700/50 bg-zinc-800 px-3.5 py-2.5 text-xs font-bold text-zinc-300 transition-all hover:bg-zinc-700 md:px-4"
                             :title="__('nav.navbar.go_public_site_title')"
                         >
                             <span>🌐</span>
                             <span class="ml-1.5 hidden md:inline">{{
                                 __('nav.navbar.go_public_site')
                             }}</span>
-                        </Link>
+                        </a>
 
                         <!-- Institution Switcher for Admin (Desktop/Mobile) -->
                         <div
@@ -1065,7 +1074,10 @@ const switchInstitution = (id) => {
                     <Breadcrumbs />
 
                     <!-- Header Slot -->
-                    <header class="mb-6" v-if="$slots.header">
+                    <header
+                        v-if="$slots.header"
+                        class="-mx-4 mb-6 border-b border-zinc-800/70 px-4 pb-5 pt-1 sm:-mx-6 sm:mb-8 sm:px-6 sm:pb-6 lg:-mx-8 lg:px-8"
+                    >
                         <slot name="header" />
                     </header>
 

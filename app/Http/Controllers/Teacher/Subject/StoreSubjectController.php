@@ -22,6 +22,6 @@ class StoreSubjectController extends Controller
 
         $createSubject($request->validated(), $user);
 
-        return to_route('teacher.dashboard')->with('success', 'Matéria criada com sucesso e associada ao seu perfil!');
+        return to_route('teacher.subjects.index')->with('success', 'Matéria criada com sucesso e associada ao seu perfil!');
     }
 }

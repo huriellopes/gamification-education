@@ -56,7 +56,7 @@ defineProps({
 
                 <!-- Informações do perfil -->
                 <div
-                    class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8 dark:border-gray-700 dark:bg-gray-800"
+                    class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:p-8"
                 >
                     <UpdateProfileInformationForm
                         :must-verify-email="mustVerifyEmail"
@@ -67,14 +67,14 @@ defineProps({
 
                 <!-- Atualização de senha -->
                 <div
-                    class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8 dark:border-gray-700 dark:bg-gray-800"
+                    class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:p-8"
                 >
                     <UpdatePasswordForm class="max-w-xl" />
                 </div>
 
                 <!-- Exclusão de conta -->
                 <div
-                    class="rounded-2xl border border-rose-200 bg-white p-6 shadow-sm sm:p-8 dark:border-rose-500/30 dark:bg-gray-800"
+                    class="rounded-2xl border border-rose-200 bg-white p-6 shadow-sm dark:border-rose-500/30 dark:bg-gray-800 sm:p-8"
                 >
                     <DeleteUserForm class="max-w-xl" />
                 </div>

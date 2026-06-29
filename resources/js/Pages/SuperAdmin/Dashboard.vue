@@ -126,7 +126,7 @@ const hideVisitsTooltip = () => {
             </h2>
         </template>
 
-        <div class="min-h-[calc(100vh-64px)] bg-zinc-950 py-6 text-zinc-100">
+        <div class="min-h-[calc(100vh-80px)] bg-zinc-950 py-6 text-zinc-100">
             <div class="space-y-8">
                 <WelcomeWidget />
 

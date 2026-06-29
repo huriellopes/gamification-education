@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Middleware;
 
+use App\Support\AppVersion;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -52,6 +53,7 @@ class HandleInertiaRequests extends Middleware
                 'error' => fn () => $request->session()->get('error') ?? ($request->session()->get('flash')['error'] ?? null),
             ],
             'locale' => app()->getLocale(),
+            'version' => AppVersion::current(),
             'translations' => fn (): array => self::translations(),
         ];
     }

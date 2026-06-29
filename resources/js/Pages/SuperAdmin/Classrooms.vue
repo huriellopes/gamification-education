@@ -3,6 +3,7 @@ import BaseModal from '@/Components/BaseModal.vue';
 import ConfirmModal from '@/Components/ConfirmModal.vue';
 import DataTable from '@/Components/DataTable.vue';
 import InputLabel from '@/Components/InputLabel.vue';
+import SelectInput from '@/Components/SelectInput.vue';
 import TextInput from '@/Components/TextInput.vue';
 import TextareaInput from '@/Components/TextareaInput.vue';
 import Tooltip from '@/Components/Tooltip.vue';
@@ -332,11 +333,10 @@ const confirmToggle = (classroom) => {
                         for="institution_id"
                         :value="__('classrooms.form_institution')"
                     />
-                    <select
+                    <SelectInput
                         id="institution_id"
                         v-model="form.institution_id"
                         @change="onInstitutionChange"
-                        class="mt-1 block w-full rounded-xl border-zinc-700 bg-zinc-900 text-sm text-zinc-200 focus:border-indigo-500 focus:ring-indigo-500"
                         required
                     >
                         <option value="" disabled>
@@ -349,7 +349,7 @@ const confirmToggle = (classroom) => {
                         >
                             {{ inst.name }}
                         </option>
-                    </select>
+                    </SelectInput>
                     <span
                         v-if="form.errors.institution_id"
                         class="mt-1 block text-xs text-rose-400"
@@ -395,10 +395,9 @@ const confirmToggle = (classroom) => {
                         for="teacher_id"
                         :value="__('classrooms.form_teacher')"
                     />
-                    <select
+                    <SelectInput
                         id="teacher_id"
                         v-model="form.teacher_id"
-                        class="mt-1 block w-full rounded-xl border-zinc-700 bg-zinc-900 text-sm text-zinc-200 focus:border-indigo-500 focus:ring-indigo-500"
                         :disabled="!form.institution_id"
                     >
                         <option value="">
@@ -411,7 +410,7 @@ const confirmToggle = (classroom) => {
                         >
                             {{ t.name }}
                         </option>
-                    </select>
+                    </SelectInput>
                 </div>
 
                 <div>

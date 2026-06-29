@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\DashboardRedirectController;
+use App\Http\Controllers\Legal\GuidelinesController;
+use App\Http\Controllers\Legal\PrivacyPolicyController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\WelcomeController;
 use Illuminate\Support\Facades\Route;
@@ -10,6 +12,10 @@ use Illuminate\Support\Facades\Route;
 // Rota Inicial (Site Público)
 Route::get('/', WelcomeController::class);
 Route::get('/sitemap.xml', SitemapController::class);
+
+// Páginas Legais Públicas
+Route::get('/politica-de-privacidade', PrivacyPolicyController::class)->name('legal.privacy');
+Route::get('/diretrizes', GuidelinesController::class)->name('legal.guidelines');
 
 // Redirecionamento de Dashboard por Role
 Route::get('/dashboard', DashboardRedirectController::class)

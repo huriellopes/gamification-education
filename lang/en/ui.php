@@ -136,9 +136,14 @@ return [
             'online_responsive' => 'Online & Responsive',
         ],
         'footer' => '© :year GamificaEdu. Built with Laravel, InertiaJS and VueJS.',
+        'legal' => [
+            'privacy' => 'Privacy Policy',
+            'guidelines' => 'Usage Guidelines',
+        ],
         'cookie' => [
             'title' => 'We value your privacy!',
             'body' => 'We use cookies to improve your browsing and personalize content. By clicking "Accept All", our analytics system will start collecting anonymized browsing data for statistics and marketing.',
+            'learn_more' => 'Learn more at:',
             'decline' => 'Decline',
             'accept' => 'Accept All',
         ],

@@ -28,7 +28,7 @@ class SubjectPolicy
         }
 
         if ($user->isTeacher()) {
-            return $subject->teachers()->where('user_id', $user->id)->exists();
+            return $this->teacherOwns($user, $subject);
         }
 
         return $user->isInstitutionAdmin() || $user->isStudent();
@@ -60,7 +60,7 @@ class SubjectPolicy
         }
 
         if ($user->isTeacher()) {
-            return $subject->teachers()->where('user_id', $user->id)->exists();
+            return $this->teacherOwns($user, $subject);
         }
 
         return false;
@@ -92,7 +92,7 @@ class SubjectPolicy
         }
 
         if ($user->isTeacher()) {
-            return $subject->teachers()->where('user_id', $user->id)->exists();
+            return $this->teacherOwns($user, $subject);
         }
 
         return false;
@@ -110,5 +110,19 @@ class SubjectPolicy
         }
 
         return $user->isInstitutionAdmin() && $subject->institution_id === $user->institution_id;
+    }
+
+    /**
+     * A teacher "owns" a subject when they are attached via the subject_user
+     * pivot OR they are the teacher responsible for the subject's classroom.
+     */
+    private function teacherOwns(User $user, Subject $subject): bool
+    {
+        if ($subject->teachers()->where('user_id', $user->id)->exists()) {
+            return true;
+        }
+
+        return $subject->classroom_id !== null
+            && $subject->classroom?->teacher_id === $user->id;
     }
 }

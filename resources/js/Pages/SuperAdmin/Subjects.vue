@@ -3,6 +3,9 @@ import BaseModal from '@/Components/BaseModal.vue';
 import Button from '@/Components/Button.vue';
 import ConfirmModal from '@/Components/ConfirmModal.vue';
 import DataTable from '@/Components/DataTable.vue';
+import SelectInput from '@/Components/SelectInput.vue';
+import TextInput from '@/Components/TextInput.vue';
+import TextareaInput from '@/Components/TextareaInput.vue';
 import Tooltip from '@/Components/Tooltip.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { slugify } from '@/Utils/mask';
@@ -316,11 +319,10 @@ const confirmDeleteSubject = (sub) => {
                             class="mb-2 block text-xs font-bold uppercase text-zinc-400"
                             >{{ __('superadmin.subjects.label_name') }}</label
                         >
-                        <input
+                        <TextInput
                             v-model="subjectForm.name"
                             type="text"
                             required
-                            class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-sm text-white focus:border-indigo-500 focus:outline-none"
                         />
                     </div>
                     <div>
@@ -328,11 +330,10 @@ const confirmDeleteSubject = (sub) => {
                             class="mb-2 block text-xs font-bold uppercase text-zinc-400"
                             >{{ __('superadmin.subjects.label_slug') }}</label
                         >
-                        <input
+                        <TextInput
                             v-model="subjectForm.slug"
                             type="text"
                             required
-                            class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-sm text-white focus:border-indigo-500 focus:outline-none"
                         />
                     </div>
                 </div>
@@ -344,11 +345,7 @@ const confirmDeleteSubject = (sub) => {
                             __('superadmin.subjects.label_description')
                         }}</label
                     >
-                    <textarea
-                        v-model="subjectForm.description"
-                        rows="3"
-                        class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-sm text-white focus:border-indigo-500 focus:outline-none"
-                    ></textarea>
+                    <TextareaInput v-model="subjectForm.description" rows="3" />
                 </div>
 
                 <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -359,10 +356,9 @@ const confirmDeleteSubject = (sub) => {
                                 __('superadmin.subjects.label_institution')
                             }}</label
                         >
-                        <select
+                        <SelectInput
                             v-model="subjectForm.institution_id"
                             required
-                            class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-sm text-white focus:border-indigo-500 focus:outline-none"
                         >
                             <option value="" disabled>
                                 {{
@@ -376,7 +372,7 @@ const confirmDeleteSubject = (sub) => {
                             >
                                 {{ inst.name }}
                             </option>
-                        </select>
+                        </SelectInput>
                     </div>
                     <div>
                         <label
@@ -385,14 +381,13 @@ const confirmDeleteSubject = (sub) => {
                                 __('superadmin.subjects.label_duration')
                             }}</label
                         >
-                        <input
+                        <TextInput
                             v-model="subjectForm.duration"
                             type="text"
                             required
                             :placeholder="
                                 __('superadmin.subjects.duration_placeholder')
                             "
-                            class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-sm text-white focus:border-indigo-500 focus:outline-none"
                         />
                     </div>
                 </div>

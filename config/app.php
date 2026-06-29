@@ -19,6 +19,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Application Version
+    |--------------------------------------------------------------------------
+    |
+    | Fonte única da versão (arquivo VERSION na raiz). Exposta ao frontend e
+    | usada pelo workflow de release para gerar a tag/Release automaticamente.
+    | Pode ser sobrescrita por APP_VERSION em ambientes específicos.
+    |
+    */
+
+    'version' => mb_trim((string) @file_get_contents(__DIR__ . '/../VERSION')) ?: '0.0.0',
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Environment
     |--------------------------------------------------------------------------
     |

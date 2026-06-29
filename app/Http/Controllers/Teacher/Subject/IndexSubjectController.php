@@ -25,8 +25,15 @@ class IndexSubjectController extends Controller
             ->orderBy('name')
             ->get();
 
+        // Turmas sob responsabilidade do professor (para vincular a matéria a uma turma).
+        $classrooms = $user->classrooms()
+            ->active()
+            ->orderBy('name')
+            ->get(['id', 'name']);
+
         return Inertia::render('Teacher/Subjects/Index', [
             'subjects' => $subjects,
+            'classrooms' => $classrooms,
         ]);
     }
 }
