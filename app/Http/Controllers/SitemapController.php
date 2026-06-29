@@ -16,13 +16,13 @@ class SitemapController extends Controller
         $urls = [
             [
                 'loc' => url('/'),
-                'lastmod' => now()->startOfDay()->toAtomString(),
+                'lastmod' => today()->toAtomString(),
                 'changefreq' => 'weekly',
                 'priority' => '1.0',
             ],
             [
                 'loc' => url('/login'),
-                'lastmod' => now()->startOfDay()->toAtomString(),
+                'lastmod' => today()->toAtomString(),
                 'changefreq' => 'monthly',
                 'priority' => '0.8',
             ],

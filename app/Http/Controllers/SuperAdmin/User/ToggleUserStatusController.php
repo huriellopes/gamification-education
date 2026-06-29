@@ -17,7 +17,7 @@ class ToggleUserStatusController extends Controller
     public function __invoke(User $user): RedirectResponse
     {
         if ($user->isSuperAdmin()) {
-            return redirect()->back()->with('error', 'Não é possível desativar um Super Administrador.');
+            return back()->with('error', 'Não é possível desativar um Super Administrador.');
         }
 
         $newStatus = $user->is_active === GeneralStatus::ACTIVE
@@ -30,6 +30,6 @@ class ToggleUserStatusController extends Controller
 
         $statusText = $newStatus === GeneralStatus::ACTIVE ? 'ativado' : 'desativado';
 
-        return redirect()->back()->with('success', "Usuário {$statusText} com sucesso!");
+        return back()->with('success', "Usuário {$statusText} com sucesso!");
     }
 }

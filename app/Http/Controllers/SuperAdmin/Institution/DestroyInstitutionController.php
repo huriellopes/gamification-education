@@ -17,6 +17,6 @@ class DestroyInstitutionController extends Controller
     {
         $institution->delete();
 
-        return redirect()->back()->with('success', 'Instituição enviada para a lixeira com sucesso!');
+        return back()->with('success', 'Instituição enviada para a lixeira com sucesso!');
     }
 }

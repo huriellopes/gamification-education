@@ -4,7 +4,12 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Events\MilestoneReached;
+use App\Listeners\SendMilestoneReachedEmail;
+use App\Listeners\UpdateLastLoginAt;
+use App\Models\Institution;
 use App\Models\User;
+use App\Observers\InstitutionObserver;
 use App\Observers\UserObserver;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -29,17 +34,10 @@ class AppServiceProvider extends ServiceProvider
     {
         Vite::prefetch(concurrency: 3);
         User::observe(UserObserver::class);
+        Institution::observe(InstitutionObserver::class);
         JsonResource::withoutWrapping();
 
-        Event::listen(
-            Login::class,
-            function (Login $event) {
-                if ($event->user instanceof User) {
-                    $event->user->update([
-                        'last_login_at' => now(),
-                    ]);
-                }
-            },
-        );
+        Event::listen(Login::class, UpdateLastLoginAt::class);
+        Event::listen(MilestoneReached::class, SendMilestoneReachedEmail::class);
     }
 }

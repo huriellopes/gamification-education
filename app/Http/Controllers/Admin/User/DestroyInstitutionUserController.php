@@ -22,6 +22,6 @@ class DestroyInstitutionUserController extends Controller
 
         $deleteUser($user);
 
-        return redirect()->back()->with('success', 'Membro enviado para a lixeira com sucesso!');
+        return back()->with('success', 'Membro enviado para a lixeira com sucesso!');
     }
 }

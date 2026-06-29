@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\SuperAdmin\Report;
 
+use App\Enums\ReportStatus;
 use App\Jobs\GenerateReportJob;
 use App\Models\Report;
 
@@ -17,10 +18,10 @@ class RequestReportGenerationAction
         $report = Report::create([
             'user_id' => auth()->id(),
             'name' => $name,
-            'status' => 'pending',
+            'status' => ReportStatus::PENDING,
         ]);
 
-        GenerateReportJob::dispatch($report, $type);
+        dispatch(new GenerateReportJob($report, $type));
 
         return $report;
     }

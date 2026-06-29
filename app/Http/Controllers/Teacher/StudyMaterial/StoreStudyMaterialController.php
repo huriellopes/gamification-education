@@ -22,6 +22,6 @@ class StoreStudyMaterialController extends Controller
 
         $createStudyMaterial($request->validated(), $subject);
 
-        return redirect()->back()->with('success', 'Material de estudo cadastrado com sucesso!');
+        return back()->with('success', 'Material de estudo cadastrado com sucesso!');
     }
 }

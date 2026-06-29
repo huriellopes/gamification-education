@@ -28,6 +28,6 @@ class UpdateInstitutionUserController extends Controller
 
         $roleText = $user->isTeacher() ? 'Professor' : 'Estudante';
 
-        return redirect()->back()->with('success', "{$roleText} atualizado com sucesso!");
+        return back()->with('success', "{$roleText} atualizado com sucesso!");
     }
 }

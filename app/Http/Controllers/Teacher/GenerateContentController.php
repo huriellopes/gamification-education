@@ -22,9 +22,9 @@ class GenerateContentController extends Controller
 
         $theme = (string) $request->validated('theme');
 
-        GenerateContentJob::dispatch($subject, $theme);
+        dispatch(new GenerateContentJob($subject, $theme));
 
-        return redirect()->route('teacher.subjects.show', $subject)
+        return to_route('teacher.subjects.show', $subject)
             ->with('success', 'Geração de conteúdo didático e avaliação iniciada em segundo plano!');
     }
 }

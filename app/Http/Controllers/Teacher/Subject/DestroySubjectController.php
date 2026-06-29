@@ -21,6 +21,6 @@ class DestroySubjectController extends Controller
 
         $deleteSubject($subject);
 
-        return redirect()->route('teacher.dashboard')->with('success', 'Matéria enviada para a lixeira com sucesso!');
+        return to_route('teacher.dashboard')->with('success', 'Matéria enviada para a lixeira com sucesso!');
     }
 }

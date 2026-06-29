@@ -4,20 +4,17 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\SuperAdmin\Subject;
 
-use App\Data\SuperAdmin\Subject\SubjectData;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\SuperAdmin\Subject\UpdateSubjectRequest;
 use App\Models\Subject;
 use Illuminate\Http\RedirectResponse;
 
 class UpdateSubjectController extends Controller
 {
-    /**
-     * Handle the incoming request.
-     */
-    public function __invoke(SubjectData $data, Subject $subject): RedirectResponse
+    public function __invoke(UpdateSubjectRequest $request, Subject $subject): RedirectResponse
     {
-        $subject->update($data->toArray());
+        $subject->update($request->validated());
 
-        return redirect()->back()->with('success', __('messages.subject_updated'));
+        return back()->with('success', __('messages.subject_updated'));
     }
 }

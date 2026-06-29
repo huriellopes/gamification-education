@@ -21,6 +21,6 @@ class DestroySubjectController extends Controller
 
         $deleteSubject($subject);
 
-        return redirect()->back()->with('success', 'Matéria enviada para a lixeira com sucesso!');
+        return back()->with('success', 'Matéria enviada para a lixeira com sucesso!');
     }
 }

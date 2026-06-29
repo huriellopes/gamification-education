@@ -26,6 +26,6 @@ class ToggleInstitutionStatusController extends Controller
 
         $statusText = $newStatus === GeneralStatus::ACTIVE ? 'ativada' : 'desativada';
 
-        return redirect()->back()->with('success', "Instituição {$statusText} com sucesso!");
+        return back()->with('success', "Instituição {$statusText} com sucesso!");
     }
 }

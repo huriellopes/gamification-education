@@ -26,10 +26,10 @@ class SupportRequestMail extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Novo Chamado de Suporte: ' . $this->supportSubject,
             replyTo: [
                 new Address($this->sender->email, $this->sender->name),
             ],
+            subject: 'Novo Chamado de Suporte: ' . $this->supportSubject,
         );
     }
 

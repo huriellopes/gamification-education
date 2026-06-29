@@ -23,7 +23,7 @@ class DeleteFailedJobController extends Controller
             $msg = "Job falho ID #{$id} foi removido com sucesso!";
         }
 
-        return redirect()->back()->with('flash', [
+        return back()->with('flash', [
             'success' => $msg,
         ]);
     }

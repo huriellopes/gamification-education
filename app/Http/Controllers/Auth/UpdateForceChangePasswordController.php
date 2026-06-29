@@ -24,6 +24,6 @@ class UpdateForceChangePasswordController extends Controller
             $action->execute($user, $validated['password']);
         }
 
-        return redirect()->route('dashboard')->with('success', 'Sua senha foi alterada com sucesso!');
+        return to_route('dashboard')->with('success', 'Sua senha foi alterada com sucesso!');
     }
 }

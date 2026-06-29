@@ -2,47 +2,31 @@
 
 declare(strict_types=1);
 
-namespace App\Data\SuperAdmin\Institution;
+namespace App\Http\Requests\SuperAdmin\Institution;
 
 use App\Models\Institution;
 use App\Rules\Cnpj;
-use Spatie\LaravelData\Attributes\Validation\Max;
-use Spatie\LaravelData\Attributes\Validation\Nullable;
-use Spatie\LaravelData\Attributes\Validation\Required;
-use Spatie\LaravelData\Attributes\Validation\StringType;
-use Spatie\LaravelData\Data;
+use Illuminate\Foundation\Http\FormRequest;
 
-class InstitutionData extends Data
+class UpdateInstitutionRequest extends FormRequest
 {
-    public function __construct(
-        #[Required, StringType, Max(255)]
-        public string $name,
-
-        #[Nullable, StringType]
-        public ?string $description,
-
-        #[Required, StringType, Max(255)]
-        public string $razao_social,
-
-        #[Nullable, StringType]
-        public ?string $cnpj,
-
-        #[Required, StringType, Max(255)]
-        public string $slug,
-
-        #[Nullable]
-        public ?array $address,
-
-        #[Nullable]
-        public ?array $phones,
-    ) {}
-
-    public static function rules(): array
+    public function authorize(): bool
     {
-        $institution = request()->route('institution');
+        return true;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function rules(): array
+    {
+        $institution = $this->route('institution');
         $institutionId = $institution instanceof Institution ? $institution->id : $institution;
 
         return [
+            'name' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+            'razao_social' => ['required', 'string', 'max:255'],
             'cnpj' => ['nullable', 'string', new Cnpj()],
             'slug' => ['required', 'string', 'max:255', 'unique:institutions,slug,' . ($institutionId ?? '')],
             'address' => ['nullable', 'array'],

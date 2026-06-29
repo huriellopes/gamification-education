@@ -22,14 +22,6 @@ class SiteVisit extends Model
         'visited_at' => 'datetime',
     ];
 
-    public static function recordVisit(string $ip, ?string $userAgent): void
-    {
-        self::create([
-            'ip_address' => $ip,
-            'user_agent' => $userAgent,
-        ]);
-    }
-
     /**
      * Number of visits per day since the given date, keyed by "Y-m-d".
      *

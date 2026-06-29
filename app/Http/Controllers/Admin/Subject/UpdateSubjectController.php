@@ -22,6 +22,6 @@ class UpdateSubjectController extends Controller
     ): RedirectResponse {
         $updateSubject($subject, $request->validated());
 
-        return redirect()->back()->with('success', 'Matéria atualizada com sucesso!');
+        return back()->with('success', 'Matéria atualizada com sucesso!');
     }
 }

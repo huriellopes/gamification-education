@@ -23,6 +23,7 @@
     "require-dev": {
         "barryvdh/laravel-debugbar": "^4.3",
         "barryvdh/laravel-ide-helper": "^3.7",
+        "driftingly/rector-laravel": "^2.5",
         "fakerphp/faker": "^1.23",
         "larastan/larastan": "^3.10",
         "laravel/breeze": "^2.4",
@@ -65,8 +66,11 @@
         "pest": "./vendor/bin/pest",
         "pint": "./vendor/bin/pint",
         "phpstan": "./vendor/bin/phpstan analyse",
+        "rector": "./vendor/bin/rector process",
+        "rector:check": "./vendor/bin/rector process --dry-run",
         "lint:vue": "npm run lint",
         "quality": [
+            "@rector",
             "@pint",
             "@phpstan",
             "@lint:vue",

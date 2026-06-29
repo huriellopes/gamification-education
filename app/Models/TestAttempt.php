@@ -29,15 +29,6 @@ class TestAttempt extends Model
     }
 
     /**
-     * @param  Builder<static>  $query
-     * @return Builder<static>
-     */
-    public function scopeForUserAndTest(Builder $query, int $userId, int $testId): Builder
-    {
-        return $query->where('user_id', $userId)->where('test_id', $testId);
-    }
-
-    /**
      * The student's best attempt at a given test, if any.
      */
     public static function bestForUserAndTest(int $userId, int $testId): ?self
@@ -46,6 +37,15 @@ class TestAttempt extends Model
             ->forUserAndTest($userId, $testId)
             ->orderByDesc('score')
             ->first();
+    }
+
+    /**
+     * @param  Builder<static>  $query
+     * @return Builder<static>
+     */
+    protected function scopeForUserAndTest(Builder $query, int $userId, int $testId): Builder
+    {
+        return $query->where('user_id', $userId)->where('test_id', $testId);
     }
 
     protected function casts(): array

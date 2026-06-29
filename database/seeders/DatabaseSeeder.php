@@ -141,8 +141,8 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // 5. Instanciar as Actions para gerar materiais e testes automaticamente via Seeder
-        $generateMaterial = app(GenerateStudyMaterialAction::class);
-        $generateTest = app(GenerateTestForSubjectAction::class);
+        $generateMaterial = resolve(GenerateStudyMaterialAction::class);
+        $generateTest = resolve(GenerateTestForSubjectAction::class);
 
         // Gerar materiais e testes para a matéria de Web/Laravel
         $generateMaterial->execute($subjectWeb, 'laravel_eloquent');

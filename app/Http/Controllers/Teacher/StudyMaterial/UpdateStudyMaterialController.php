@@ -23,6 +23,6 @@ class UpdateStudyMaterialController extends Controller
 
         $updateStudyMaterial($material, $request->validated());
 
-        return redirect()->back()->with('success', 'Material de estudo atualizado com sucesso!');
+        return back()->with('success', 'Material de estudo atualizado com sucesso!');
     }
 }

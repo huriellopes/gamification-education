@@ -22,6 +22,6 @@ class StoreTestController extends Controller
 
         $createTest($request->validated(), $subject);
 
-        return redirect()->back()->with('success', 'Teste cadastrado com sucesso!');
+        return back()->with('success', 'Teste cadastrado com sucesso!');
     }
 }

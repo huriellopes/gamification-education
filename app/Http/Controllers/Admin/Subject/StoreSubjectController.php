@@ -22,6 +22,6 @@ class StoreSubjectController extends Controller
 
         $createSubject($request->validated(), (int) $user->institution_id);
 
-        return redirect()->back()->with('success', 'Matéria criada com sucesso!');
+        return back()->with('success', 'Matéria criada com sucesso!');
     }
 }

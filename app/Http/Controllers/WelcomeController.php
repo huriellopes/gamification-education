@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Models\SiteVisit;
+use App\Actions\RecordSiteVisitAction;
 use App\Models\Subject;
 use App\Models\User;
 use Illuminate\Foundation\Application;
@@ -17,9 +17,9 @@ class WelcomeController extends Controller
     /**
      * Handle the incoming request.
      */
-    public function __invoke(): Response
+    public function __invoke(RecordSiteVisitAction $recordVisit): Response
     {
-        SiteVisit::recordVisit(request()->ip() ?? '127.0.0.1', request()->userAgent());
+        $recordVisit(request()->ip() ?? '127.0.0.1', request()->userAgent());
 
         $totalStudents = User::activeStudentsCount();
         $totalSubjects = Subject::activeCount();

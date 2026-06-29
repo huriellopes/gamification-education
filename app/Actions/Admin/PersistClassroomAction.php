@@ -21,7 +21,7 @@ class PersistClassroomAction
     public function __invoke(Classroom $classroom, array $attributes, int $institutionId): Classroom
     {
         $teacherId = $this->resolveTeacherId(
-            isset($attributes['teacher_id']) ? (int) $attributes['teacher_id'] : null,
+            isset($attributes['teacher_id']) ? $attributes['teacher_id'] : null,
             $institutionId,
         );
 

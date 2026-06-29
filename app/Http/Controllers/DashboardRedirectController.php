@@ -17,17 +17,17 @@ class DashboardRedirectController extends Controller
         $user = $request->user();
 
         if ($user->isSuperAdmin()) {
-            return redirect()->route('super-admin.dashboard');
+            return to_route('super-admin.dashboard');
         }
 
         if ($user->isInstitutionAdmin()) {
-            return redirect()->route('admin.dashboard');
+            return to_route('admin.dashboard');
         }
 
         if ($user->isTeacher()) {
-            return redirect()->route('teacher.dashboard');
+            return to_route('teacher.dashboard');
         }
 
-        return redirect()->route('student.dashboard');
+        return to_route('student.dashboard');
     }
 }

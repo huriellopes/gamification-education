@@ -22,6 +22,6 @@ class StoreAdminController extends Controller
 
         User::create($data);
 
-        return redirect()->back()->with('success', 'Administrador criado com sucesso!');
+        return back()->with('success', 'Administrador criado com sucesso!');
     }
 }

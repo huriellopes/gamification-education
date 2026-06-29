@@ -28,6 +28,6 @@ class StoreInstitutionUserController extends Controller
 
         $roleText = ($attributes['role'] ?? null) === 'teacher' ? 'Professor' : 'Estudante';
 
-        return redirect()->back()->with('success', "{$roleText} cadastrado com sucesso!");
+        return back()->with('success', "{$roleText} cadastrado com sucesso!");
     }
 }

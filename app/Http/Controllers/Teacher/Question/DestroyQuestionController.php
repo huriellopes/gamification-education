@@ -27,6 +27,6 @@ class DestroyQuestionController extends Controller
 
         $deleteQuestion($question);
 
-        return redirect()->back()->with('success', 'Questão excluída com sucesso!');
+        return back()->with('success', 'Questão excluída com sucesso!');
     }
 }
