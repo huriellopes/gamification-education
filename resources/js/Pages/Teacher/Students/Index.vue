@@ -36,6 +36,15 @@ const form = useForm({
     role: 'student',
 });
 
+const isActive = (item) => {
+    if (!item) return false;
+    const val = typeof item === 'object' && 'is_active' in item ? item.is_active : item;
+    if (typeof val === 'object' && val !== null) {
+        return val.value === 1 || val.value === true || String(val.value) === '1' || val.value === 'active';
+    }
+    return val === 1 || val === true || String(val) === '1' || val === 'active';
+};
+
 const openCreateModal = () => {
     isEditing.value = false;
     selectedStudentId.value = null;
@@ -73,6 +82,7 @@ const submit = () => {
         () => {
             if (isEditing.value) {
                 form.put(route('teacher.students.update', selectedStudentId.value), {
+                    preserveScroll: true,
                     onSuccess: () => {
                         isModalOpen.value = false;
                         form.reset();
@@ -81,6 +91,7 @@ const submit = () => {
                 });
             } else {
                 form.post(route('teacher.students.store'), {
+                    preserveScroll: true,
                     onSuccess: () => {
                         isModalOpen.value = false;
                         form.reset();
@@ -98,6 +109,7 @@ const confirmDeleteStudent = (id) => {
         'Tem certeza que deseja excluir este aluno? Esta ação enviará o usuário para a lixeira.',
         () => {
             router.delete(route('teacher.students.destroy', id), {
+                preserveScroll: true,
                 onSuccess: () => {
                     confirmState.value.show = false;
                 },
@@ -107,12 +119,13 @@ const confirmDeleteStudent = (id) => {
 };
 
 const toggleStatus = (student) => {
-    const actionText = student.is_active === 'active' ? 'desativar' : 'ativar';
+    const actionText = isActive(student) ? 'desativar' : 'ativar';
     triggerConfirm(
         'Alterar Status',
         `Tem certeza de que deseja ${actionText} o aluno "${student.name}"?`,
         () => {
             router.post(route('teacher.students.toggle', student.id), {}, {
+                preserveScroll: true,
                 onSuccess: () => {
                     confirmState.value.show = false;
                 },
@@ -133,9 +146,11 @@ const toggleStatus = (student) => {
                 </h2>
                 <button
                     @click="openCreateModal"
-                    class="rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-indigo-900/30 transition-all duration-200 hover:from-violet-500 hover:to-indigo-500"
+                    class="rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-indigo-900/30 transition-all duration-200 hover:from-violet-500 hover:to-indigo-500 flex items-center gap-2"
+                    title="Cadastrar Aluno"
                 >
-                    + Cadastrar Aluno
+                    <Plus class="h-4 w-4 shrink-0" />
+                    <span class="hidden md:inline">Cadastrar Aluno</span>
                 </button>
             </div>
         </template>
@@ -165,12 +180,12 @@ const toggleStatus = (student) => {
                             <span
                                 class="inline-flex rounded-full px-2 text-xs font-semibold leading-5"
                                 :class="
-                                    item.is_active === 'active'
+                                    isActive(item)
                                         ? 'bg-emerald-100 text-emerald-800'
                                         : 'bg-red-100 text-red-800'
                                 "
                             >
-                                {{ item.is_active === 'active' ? 'Ativo' : 'Inativo' }}
+                                {{ isActive(item) ? 'Ativo' : 'Inativo' }}
                             </span>
                         </template>
 
@@ -198,22 +213,23 @@ const toggleStatus = (student) => {
                                         <Pencil class="h-4 w-4" />
                                     </button>
                                 </Tooltip>
-                                <Tooltip text="Alterar Status">
-                                    <button
-                                        @click="toggleStatus(item)"
-                                        class="rounded-lg p-1.5 text-zinc-400 transition-colors hover:bg-zinc-850 hover:text-white"
-                                    >
-                                        <Power class="h-4 w-4" />
-                                    </button>
-                                </Tooltip>
-                                <Tooltip text="Excluir Aluno">
-                                    <button
-                                        @click="confirmDeleteStudent(item.id)"
-                                        class="rounded-lg p-1.5 text-zinc-400 transition-colors hover:bg-red-500/20 hover:text-red-400"
-                                    >
-                                        <Trash2 class="h-4 w-4" />
-                                    </button>
-                                </Tooltip>
+                                 <Tooltip :text="isActive(item) ? 'Desativar Aluno' : 'Ativar Aluno'">
+                                     <button
+                                         @click="toggleStatus(item)"
+                                         class="rounded-lg p-1.5 transition-colors"
+                                         :class="isActive(item) ? 'text-red-500 hover:text-red-400 hover:bg-red-500/10' : 'text-emerald-500 hover:text-emerald-400 hover:bg-emerald-500/10'"
+                                     >
+                                         <Power class="h-4 w-4" />
+                                     </button>
+                                 </Tooltip>
+                                 <Tooltip text="Excluir Aluno">
+                                     <button
+                                         @click="confirmDeleteStudent(item.id)"
+                                         class="rounded-lg p-1.5 text-red-500 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                                     >
+                                         <Trash2 class="h-4 w-4" />
+                                     </button>
+                                 </Tooltip>
                             </div>
                         </template>
                     </DataTable>

@@ -160,5 +160,36 @@ class DatabaseSeeder extends Seeder
 
         // Associar instituições ao administrador criado
         $admin->institutions()->attach([$ift->id, $uec->id]);
+
+        // 6. Gerar dados em lote para testar a paginação (120 estudantes, 10 professores e 15 matérias extras)
+        for ($i = 1; $i <= 120; $i++) {
+            User::create([
+                'name' => "Estudante de Teste Paginação {$i}",
+                'email' => "student_page_{$i}@example.com",
+                'password' => Hash::make('password'),
+                'role' => 'student',
+                'points' => rand(10, 800),
+                'institution_id' => $i % 2 === 0 ? $ift->id : $uec->id,
+            ]);
+        }
+
+        for ($i = 1; $i <= 10; $i++) {
+            User::create([
+                'name' => "Professor Auxiliar {$i}",
+                'email' => "teacher_page_{$i}@example.com",
+                'password' => Hash::make('password'),
+                'role' => 'teacher',
+                'points' => 0,
+                'institution_id' => $ift->id,
+            ]);
+        }
+
+        for ($i = 1; $i <= 15; $i++) {
+            Subject::create([
+                'institution_id' => $ift->id,
+                'name' => "Matéria Optativa {$i}",
+                'description' => "Descrição detalhada para a Matéria Optativa de número {$i} para fins de testes de paginação do admin.",
+            ]);
+        }
     }
 }

@@ -31,6 +31,7 @@ class InstitutionResource extends JsonResource
             'address' => $this->address,
             'phones' => $this->phones,
             'subjects_count' => $this->subjects_count,
+            'users_count' => $this->users_count,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

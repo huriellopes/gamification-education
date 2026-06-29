@@ -15,6 +15,7 @@ const studentHeaders = [
     { key: 'email', label: 'E-mail', sortable: true },
     { key: 'is_active', label: 'Status', sortable: true, align: 'center' },
     { key: 'points', label: 'XP Acumulado', sortable: true, align: 'center' },
+    { key: 'last_login_at', label: 'Último Acesso', sortable: true, align: 'center' },
     { key: 'actions', label: 'Ações', sortable: false, align: 'center' },
 ];
 
@@ -22,6 +23,7 @@ const teacherHeaders = [
     { key: 'name', label: 'Nome', sortable: true },
     { key: 'email', label: 'E-mail', sortable: true },
     { key: 'is_active', label: 'Status', sortable: true, align: 'center' },
+    { key: 'last_login_at', label: 'Último Acesso', sortable: true, align: 'center' },
     { key: 'actions', label: 'Ações', sortable: false, align: 'center' },
 ];
 
@@ -96,6 +98,7 @@ const submit = () => {
         () => {
             if (isEditing.value) {
                 form.put(route('admin.users.update', selectedUserId.value), {
+                    preserveScroll: true,
                     onSuccess: () => {
                         isModalOpen.value = false;
                         form.reset();
@@ -104,6 +107,7 @@ const submit = () => {
                 });
             } else {
                 form.post(route('admin.users.store'), {
+                    preserveScroll: true,
                     onSuccess: () => {
                         isModalOpen.value = false;
                         form.reset();
@@ -121,6 +125,7 @@ const confirmDeleteUser = (id) => {
         'Tem certeza que deseja enviar este membro para a lixeira?',
         () => {
             router.delete(route('admin.users.destroy', id), {
+                preserveScroll: true,
                 onSuccess: () => {
                     confirmState.value.show = false;
                 },
@@ -136,6 +141,7 @@ const toggleStatus = (user) => {
         `Tem certeza de que deseja ${actionText} o usuário "${user.name}"?`,
         () => {
             router.post(route('admin.users.toggle', user.id), {}, {
+                preserveScroll: true,
                 onSuccess: () => {
                     confirmState.value.show = false;
                 },
@@ -235,6 +241,12 @@ const toggleStatus = (user) => {
                             </span>
                         </template>
 
+                        <template #last_login_at="{ item }">
+                            <span class="text-xs text-zinc-400 font-medium">
+                                {{ item.last_login_at ? new Date(item.last_login_at).toLocaleString('pt-BR') : 'Nunca' }}
+                            </span>
+                        </template>
+
                         <template #actions="{ item }">
                             <div class="flex items-center justify-center gap-1">
                                 <Tooltip text="Editar Aluno">
@@ -245,22 +257,23 @@ const toggleStatus = (user) => {
                                         <Pencil class="h-4 w-4" />
                                     </button>
                                 </Tooltip>
-                                <Tooltip text="Alterar Status">
-                                    <button
-                                        @click="toggleStatus(item)"
-                                        class="rounded-lg p-1.5 text-zinc-400 transition-colors hover:bg-zinc-850 hover:text-white"
-                                    >
-                                        <Power class="h-4 w-4" />
-                                    </button>
-                                </Tooltip>
-                                <Tooltip text="Excluir Aluno">
-                                    <button
-                                        @click="confirmDeleteUser(item.id)"
-                                        class="rounded-lg p-1.5 text-zinc-400 transition-colors hover:bg-red-500/20 hover:text-red-400"
-                                    >
-                                        <Trash2 class="h-4 w-4" />
-                                    </button>
-                                </Tooltip>
+                                <Tooltip :text="isActive(item) ? 'Desativar Aluno' : 'Ativar Aluno'">
+                                     <button
+                                         @click="toggleStatus(item)"
+                                         class="rounded-lg p-1.5 transition-colors"
+                                         :class="isActive(item) ? 'text-red-500 hover:text-red-400 hover:bg-red-500/10' : 'text-emerald-500 hover:text-emerald-400 hover:bg-emerald-500/10'"
+                                     >
+                                         <Power class="h-4 w-4" />
+                                     </button>
+                                 </Tooltip>
+                                 <Tooltip text="Excluir Aluno">
+                                     <button
+                                         @click="confirmDeleteUser(item.id)"
+                                         class="rounded-lg p-1.5 text-red-500 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                                     >
+                                         <Trash2 class="h-4 w-4" />
+                                     </button>
+                                 </Tooltip>
                             </div>
                         </template>
                     </DataTable>
@@ -292,6 +305,12 @@ const toggleStatus = (user) => {
                             </span>
                         </template>
 
+                        <template #last_login_at="{ item }">
+                            <span class="text-xs text-zinc-400 font-medium">
+                                {{ item.last_login_at ? new Date(item.last_login_at).toLocaleString('pt-BR') : 'Nunca' }}
+                            </span>
+                        </template>
+
                         <template #actions="{ item }">
                             <div class="flex items-center justify-center gap-1">
                                 <Tooltip text="Editar Professor">
@@ -302,22 +321,23 @@ const toggleStatus = (user) => {
                                         <Pencil class="h-4 w-4" />
                                     </button>
                                 </Tooltip>
-                                <Tooltip text="Alterar Status">
-                                    <button
-                                        @click="toggleStatus(item)"
-                                        class="rounded-lg p-1.5 text-zinc-400 transition-colors hover:bg-zinc-850 hover:text-white"
-                                    >
-                                        <Power class="h-4 w-4" />
-                                    </button>
-                                </Tooltip>
-                                <Tooltip text="Excluir Professor">
-                                    <button
-                                        @click="confirmDeleteUser(item.id)"
-                                        class="rounded-lg p-1.5 text-zinc-400 transition-colors hover:bg-red-500/20 hover:text-red-400"
-                                    >
-                                        <Trash2 class="h-4 w-4" />
-                                    </button>
-                                </Tooltip>
+                                <Tooltip :text="isActive(item) ? 'Desativar Professor' : 'Ativar Professor'">
+                                     <button
+                                         @click="toggleStatus(item)"
+                                         class="rounded-lg p-1.5 transition-colors"
+                                         :class="isActive(item) ? 'text-red-500 hover:text-red-400 hover:bg-red-500/10' : 'text-emerald-500 hover:text-emerald-400 hover:bg-emerald-500/10'"
+                                     >
+                                         <Power class="h-4 w-4" />
+                                     </button>
+                                 </Tooltip>
+                                 <Tooltip text="Excluir Professor">
+                                     <button
+                                         @click="confirmDeleteUser(item.id)"
+                                         class="rounded-lg p-1.5 text-red-500 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                                     >
+                                         <Trash2 class="h-4 w-4" />
+                                     </button>
+                                 </Tooltip>
                             </div>
                         </template>
                     </DataTable>

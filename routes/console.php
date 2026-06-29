@@ -36,3 +36,39 @@ Artisan::command('app:send-study-reminders', function () {
 
     $this->info("{$count} lembretes de estudo enviados com sucesso!");
 })->purpose('Send study reminders to inactive students');
+
+Artisan::command('logs:prune', function () {
+    $logPath = storage_path('logs');
+    $files = glob($logPath . '/*.log');
+    $cutoffDate = Carbon::today()->subDays(2)->startOfDay();
+    $deletedCount = 0;
+
+    foreach ($files as $file) {
+        $filename = basename($file);
+
+        if ($filename === 'laravel.log') {
+            continue; // Sempre mantém o log padrão
+        }
+
+        // Se o nome do arquivo de log tiver uma data, ex: laravel-YYYY-MM-DD.log
+        if (preg_match('/laravel-(\d{4}-\d{2}-\d{2})\.log/', $filename, $matches)) {
+            $fileDate = Carbon::parse($matches[1])->startOfDay();
+
+            if ($fileDate->lessThan($cutoffDate)) {
+                @unlink($file);
+                $deletedCount++;
+                continue;
+            }
+        }
+
+        // Fallback para data de modificação física
+        $mtime = Carbon::createFromTimestamp(filemtime($file))->startOfDay();
+
+        if ($mtime->lessThan($cutoffDate)) {
+            @unlink($file);
+            $deletedCount++;
+        }
+    }
+
+    $this->info("Limpeza concluída! {$deletedCount} arquivos de log antigos foram excluídos.");
+})->purpose('Prune Laravel log files keeping the last 3 days (including today)');

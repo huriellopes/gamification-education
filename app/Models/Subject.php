@@ -44,6 +44,16 @@ class Subject extends Model
             ->withTimestamps();
     }
 
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', GeneralStatus::ACTIVE);
+    }
+
+    public static function activeCount(): int
+    {
+        return self::active()->count();
+    }
+
     protected function casts(): array
     {
         return [

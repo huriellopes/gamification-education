@@ -20,6 +20,8 @@ class StoreUserController extends Controller
     public function __invoke(UserData $data): RedirectResponse
     {
         $attributes = $data->toArray();
+        unset($attributes['institution_ids']);
+
         $password = $attributes['password'] ?? null;
         $tempPassword = null;
 
@@ -33,7 +35,25 @@ class StoreUserController extends Controller
             $tempPassword = $password;
         }
 
+        // Se for admin, o primeiro ID do array de instituição é o seu contexto inicial ativo
+        $institutionIds = $data->institution_ids;
+        if ($data->role === 'admin') {
+            if (empty($institutionIds) && !empty($data->institution_id)) {
+                $institutionIds = [$data->institution_id];
+            }
+            if (!empty($institutionIds)) {
+                $attributes['institution_id'] = $institutionIds[0];
+            }
+        }
+
         $user = User::create($attributes);
+
+        // Sincroniza a tabela pivot de muitas para muitas instituições
+        if ($user->isInstitutionAdmin() && !empty($institutionIds)) {
+            $user->institutions()->sync($institutionIds);
+        } elseif (!empty($user->institution_id)) {
+            $user->institutions()->sync([$user->institution_id]);
+        }
 
         Mail::to($user->email)->send(new WelcomeUserMail($user, $tempPassword));
 

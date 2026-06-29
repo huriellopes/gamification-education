@@ -39,6 +39,6 @@ class ForceChangePasswordController extends Controller
             $user->save();
         }
 
-        return redirect()->intended(route('dashboard'))->with('success', 'Sua senha foi alterada com sucesso!');
+        return redirect()->route('dashboard')->with('success', 'Sua senha foi alterada com sucesso!');
     }
 }

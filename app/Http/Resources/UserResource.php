@@ -36,8 +36,10 @@ class UserResource extends JsonResource
                     'name' => $institution->name,
                 ];
             }),
+            'institution_ids' => $this->institutions()->pluck('institution_id')->all(),
             'points' => $this->points,
             'is_active' => $this->is_active,
+            'last_login_at' => $this->last_login_at,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

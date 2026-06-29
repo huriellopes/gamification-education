@@ -30,6 +30,9 @@ class UserData extends Data
 
         #[Nullable]
         public ?int $institution_id = null,
+
+        #[Nullable]
+        public ?array $institution_ids = null,
     ) {}
 
     public static function rules(): array
@@ -41,12 +44,21 @@ class UserData extends Data
             ? 'admin,teacher,student'
             : 'teacher,student';
 
+        $role = request()->input('role');
+
         return [
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . ($userId ?? '')],
             'password' => [$userId ? 'nullable' : 'required', 'string', 'min:8'],
             'role' => ['required', 'string', 'in:' . $allowedRoles],
             'institution_id' => [
-                auth()->user()?->isSuperAdmin() ? 'required' : 'nullable',
+                auth()->user()?->isSuperAdmin() && $role !== 'admin' ? 'required' : 'nullable',
+                'exists:institutions,id',
+            ],
+            'institution_ids' => [
+                $role === 'admin' && !request()->has('institution_id') ? 'required' : 'nullable',
+                'array',
+            ],
+            'institution_ids.*' => [
                 'exists:institutions,id',
             ],
         ];

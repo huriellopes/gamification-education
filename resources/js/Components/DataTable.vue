@@ -40,16 +40,22 @@ const selectedFilter = ref('');
 const currentPage = ref(1);
 const sortKey = ref('');
 const sortOrder = ref('asc'); // 'asc' | 'desc'
+const localPageSize = ref(props.pageSize);
 
-// Reset page on search or filter change
-watch([searchQuery, selectedFilter], () => {
+watch(() => props.pageSize, (newSize) => {
+    localPageSize.value = newSize;
+});
+
+// Reset page on search, filter, or page size change
+watch([searchQuery, selectedFilter, localPageSize], () => {
     currentPage.value = 1;
 });
 
 // Reset page if items count drops below current page range
 watch(() => props.items, () => {
     const totalFiltered = filteredItems.value.length;
-    const maxPage = Math.ceil(totalFiltered / props.pageSize) || 1;
+    const limit = localPageSize.value === -1 ? totalFiltered : localPageSize.value;
+    const maxPage = Math.ceil(totalFiltered / limit) || 1;
     if (currentPage.value > maxPage) {
         currentPage.value = maxPage;
     }
@@ -135,14 +141,18 @@ const filteredItems = computed(() => {
 
 // Paginated items
 const paginatedItems = computed(() => {
-    const start = (currentPage.value - 1) * props.pageSize;
-    const end = start + props.pageSize;
+    if (localPageSize.value === -1) {
+        return filteredItems.value;
+    }
+    const start = (currentPage.value - 1) * localPageSize.value;
+    const end = start + localPageSize.value;
     return filteredItems.value.slice(start, end);
 });
 
 // Total pages
 const totalPages = computed(() => {
-    return Math.ceil(filteredItems.value.length / props.pageSize) || 1;
+    if (localPageSize.value === -1) return 1;
+    return Math.ceil(filteredItems.value.length / localPageSize.value) || 1;
 });
 </script>
 
@@ -162,20 +172,37 @@ const totalPages = computed(() => {
                 />
             </div>
             
-            <div v-if="filterKey && filterOptions.length > 0" class="flex items-center gap-2">
-                <select
-                    v-model="selectedFilter"
-                    class="rounded-xl border border-zinc-800 bg-zinc-950/50 px-4 py-2.5 text-sm text-zinc-200 backdrop-blur-md focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                >
-                    <option value="">{{ filterPlaceholder }}</option>
-                    <option
-                        v-for="opt in filterOptions"
-                        :key="opt.value"
-                        :value="opt.value"
+            <div class="flex items-center gap-3">
+                <div v-if="filterKey && filterOptions.length > 0" class="flex items-center gap-2">
+                    <select
+                        v-model="selectedFilter"
+                        class="rounded-xl border border-zinc-800 bg-zinc-950/50 px-4 py-2.5 text-sm text-zinc-200 backdrop-blur-md focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                     >
-                        {{ opt.label }}
-                    </option>
-                </select>
+                        <option value="">{{ filterPlaceholder }}</option>
+                        <option
+                            v-for="opt in filterOptions"
+                            :key="opt.value"
+                            :value="opt.value"
+                        >
+                            {{ opt.label }}
+                        </option>
+                    </select>
+                </div>
+
+                <div v-if="items.length > 0" class="flex items-center gap-2">
+                    <span class="text-xs text-zinc-500 font-medium">Mostrar:</span>
+                    <select
+                        v-model.number="localPageSize"
+                        class="rounded-xl border border-zinc-800 bg-zinc-950/50 px-3 py-2 text-sm text-zinc-200 backdrop-blur-md focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    >
+                        <option :value="10">10</option>
+                        <option :value="20">20</option>
+                        <option :value="30">30</option>
+                        <option :value="50">50</option>
+                        <option :value="100">100</option>
+                        <option :value="-1">Todos</option>
+                    </select>
+                </div>
             </div>
         </div>
 
@@ -237,12 +264,17 @@ const totalPages = computed(() => {
         </div>
 
         <!-- Pagination Controls -->
-        <div v-if="totalPages > 1" class="flex items-center justify-between border-t border-zinc-800/50 pt-4">
+        <div v-if="filteredItems.length > 0" class="flex flex-col sm:flex-row gap-3 items-center justify-between border-t border-zinc-800/50 pt-4">
             <span class="text-xs text-zinc-500 font-medium">
-                Mostrando {{ (currentPage - 1) * pageSize + 1 }} até {{ Math.min(currentPage * pageSize, filteredItems.length) }} de {{ filteredItems.length }} registros
+                <template v-if="localPageSize === -1">
+                    Mostrando todos os {{ filteredItems.length }} registros
+                </template>
+                <template v-else>
+                    Mostrando {{ (currentPage - 1) * localPageSize + 1 }} até {{ Math.min(currentPage * localPageSize, filteredItems.length) }} de {{ filteredItems.length }} registros
+                </template>
             </span>
             
-            <div class="flex items-center gap-1.5">
+            <div v-if="totalPages > 1 && localPageSize !== -1" class="flex items-center gap-1.5">
                 <button
                     type="button"
                     :disabled="currentPage === 1"

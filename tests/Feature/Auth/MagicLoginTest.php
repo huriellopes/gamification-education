@@ -33,7 +33,7 @@ class MagicLoginTest extends TestCase
             'used_at' => null,
         ]);
 
-        Mail::assertSent(MagicLoginMail::class, function ($mail) use ($user) {
+        Mail::assertQueued(MagicLoginMail::class, function ($mail) use ($user) {
             return $mail->hasTo($user->email);
         });
     }
@@ -100,5 +100,27 @@ class MagicLoginTest extends TestCase
         $response->assertRedirect(route('login'));
         $response->assertSessionHasErrors(['email']);
         $this->assertGuest();
+    }
+
+    public function test_user_can_authenticate_via_magic_link_with_remember_me(): void
+    {
+        $user = User::factory()->create();
+        $token = 'magic-remember-token-123';
+        MagicLoginToken::create([
+            'user_id' => $user->id,
+            'token' => $token,
+            'expires_at' => Carbon::now()->addMinutes(15),
+        ]);
+
+        $response = $this->get(route('magic-login.authenticate', [
+            'token' => $token,
+            'remember' => '1',
+        ]));
+
+        $response->assertRedirect();
+        $this->assertAuthenticatedAs($user);
+
+        // O token deve estar marcado como usado
+        $this->assertNotNull(MagicLoginToken::where('token', $token)->first()->used_at);
     }
 }

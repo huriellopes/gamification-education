@@ -28,6 +28,7 @@ const form = useForm({
 
 const magicForm = useForm({
     email: '',
+    remember: false,
 });
 
 const submit = () => {
@@ -183,6 +184,11 @@ const sendMagicLink = () => {
                     />
                 </div>
                 <InputError class="mt-2" :message="magicForm.errors.email" />
+            </div>
+
+            <div class="flex items-center">
+                <Checkbox name="magic_remember" v-model:checked="magicForm.remember" />
+                <span class="ms-2 text-xs text-zinc-400 select-none">Lembrar-me neste dispositivo</span>
             </div>
 
             <button

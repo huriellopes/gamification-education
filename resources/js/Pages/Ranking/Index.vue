@@ -1,5 +1,6 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import DataTable from '@/Components/DataTable.vue';
 import { Head, router } from '@inertiajs/vue3';
 import { computed, ref, watch } from 'vue';
 
@@ -29,6 +30,13 @@ const props = defineProps({
         default: null,
     },
 });
+
+const rankingHeaders = [
+    { key: 'position', label: 'Posição', sortable: true },
+    { key: 'name', label: 'Estudante', sortable: true },
+    { key: 'institution', label: 'Instituição', sortable: true },
+    { key: 'points', label: 'Pontuação (XP)', sortable: true, align: 'right' },
+];
 
 // Abas de ranking: 'global', 'institution', 'subject'
 const activeTab = ref(props.selectedSubjectId ? 'subject' : 'global');
@@ -288,65 +296,29 @@ const setTab = (tabName) => {
                     <!-- TABELA PARA O RESTO DOS INTEGRANTES (Posição 4 em diante) -->
                     <div
                         v-if="remainingRanks.length > 0"
-                        class="overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/30 shadow-xl"
+                        class="rounded-2xl border border-zinc-800 bg-zinc-900/10 p-6 shadow-xl"
                     >
-                        <table class="min-w-full text-left text-sm">
-                            <thead
-                                class="border-zinc-850 border-b bg-zinc-900/60 text-xs font-bold uppercase tracking-wider text-zinc-500"
-                            >
-                                <tr>
-                                    <th scope="col" class="px-6 py-4">
-                                        Posição
-                                    </th>
-                                    <th scope="col" class="px-6 py-4">
-                                        Estudante
-                                    </th>
-                                    <th scope="col" class="px-6 py-4">
-                                        Instituição
-                                    </th>
-                                    <th
-                                        scope="col"
-                                        class="px-6 py-4 text-right"
-                                    >
-                                        Pontuação (XP)
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody
-                                class="divide-zinc-850/50 divide-y text-zinc-300"
-                            >
-                                <tr
-                                    v-for="user in remainingRanks"
-                                    :key="user.position"
-                                    class="transition-colors hover:bg-zinc-800/10"
-                                >
-                                    <td
-                                        class="whitespace-nowrap px-6 py-4 font-bold text-zinc-400"
-                                    >
-                                        #{{ user.position }}
-                                    </td>
-                                    <td
-                                        class="whitespace-nowrap px-6 py-4 font-semibold text-white"
-                                    >
-                                        {{ user.name }}
-                                    </td>
-                                    <td
-                                        class="text-zinc-450 whitespace-nowrap px-6 py-4"
-                                    >
-                                        {{ user.institution }}
-                                    </td>
-                                    <td
-                                        class="whitespace-nowrap px-6 py-4 text-right font-bold text-yellow-400"
-                                    >
-                                        {{ user.points.toLocaleString() }}
-                                        <span
-                                            class="text-[10px] font-semibold uppercase text-zinc-500"
-                                            >xp</span
-                                        >
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <DataTable
+                            :items="remainingRanks"
+                            :columns="rankingHeaders"
+                            searchPlaceholder="Buscar por estudante ou instituição..."
+                        >
+                            <template #position="{ item }">
+                                <span class="font-bold text-zinc-400">#{{ item.position }}</span>
+                            </template>
+                            <template #name="{ item }">
+                                <span class="font-semibold text-white">{{ item.name }}</span>
+                            </template>
+                            <template #institution="{ item }">
+                                <span class="text-zinc-400">{{ item.institution }}</span>
+                            </template>
+                            <template #points="{ item }">
+                                <span class="font-bold text-yellow-400">
+                                    {{ item.points.toLocaleString() }}
+                                    <span class="text-[10px] font-semibold uppercase text-zinc-500">xp</span>
+                                </span>
+                            </template>
+                        </DataTable>
                     </div>
                 </div>
             </div>

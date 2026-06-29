@@ -22,7 +22,7 @@ use Spatie\DeletedModels\Models\Concerns\KeepsDeletedModels;
  * @property UserRole $role
  * @property GeneralStatus $is_active
  */
-#[Fillable(['name', 'email', 'password', 'institution_id', 'role', 'points', 'is_active', 'must_change_password'])]
+#[Fillable(['name', 'email', 'password', 'institution_id', 'role', 'points', 'is_active', 'must_change_password', 'last_login_at'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -88,6 +88,31 @@ class User extends Authenticatable
         return $this->role === UserRole::ADMIN;
     }
 
+    public function scopeStudents($query)
+    {
+        return $query->where('role', UserRole::STUDENT);
+    }
+
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', GeneralStatus::ACTIVE);
+    }
+
+    public static function activeStudentsCount(): int
+    {
+        return self::students()->active()->count();
+    }
+
+    public static function studentsTotalXp(): int|float|string
+    {
+        return self::students()->sum('points');
+    }
+
+    public static function getSuperAdmin(): ?self
+    {
+        return self::where('role', UserRole::SUPER_ADMIN)->first();
+    }
+
     /**
      * Get the attributes that should be cast.
      *
@@ -102,6 +127,7 @@ class User extends Authenticatable
             'is_active' => GeneralStatus::class,
             'role' => UserRole::class,
             'must_change_password' => 'boolean',
+            'last_login_at' => 'datetime',
         ];
     }
 }

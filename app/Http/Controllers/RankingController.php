@@ -38,19 +38,19 @@ class RankingController extends Controller
         }
 
         // Calcula os rankings dependendo do filtro selecionado
-        $globalRanking = $this->rankingService->getGlobalRanking(20);
+        $globalRanking = $this->rankingService->getGlobalRanking(200);
 
         $institutionRanking = collect();
 
         if ($user && $user->institution_id) {
-            $institutionRanking = $this->rankingService->getInstitutionRanking($user->institution_id, 20);
+            $institutionRanking = $this->rankingService->getInstitutionRanking($user->institution_id, 200);
         }
 
         $subjectRanking = collect();
         $selectedSubject = null;
 
         if ($subjectId) {
-            $subjectRanking = $this->rankingService->getSubjectRanking((int) $subjectId, 20);
+            $subjectRanking = $this->rankingService->getSubjectRanking((int) $subjectId, 200);
             $selectedSubject = Subject::find($subjectId);
         }
 

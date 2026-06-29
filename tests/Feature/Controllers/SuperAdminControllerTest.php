@@ -7,6 +7,9 @@ use App\Models\Institution;
 use App\Models\Subject;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Inertia\Testing\AssertableInertia as Assert;
 
 uses(RefreshDatabase::class);
@@ -52,8 +55,8 @@ test('super admin can access dashboard and view stats', function () {
         ->assertOk()
         ->assertInertia(fn (Assert $page) => $page
             ->component('SuperAdmin/Dashboard')
-            ->has('institutions')
-            ->has('users')
+            ->has('performanceChart')
+            ->has('siteVisitsChart')
             ->has('metrics'),
         );
 });
@@ -176,6 +179,30 @@ test('super admin can update user', function () {
         'id' => $this->admin->id,
         'name' => 'Updated Admin User',
     ]);
+});
+
+test('super admin can update admin user with multiple institutions', function () {
+    $secondInst = Institution::create([
+        'name' => 'Institution B',
+        'is_active' => true,
+    ]);
+
+    $this->actingAs($this->superAdmin)
+        ->put(route('super-admin.users.update', $this->admin->id), [
+            'name' => 'Updated Admin Multiple',
+            'email' => 'admin_multiple@example.com',
+            'role' => 'admin',
+            'institution_ids' => [$this->institution->id, $secondInst->id],
+        ])
+        ->assertRedirect();
+
+    $this->assertDatabaseHas('users', [
+        'id' => $this->admin->id,
+        'name' => 'Updated Admin Multiple',
+    ]);
+
+    $this->assertTrue($this->admin->institutions()->where('institution_id', $this->institution->id)->exists());
+    $this->assertTrue($this->admin->institutions()->where('institution_id', $secondInst->id)->exists());
 });
 
 test('super admin can toggle user status', function () {
@@ -318,4 +345,151 @@ test('super admin can delete subject', function () {
         'id' => $subject->id,
         'deleted_at' => null,
     ]);
+});
+
+test('super admin can view logs tab on dashboard', function () {
+    $logPath = storage_path('logs');
+
+    if (!file_exists($logPath)) {
+        mkdir($logPath, 0755, true);
+    }
+    file_put_contents($logPath . '/laravel.log', 'Log test line 1');
+
+    $response = $this->actingAs($this->superAdmin)
+        ->get(route('super-admin.logs.index'));
+
+    $response->assertOk();
+    $inertiaLogs = $response->original->getData()['page']['props']['logs'];
+    expect($inertiaLogs)->toBeArray();
+
+    $laravelLog = collect($inertiaLogs)->firstWhere('name', 'laravel.log');
+    expect($laravelLog)->not->toBeNull();
+});
+
+test('super admin can view specific log file content', function () {
+    $logPath = storage_path('logs');
+
+    if (!file_exists($logPath)) {
+        mkdir($logPath, 0755, true);
+    }
+    file_put_contents($logPath . '/laravel-test-specific.log', "Line A\nLine B\nLine C");
+
+    $response = $this->actingAs($this->superAdmin)
+        ->get(route('super-admin.logs.index', ['log_file' => 'laravel-test-specific.log']));
+
+    $response->assertOk();
+    $selectedLog = $response->original->getData()['page']['props']['selectedLog'];
+    expect($selectedLog)->not->toBeNull();
+    expect($selectedLog['name'])->toBe('laravel-test-specific.log');
+    expect($selectedLog['content'])->toContain('Line A');
+
+    @unlink($logPath . '/laravel-test-specific.log');
+});
+
+test('super admin can prune old log files keeping last 3 days', function () {
+    $logPath = storage_path('logs');
+
+    if (!file_exists($logPath)) {
+        mkdir($logPath, 0755, true);
+    }
+
+    $todayFile = $logPath . '/laravel-' . date('Y-m-d') . '.log';
+    $yesterdayFile = $logPath . '/laravel-' . date('Y-m-d', strtotime('-1 day')) . '.log';
+    $twoDaysAgoFile = $logPath . '/laravel-' . date('Y-m-d', strtotime('-2 days')) . '.log';
+    $fourDaysAgoFile = $logPath . '/laravel-' . date('Y-m-d', strtotime('-4 days')) . '.log';
+
+    file_put_contents($todayFile, 'today log');
+    file_put_contents($yesterdayFile, 'yesterday log');
+    file_put_contents($twoDaysAgoFile, 'two days ago log');
+    file_put_contents($fourDaysAgoFile, 'four days ago log');
+
+    $response = $this->actingAs($this->superAdmin)
+        ->post(route('super-admin.logs.prune'));
+
+    $response->assertRedirect();
+
+    expect(file_exists($todayFile))->toBeTrue();
+    expect(file_exists($yesterdayFile))->toBeTrue();
+    expect(file_exists($twoDaysAgoFile))->toBeTrue();
+    expect(file_exists($fourDaysAgoFile))->toBeFalse(); // Deletado
+
+    @unlink($todayFile);
+    @unlink($yesterdayFile);
+    @unlink($twoDaysAgoFile);
+});
+
+test('super admin can view failed jobs list on dashboard', function () {
+    // Insere um registro mock em failed_jobs
+    DB::table('failed_jobs')->insert([
+        'uuid' => (string) Str::uuid(),
+        'connection' => 'database',
+        'queue' => 'default',
+        'payload' => json_encode(['displayName' => 'App\\Jobs\\MockJob']),
+        'exception' => 'RuntimeException: Mock exception',
+        'failed_at' => now(),
+    ]);
+
+    $response = $this->actingAs($this->superAdmin)
+        ->get(route('super-admin.logs.index'));
+
+    $response->assertOk();
+    $failedJobs = $response->original->getData()['page']['props']['failedJobs'];
+    expect($failedJobs)->toBeArray();
+    expect(count($failedJobs))->toBeGreaterThan(0);
+    expect($failedJobs[0]['display_name'])->toBe('MockJob');
+
+    // Limpa a tabela
+    DB::table('failed_jobs')->truncate();
+});
+
+test('super admin can retry failed job', function () {
+    DB::table('failed_jobs')->insert([
+        'id' => 999,
+        'uuid' => (string) Str::uuid(),
+        'connection' => 'database',
+        'queue' => 'default',
+        'payload' => json_encode(['displayName' => 'App\\Jobs\\MockJob']),
+        'exception' => 'RuntimeException: Mock exception',
+        'failed_at' => now(),
+    ]);
+
+    // Mock Artisan queue:retry
+    Artisan::shouldReceive('call')
+        ->once()
+        ->with('queue:retry', ['id' => '999'])
+        ->andReturn(0);
+
+    $response = $this->actingAs($this->superAdmin)
+        ->post(route('super-admin.failed-jobs.retry', '999'));
+
+    $response->assertRedirect();
+
+    // Limpa a tabela
+    DB::table('failed_jobs')->truncate();
+});
+
+test('super admin can delete failed job history', function () {
+    DB::table('failed_jobs')->insert([
+        'id' => 999,
+        'uuid' => (string) Str::uuid(),
+        'connection' => 'database',
+        'queue' => 'default',
+        'payload' => json_encode(['displayName' => 'App\\Jobs\\MockJob']),
+        'exception' => 'RuntimeException: Mock exception',
+        'failed_at' => now(),
+    ]);
+
+    // Mock Artisan queue:forget
+    Artisan::shouldReceive('call')
+        ->once()
+        ->with('queue:forget', ['id' => '999'])
+        ->andReturn(0);
+
+    $response = $this->actingAs($this->superAdmin)
+        ->delete(route('super-admin.failed-jobs.destroy', '999'));
+
+    $response->assertRedirect();
+
+    // Limpa a tabela
+    DB::table('failed_jobs')->truncate();
 });

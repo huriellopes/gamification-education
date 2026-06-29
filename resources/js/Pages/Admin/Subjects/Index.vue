@@ -6,7 +6,7 @@ import Tooltip from '@/Components/Tooltip.vue';
 import TextInput from '@/Components/TextInput.vue';
 import SelectInput from '@/Components/SelectInput.vue';
 import TextareaInput from '@/Components/TextareaInput.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Head, Link, useForm, router } from '@inertiajs/vue3';
 import { ref, watch, computed } from 'vue';
 import { slugify } from '@/Utils/mask';
 import { Pencil, Trash2, Plus, Power } from '@lucide/vue';
@@ -44,6 +44,15 @@ const form = useForm({
     duration: '',
 });
 
+const isActive = (item) => {
+    if (!item) return false;
+    const val = typeof item === 'object' && 'is_active' in item ? item.is_active : item;
+    if (typeof val === 'object' && val !== null) {
+        return val.value === 1 || val.value === true || String(val.value) === '1' || val.value === 'active';
+    }
+    return val === 1 || val === true || String(val) === '1' || val === 'active';
+};
+
 watch(() => form.name, (newName) => {
     if (!isEditing.value && !wasSlugManuallyEdited.value) {
         form.slug = slugify(newName);
@@ -77,6 +86,7 @@ const submit = () => {
         () => {
             if (isEditing.value) {
                 form.put(route('admin.subjects.update', selectedSubjectId.value), {
+                    preserveScroll: true,
                     onSuccess: () => {
                         form.reset();
                         isModalOpen.value = false;
@@ -85,6 +95,7 @@ const submit = () => {
                 });
             } else {
                 form.post(route('admin.subjects.store'), {
+                    preserveScroll: true,
                     onSuccess: () => {
                         form.reset();
                         isModalOpen.value = false;
@@ -115,7 +126,8 @@ const confirmDeleteSubject = (id) => {
         'Excluir Matéria',
         'Tem certeza que deseja enviar esta matéria para a lixeira? Todos os materiais associados também serão arquivados.',
         () => {
-            form.delete(route('admin.subjects.destroy', id), {
+            router.delete(route('admin.subjects.destroy', id), {
+                preserveScroll: true,
                 onSuccess: () => {
                     confirmState.value.show = false;
                 },
@@ -124,12 +136,14 @@ const confirmDeleteSubject = (id) => {
     );
 };
 
-const toggleStatus = (id) => {
+const toggleStatus = (sub) => {
+    const actionText = isActive(sub) ? 'desativar' : 'ativar';
     triggerConfirm(
         'Alterar Status',
-        'Deseja alterar o status de ativação desta matéria?',
+        `Deseja ${actionText} a matéria "${sub.name}"?`,
         () => {
-            form.post(route('admin.subjects.toggle', id), {
+            router.post(route('admin.subjects.toggle', sub.id), {}, {
+                preserveScroll: true,
                 onSuccess: () => {
                     confirmState.value.show = false;
                 },
@@ -198,10 +212,11 @@ const toggleStatus = (id) => {
                                             <Pencil class="h-4 w-4" />
                                         </button>
                                     </Tooltip>
-                                    <Tooltip text="Alterar Status">
+                                    <Tooltip :text="isActive(sub) ? 'Desativar Matéria' : 'Ativar Matéria'">
                                         <button
-                                            @click="toggleStatus(sub.id)"
-                                            class="rounded-lg p-1.5 text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-white"
+                                            @click="toggleStatus(sub)"
+                                            class="rounded-lg p-1.5 transition-colors"
+                                            :class="isActive(sub) ? 'text-red-500 hover:text-red-400 hover:bg-red-500/10' : 'text-emerald-500 hover:text-emerald-400 hover:bg-emerald-500/10'"
                                             type="button"
                                         >
                                             <Power class="h-4 w-4" />
@@ -210,7 +225,7 @@ const toggleStatus = (id) => {
                                     <Tooltip text="Excluir Matéria">
                                         <button
                                             @click="confirmDeleteSubject(sub.id)"
-                                            class="rounded-lg p-1.5 text-zinc-400 transition-colors hover:bg-red-500/20 hover:text-red-400"
+                                            class="rounded-lg p-1.5 text-red-500 hover:text-red-400 hover:bg-red-500/10 transition-colors"
                                             type="button"
                                         >
                                             <Trash2 class="h-4 w-4" />
@@ -228,12 +243,12 @@ const toggleStatus = (id) => {
                                 <span
                                     class="font-semibold"
                                     :class="
-                                        sub.is_active === 'active'
+                                        isActive(sub)
                                             ? 'text-emerald-400'
                                             : 'text-red-400'
                                     "
                                 >
-                                    {{ sub.is_active === 'active' ? 'Ativa' : 'Inativa' }}
+                                    {{ isActive(sub) ? 'Ativa' : 'Inativa' }}
                                 </span>
                             </p>
                             <p

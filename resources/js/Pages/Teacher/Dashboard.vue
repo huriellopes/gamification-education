@@ -112,9 +112,10 @@ const deleteSubject = () => {
                     <button
                         @click="openCreateModal"
                         class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-650 px-4 py-2.5 text-xs font-bold text-white transition-all hover:brightness-110"
+                        title="Nova Matéria"
                     >
                         <Plus class="h-4 w-4" />
-                        Nova Matéria
+                        <span class="hidden md:inline">Nova Matéria</span>
                     </button>
                 </div>
             </div>
@@ -173,7 +174,7 @@ const deleteSubject = () => {
                                     <Tooltip text="Excluir Matéria">
                                         <button
                                             @click="confirmDeleteSubject(sub.id)"
-                                            class="rounded-lg p-1.5 text-zinc-400 transition-colors hover:bg-red-500/20 hover:text-red-400"
+                                            class="rounded-lg p-1.5 text-red-500 hover:text-red-400 hover:bg-red-500/10 transition-colors"
                                             type="button"
                                         >
                                             <Trash2 class="h-4 w-4" />

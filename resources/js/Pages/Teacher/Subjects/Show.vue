@@ -451,7 +451,7 @@ const deleteQuestion = () => {
                                     <Tooltip text="Excluir Material">
                                         <button
                                             @click="confirmDeleteMaterial(mat.id)"
-                                            class="rounded-lg p-1.5 text-zinc-400 transition-colors hover:bg-red-500/20 hover:text-red-400"
+                                            class="rounded-lg p-1.5 text-red-500 hover:text-red-400 hover:bg-red-500/10 transition-colors"
                                         >
                                             <Trash2 class="h-4 w-4" />
                                         </button>
@@ -519,7 +519,7 @@ const deleteQuestion = () => {
                                         <Tooltip text="Excluir Teste">
                                             <button
                                                 @click="confirmDeleteTest(test.id)"
-                                                class="rounded-lg p-1 text-zinc-450 hover:bg-red-500/20 hover:text-red-400"
+                                                class="rounded-lg p-1 text-red-500 hover:text-red-400 hover:bg-red-500/10 transition-colors"
                                             >
                                                 <Trash2 class="h-3.5 w-3.5" />
                                             </button>
@@ -553,7 +553,7 @@ const deleteQuestion = () => {
                                                 <button @click="openEditQuestionModal(q, test.id)" class="text-zinc-550 hover:text-zinc-300 p-0.5">
                                                     <Pencil class="h-3 w-3" />
                                                 </button>
-                                                <button @click="confirmDeleteQuestion(q.id)" class="text-zinc-550 hover:text-red-400 p-0.5">
+                                                <button @click="confirmDeleteQuestion(q.id)" class="text-red-500 hover:text-red-400 p-0.5">
                                                     <Trash2 class="h-3 w-3" />
                                                 </button>
                                             </div>
@@ -688,7 +688,7 @@ const deleteQuestion = () => {
                         <div v-for="(opt, idx) in questionForm.options" :key="idx" class="flex items-center gap-2">
                             <input type="radio" :value="idx" v-model="questionForm.correct_option_index" class="h-4 w-4 border-zinc-800 bg-zinc-950 text-indigo-600 focus:ring-indigo-500" />
                             <input v-model="questionForm.options[idx]" type="text" required :placeholder="`Opção ${idx + 1}`" class="flex-grow rounded-xl border border-zinc-800 bg-zinc-955 px-4 py-2 text-xs text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500" />
-                            <button v-if="questionForm.options.length > 2" type="button" @click="removeOption(idx)" class="text-zinc-500 hover:text-red-400 p-1">
+                            <button v-if="questionForm.options.length > 2" type="button" @click="removeOption(idx)" class="text-red-500 hover:text-red-400 p-1">
                                 <Trash2 class="h-4 w-4" />
                             </button>
                         </div>

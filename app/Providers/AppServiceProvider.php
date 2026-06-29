@@ -28,5 +28,16 @@ class AppServiceProvider extends ServiceProvider
         Vite::prefetch(concurrency: 3);
         User::observe(UserObserver::class);
         JsonResource::withoutWrapping();
+
+        \Illuminate\Support\Facades\Event::listen(
+            \Illuminate\Auth\Events\Login::class,
+            function (\Illuminate\Auth\Events\Login $event) {
+                if ($event->user instanceof User) {
+                    $event->user->update([
+                        'last_login_at' => now(),
+                    ]);
+                }
+            }
+        );
     }
 }

@@ -40,6 +40,12 @@ const getGradientClass = computed(() => {
         return 'from-orange-500 to-amber-500';
     return 'from-red-500 to-rose-500';
 });
+
+const goBack = () => {
+    if (typeof window !== 'undefined') {
+        window.history.back();
+    }
+};
 </script>
 
 <template>
@@ -152,7 +158,7 @@ const getGradientClass = computed(() => {
                         class="flex flex-col items-center justify-center gap-4 sm:flex-row"
                     >
                         <button
-                            @click="() => window.history.back()"
+                            @click="goBack"
                             class="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-300 bg-white px-6 py-3 font-medium text-gray-700 shadow-sm transition-colors hover:bg-gray-50 focus:ring-2 focus:ring-gray-200 focus:ring-offset-2 sm:w-auto dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:focus:ring-offset-gray-900"
                         >
                             <svg

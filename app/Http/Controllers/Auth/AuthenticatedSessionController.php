@@ -45,7 +45,7 @@ class AuthenticatedSessionController extends Controller
                 ->delete();
         }
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        return redirect()->route('dashboard');
     }
 
     /**

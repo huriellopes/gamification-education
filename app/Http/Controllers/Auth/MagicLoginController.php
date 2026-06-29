@@ -30,6 +30,7 @@ class MagicLoginController extends Controller
         ]);
 
         $user = User::where('email', $validated['email'])->firstOrFail();
+        $remember = $request->boolean('remember');
 
         // Limpa tokens antigos não usados do usuário
         MagicLoginToken::where('user_id', $user->id)
@@ -44,8 +45,11 @@ class MagicLoginController extends Controller
             'expires_at' => Carbon::now()->addMinutes(15),
         ]);
 
-        // Envia o e-mail com o link de login mágico
-        $url = route('magic-login.authenticate', ['token' => $token]);
+        // Envia o e-mail com o link de login mágico (incluindo o parâmetro remember)
+        $url = route('magic-login.authenticate', [
+            'token' => $token,
+            'remember' => $remember ? '1' : '0',
+        ]);
         Mail::to($user->email)->send(new MagicLoginMail($user, $url));
 
         return back()->with('status', 'Enviamos o link de login mágico para o seu e-mail! Verifique sua caixa de entrada.');
@@ -54,7 +58,7 @@ class MagicLoginController extends Controller
     /**
      * Autentica o usuário a partir do link mágico.
      */
-    public function authenticate(string $token): RedirectResponse
+    public function authenticate(Request $request, string $token): RedirectResponse
     {
         /** @var MagicLoginToken|null $magicToken */
         $magicToken = MagicLoginToken::where('token', $token)->first();
@@ -71,9 +75,10 @@ class MagicLoginController extends Controller
 
         /** @var User $user */
         $user = $magicToken->user;
+        $remember = $request->boolean('remember');
 
         // Efetua o login
-        Auth::login($user);
+        Auth::login($user, $remember);
         session()->regenerate();
 
         // Restrição de login único: invalida todas as outras sessões do usuário no banco de dados
@@ -82,6 +87,6 @@ class MagicLoginController extends Controller
             ->where('id', '!=', session()->getId())
             ->delete();
 
-        return redirect()->intended(route('dashboard'))->with('success', 'Login realizado com sucesso via Link Mágico!');
+        return redirect()->route('dashboard')->with('success', 'Login realizado com sucesso via Link Mágico!');
     }
 }
