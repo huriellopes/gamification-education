@@ -6,7 +6,9 @@ namespace App\Providers;
 
 use App\Models\User;
 use App\Observers\UserObserver;
+use Illuminate\Auth\Events\Login;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 
@@ -29,15 +31,15 @@ class AppServiceProvider extends ServiceProvider
         User::observe(UserObserver::class);
         JsonResource::withoutWrapping();
 
-        \Illuminate\Support\Facades\Event::listen(
-            \Illuminate\Auth\Events\Login::class,
-            function (\Illuminate\Auth\Events\Login $event) {
+        Event::listen(
+            Login::class,
+            function (Login $event) {
                 if ($event->user instanceof User) {
                     $event->user->update([
                         'last_login_at' => now(),
                     ]);
                 }
-            }
+            },
         );
     }
 }

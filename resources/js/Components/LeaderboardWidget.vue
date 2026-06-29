@@ -1,4 +1,6 @@
 <script setup>
+import { __ } from '@/i18n';
+
 defineProps({
     users: {
         type: Array,
@@ -27,14 +29,14 @@ defineProps({
                     d="M16.5 18.75h-9m9 0a3 3 0 0 1 3 3h-15a3 3 0 0 1 3-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-5.25a1.125 1.125 0 0 0-1.125 1.125v3.375m9 0h-9M12 2.25a2.25 2.25 0 0 0-2.25 2.25c0 1.18.91 2.164 2.09 2.245a.75.75 0 0 1 .66.745v3.375h2.25V7.49a.75.75 0 0 1 .66-.745 2.25 2.25 0 0 0 2.09-2.245A2.25 2.25 0 0 0 12 2.25Z"
                 />
             </svg>
-            Top Competidores
+            {{ __('misc.leaderboard.title') }}
         </h3>
 
         <div
             v-if="users.length === 0"
             class="py-6 text-center text-sm text-zinc-500"
         >
-            Nenhum competidor registrado ainda.
+            {{ __('misc.leaderboard.empty') }}
         </div>
 
         <ul v-else class="divide-y divide-zinc-800/50">

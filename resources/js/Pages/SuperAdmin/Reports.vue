@@ -1,10 +1,11 @@
 <script setup>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import DataTable from '@/Components/DataTable.vue';
 import Button from '@/Components/Button.vue';
-import { Head, useForm, router } from '@inertiajs/vue3';
-import { ref, onMounted, onUnmounted, watch } from 'vue';
-import { Users, TrendingUp, FileSpreadsheet } from '@lucide/vue';
+import DataTable from '@/Components/DataTable.vue';
+import { __ } from '@/i18n';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { Head, router, useForm } from '@inertiajs/vue3';
+import { FileSpreadsheet, TrendingUp, Users } from '@lucide/vue';
+import { onMounted, onUnmounted, ref, watch } from 'vue';
 
 const props = defineProps({
     reports: {
@@ -18,10 +19,18 @@ const props = defineProps({
 });
 
 const reportColumns = [
-    { key: 'name', label: 'Nome do Relatório', sortable: true },
-    { key: 'status', label: 'Status', sortable: true },
-    { key: 'created_at', label: 'Solicitado em', sortable: true },
-    { key: 'actions', label: 'Ações', align: 'right' },
+    {
+        key: 'name',
+        label: __('superadmin.reports.col_report_name'),
+        sortable: true,
+    },
+    { key: 'status', label: __('common.status'), sortable: true },
+    {
+        key: 'created_at',
+        label: __('superadmin.reports.col_requested_at'),
+        sortable: true,
+    },
+    { key: 'actions', label: __('common.actions'), align: 'right' },
 ];
 
 const reportForm = useForm({
@@ -32,7 +41,7 @@ const requestMembersReport = () => {
     reportForm.post(route('super-admin.reports.members'), {
         onSuccess: () => {
             reportForm.reset();
-        }
+        },
     });
 };
 
@@ -40,7 +49,7 @@ const requestPerformanceReport = () => {
     reportForm.post(route('super-admin.reports.performance'), {
         onSuccess: () => {
             reportForm.reset();
-        }
+        },
     });
 };
 
@@ -48,7 +57,7 @@ const requestPerformanceReport = () => {
 const pollInterval = ref(null);
 
 const checkAndStartPolling = () => {
-    const hasPending = props.reports.some(r => r.status === 'pending');
+    const hasPending = props.reports.some((r) => r.status === 'pending');
     if (hasPending) {
         if (!pollInterval.value) {
             pollInterval.value = setInterval(() => {
@@ -57,11 +66,13 @@ const checkAndStartPolling = () => {
                     preserveScroll: true,
                     preserveState: true,
                     onSuccess: () => {
-                        const stillPending = props.reports.some(r => r.status === 'pending');
+                        const stillPending = props.reports.some(
+                            (r) => r.status === 'pending',
+                        );
                         if (!stillPending) {
                             stopPolling();
                         }
-                    }
+                    },
                 });
             }, 4000);
         }
@@ -77,9 +88,13 @@ const stopPolling = () => {
     }
 };
 
-watch(() => props.reports, () => {
-    checkAndStartPolling();
-}, { deep: true });
+watch(
+    () => props.reports,
+    () => {
+        checkAndStartPolling();
+    },
+    { deep: true },
+);
 
 onMounted(() => {
     checkAndStartPolling();
@@ -93,96 +108,141 @@ const formatDateTime = (dateStr) => {
     if (!dateStr) return '';
     try {
         const d = new Date(dateStr);
-        if (isNaN(d.getTime())) return 'Data Inválida';
+        if (isNaN(d.getTime())) return __('superadmin.reports.invalid_date');
         return d.toLocaleString('pt-BR');
     } catch (e) {
-        return 'Data Inválida';
+        return __('superadmin.reports.invalid_date');
     }
 };
 </script>
 
 <template>
-    <Head title="Relatórios do Sistema" />
+    <Head :title="__('superadmin.reports.head_title')" />
 
     <AuthenticatedLayout>
         <template #header>
             <h2 class="text-xl font-bold leading-tight text-zinc-100">
-                Relatórios e Exportações
+                {{ __('superadmin.reports.header') }}
             </h2>
         </template>
 
-        <div class="bg-zinc-950 py-6 text-zinc-100 space-y-6">
+        <div class="space-y-6 bg-zinc-950 py-6 text-zinc-100">
             <!-- Solicitar Relatório Card -->
-            <div class="rounded-2xl border border-zinc-800 bg-zinc-900/30 p-6 backdrop-blur-md space-y-4">
-                <h3 class="text-lg font-bold text-white">Solicitar Novo Relatório</h3>
+            <div
+                class="space-y-4 rounded-2xl border border-zinc-800 bg-zinc-900/30 p-6 backdrop-blur-md"
+            >
+                <h3 class="text-lg font-bold text-white">
+                    {{ __('superadmin.reports.request_title') }}
+                </h3>
                 <p class="text-sm text-zinc-400">
-                    Selecione uma instituição específica para filtrar o relatório, ou deixe em branco para gerar um relatório consolidado com dados de todas as instituições.
+                    {{ __('superadmin.reports.request_subtitle') }}
                 </p>
 
-                <div class="flex flex-wrap gap-4 items-end">
+                <div class="flex flex-wrap items-end gap-4">
                     <div class="w-full sm:w-64">
-                        <label class="mb-2 block text-xs font-bold uppercase text-zinc-450">Filtrar por Instituição</label>
+                        <label
+                            class="text-zinc-450 mb-2 block text-xs font-bold uppercase"
+                            >{{
+                                __('superadmin.reports.filter_by_institution')
+                            }}</label
+                        >
                         <select
                             v-model="reportForm.institution_id"
                             class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-2.5 text-sm text-white focus:border-indigo-500 focus:outline-none"
                         >
-                            <option value="">Todas as Instituições</option>
-                            <option v-for="inst in institutions" :key="inst.id" :value="inst.id">
+                            <option value="">
+                                {{ __('superadmin.reports.all_institutions') }}
+                            </option>
+                            <option
+                                v-for="inst in institutions"
+                                :key="inst.id"
+                                :value="inst.id"
+                            >
                                 {{ inst.name }}
                             </option>
                         </select>
                     </div>
 
                     <div class="flex gap-3">
-                        <Button 
-                            @click="requestMembersReport" 
+                        <Button
+                            @click="requestMembersReport"
                             :disabled="reportForm.processing"
-                            class="bg-indigo-600 hover:bg-indigo-500 font-bold flex items-center gap-2 px-3 py-2.5 md:px-4"
-                            title="Gerar Relatório de Membros"
+                            class="flex items-center gap-2 bg-indigo-600 px-3 py-2.5 font-bold hover:bg-indigo-500 md:px-4"
+                            :title="
+                                __('superadmin.reports.members_report_title')
+                            "
                         >
                             <Users class="h-4 w-4 shrink-0" />
-                            <span class="hidden md:inline">Relatório de Membros</span>
+                            <span class="hidden md:inline">{{
+                                __('superadmin.reports.members_report')
+                            }}</span>
                         </Button>
-                        <Button 
-                            @click="requestPerformanceReport" 
+                        <Button
+                            @click="requestPerformanceReport"
                             :disabled="reportForm.processing"
-                            class="bg-emerald-600 hover:bg-emerald-500 font-bold flex items-center gap-2 px-3 py-2.5 md:px-4"
-                            title="Gerar Relatório de Desempenho"
+                            class="flex items-center gap-2 bg-emerald-600 px-3 py-2.5 font-bold hover:bg-emerald-500 md:px-4"
+                            :title="
+                                __(
+                                    'superadmin.reports.performance_report_title',
+                                )
+                            "
                         >
                             <TrendingUp class="h-4 w-4 shrink-0" />
-                            <span class="hidden md:inline">Relatório de Desempenho</span>
+                            <span class="hidden md:inline">{{
+                                __('superadmin.reports.performance_report')
+                            }}</span>
                         </Button>
                     </div>
                 </div>
             </div>
 
             <!-- Fila de Relatórios -->
-            <div class="rounded-2xl border border-zinc-800 bg-zinc-900/30 p-6 backdrop-blur-md space-y-4">
+            <div
+                class="space-y-4 rounded-2xl border border-zinc-800 bg-zinc-900/30 p-6 backdrop-blur-md"
+            >
                 <div>
-                    <h3 class="text-lg font-bold text-white">Histórico e Fila de Relatórios</h3>
-                    <p class="text-xs text-zinc-400">Os relatórios são processados em fila de forma assíncrona. Assim que concluídos, o botão para download ficará disponível.</p>
+                    <h3 class="text-lg font-bold text-white">
+                        {{ __('superadmin.reports.queue_title') }}
+                    </h3>
+                    <p class="text-xs text-zinc-400">
+                        {{ __('superadmin.reports.queue_subtitle') }}
+                    </p>
                 </div>
 
                 <DataTable
                     :items="reports"
                     :columns="reportColumns"
-                    searchPlaceholder="Buscar relatório..."
+                    :searchPlaceholder="
+                        __('superadmin.reports.search_placeholder')
+                    "
                 >
                     <template #name="{ item }">
-                        <span class="font-semibold text-zinc-200">{{ item.name }}</span>
+                        <span class="font-semibold text-zinc-200">{{
+                            item.name
+                        }}</span>
                     </template>
                     <template #status="{ item }">
-                        <span v-if="item.status === 'pending'" class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold text-amber-400 bg-amber-400/10 rounded-full">
-                            <span class="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse"></span>
-                            Processando
+                        <span
+                            v-if="item.status === 'pending'"
+                            class="inline-flex items-center gap-1.5 rounded-full bg-amber-400/10 px-2.5 py-1 text-xs font-semibold text-amber-400"
+                        >
+                            <span
+                                class="h-1.5 w-1.5 animate-pulse rounded-full bg-amber-400"
+                            ></span>
+                            {{ __('superadmin.reports.processing') }}
                         </span>
-                        <span v-else class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold text-emerald-400 bg-emerald-400/10 rounded-full">
-                            <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
-                            Concluído
+                        <span
+                            v-else
+                            class="inline-flex items-center gap-1.5 rounded-full bg-emerald-400/10 px-2.5 py-1 text-xs font-semibold text-emerald-400"
+                        >
+                            <span
+                                class="h-1.5 w-1.5 rounded-full bg-emerald-400"
+                            ></span>
+                            {{ __('superadmin.reports.completed') }}
                         </span>
                     </template>
                     <template #created_at="{ item }">
-                        <span class="text-zinc-400 font-mono text-xs">
+                        <span class="font-mono text-xs text-zinc-400">
                             {{ formatDateTime(item.created_at) }}
                         </span>
                     </template>
@@ -191,13 +251,21 @@ const formatDateTime = (dateStr) => {
                             <a
                                 v-if="item.status === 'completed'"
                                 :href="route('reports.download', item.id)"
-                                class="inline-flex items-center justify-center gap-2 rounded-xl border border-amber-500/20 bg-amber-500/5 px-3 py-2.5 md:px-4 md:py-2 text-sm text-amber-400 hover:bg-amber-500/10 transition-all font-semibold active:scale-98"
-                                title="Baixar Relatório (XLSX)"
+                                class="active:scale-98 inline-flex items-center justify-center gap-2 rounded-xl border border-amber-500/20 bg-amber-500/5 px-3 py-2.5 text-sm font-semibold text-amber-400 transition-all hover:bg-amber-500/10 md:px-4 md:py-2"
+                                :title="__('superadmin.reports.download_title')"
                             >
                                 <FileSpreadsheet class="h-4 w-4 shrink-0" />
-                                <span class="hidden md:inline">Download (XLSX)</span>
+                                <span class="hidden md:inline">{{
+                                    __('superadmin.reports.download')
+                                }}</span>
                             </a>
-                            <span v-else class="text-zinc-550 text-xs font-bold animate-pulse">Processando...</span>
+                            <span
+                                v-else
+                                class="text-zinc-550 animate-pulse text-xs font-bold"
+                                >{{
+                                    __('superadmin.reports.processing_ellipsis')
+                                }}</span
+                            >
                         </div>
                     </template>
                 </DataTable>

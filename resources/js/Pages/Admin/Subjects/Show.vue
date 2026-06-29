@@ -1,4 +1,5 @@
 <script setup>
+import { __ } from '@/i18n';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
@@ -32,7 +33,7 @@ const saveTeachers = () => {
 </script>
 
 <template>
-    <Head :title="`Gerenciar - ${subject.name}`" />
+    <Head :title="__('admin.subject_show.title', { name: subject.name })" />
 
     <AuthenticatedLayout>
         <template #header>
@@ -84,12 +85,12 @@ const saveTeachers = () => {
                     <h3
                         class="text-xs font-bold uppercase tracking-wider text-zinc-500"
                     >
-                        Descrição da Matéria
+                        {{ __('admin.subject_show.subject_description') }}
                     </h3>
                     <p class="mt-2 text-sm text-zinc-300">
                         {{
                             subject.description ||
-                            'Sem descrição cadastrada para esta matéria.'
+                            __('admin.subject_show.no_description')
                         }}
                     </p>
                 </div>
@@ -103,19 +104,25 @@ const saveTeachers = () => {
                     >
                         <div>
                             <h3 class="text-lg font-bold text-white">
-                                Professores Responsáveis
+                                {{
+                                    __(
+                                        'admin.subject_show.responsible_teachers',
+                                    )
+                                }}
                             </h3>
                             <p class="text-sm text-zinc-400">
-                                Gerencie os professores autorizados a
-                                disponibilizar materiais e quizzes para esta
-                                matéria.
+                                {{
+                                    __(
+                                        'admin.subject_show.responsible_teachers_desc',
+                                    )
+                                }}
                             </p>
                         </div>
                         <button
                             @click="isModalOpen = true"
                             class="rounded-xl bg-indigo-600 px-4 py-2 text-sm font-bold text-white transition-all hover:bg-indigo-500"
                         >
-                            Gerenciar Professores
+                            {{ __('admin.subject_show.manage_teachers') }}
                         </button>
                     </div>
 
@@ -140,7 +147,7 @@ const saveTeachers = () => {
                             "
                             class="py-2 text-sm text-zinc-500"
                         >
-                            Nenhum professor associado a esta matéria.
+                            {{ __('admin.subject_show.no_teachers') }}
                         </div>
                     </div>
                 </div>
@@ -152,8 +159,10 @@ const saveTeachers = () => {
                         <h3
                             class="flex items-center gap-2 text-lg font-bold text-white"
                         >
-                            <span class="text-zinc-500">📚</span> Materiais de
-                            Estudo ({{ subject.study_materials?.length || 0 }})
+                            <span class="text-zinc-500">📚</span>
+                            {{ __('admin.subject_show.study_materials') }} ({{
+                                subject.study_materials?.length || 0
+                            }})
                         </h3>
 
                         <div class="space-y-3">
@@ -167,8 +176,12 @@ const saveTeachers = () => {
                                         {{ mat.title }}
                                     </h4>
                                     <p class="mt-1 text-xs text-zinc-500">
-                                        Concede +{{ mat.points_reward }} pontos
-                                        por leitura
+                                        {{
+                                            __(
+                                                'admin.subject_show.points_per_reading',
+                                                { points: mat.points_reward },
+                                            )
+                                        }}
                                     </p>
                                 </div>
                             </div>
@@ -177,8 +190,7 @@ const saveTeachers = () => {
                                 v-if="subject.study_materials?.length === 0"
                                 class="rounded-xl border border-dashed border-zinc-800 p-8 text-center text-sm text-zinc-500"
                             >
-                                Nenhum material didático gerado para esta
-                                matéria ainda.
+                                {{ __('admin.subject_show.no_materials') }}
                             </div>
                         </div>
                     </div>
@@ -188,8 +200,10 @@ const saveTeachers = () => {
                         <h3
                             class="flex items-center gap-2 text-lg font-bold text-white"
                         >
-                            <span class="text-zinc-500">⚔️</span> Testes e
-                            Quizzes ({{ subject.tests?.length || 0 }})
+                            <span class="text-zinc-500">⚔️</span>
+                            {{ __('admin.subject_show.tests_quizzes') }} ({{
+                                subject.tests?.length || 0
+                            }})
                         </h3>
 
                         <div class="space-y-4">
@@ -212,14 +226,16 @@ const saveTeachers = () => {
                                     <span
                                         class="rounded-lg bg-indigo-500/10 px-2.5 py-1 text-xs font-bold text-indigo-400"
                                     >
-                                        +{{ test.points_reward }} XP Máx
+                                        +{{ test.points_reward }}
+                                        {{ __('admin.subject_show.xp_max') }}
                                     </span>
                                 </div>
 
                                 <!-- Mini-Listagem de Questões do Teste -->
                                 <div class="border-t border-zinc-800 pt-3">
                                     <h5 class="text-xs font-bold text-zinc-500">
-                                        Questões ({{ test.questions?.length }})
+                                        {{ __('admin.subject_show.questions') }}
+                                        ({{ test.questions?.length }})
                                     </h5>
                                     <ol
                                         class="mt-2 list-inside list-decimal space-y-2 text-xs"
@@ -259,8 +275,7 @@ const saveTeachers = () => {
                                 v-if="subject.tests?.length === 0"
                                 class="rounded-xl border border-dashed border-zinc-800 p-8 text-center text-sm text-zinc-500"
                             >
-                                Nenhum teste ou atividade gerada para esta
-                                matéria ainda.
+                                {{ __('admin.subject_show.no_tests') }}
                             </div>
                         </div>
                     </div>
@@ -277,11 +292,11 @@ const saveTeachers = () => {
                 class="w-full max-w-md space-y-4 rounded-2xl border border-zinc-800 bg-zinc-900 p-6 shadow-2xl"
             >
                 <h3 class="text-lg font-bold text-white">
-                    Associar Professores
+                    {{ __('admin.subject_show.associate_teachers') }}
                 </h3>
                 <form @submit.prevent="saveTeachers" class="space-y-4">
                     <p class="text-xs text-zinc-400">
-                        Selecione os professores responsáveis por esta matéria:
+                        {{ __('admin.subject_show.select_teachers') }}
                     </p>
                     <div class="max-h-60 space-y-2 overflow-y-auto pr-2">
                         <label
@@ -308,7 +323,9 @@ const saveTeachers = () => {
                             v-if="availableTeachers.length === 0"
                             class="py-4 text-center text-sm text-zinc-500"
                         >
-                            Nenhum professor cadastrado na instituição ainda.
+                            {{
+                                __('admin.subject_show.no_teachers_registered')
+                            }}
                         </div>
                     </div>
                     <div class="flex justify-end gap-3 pt-2">
@@ -317,14 +334,14 @@ const saveTeachers = () => {
                             @click="isModalOpen = false"
                             class="rounded-xl border border-zinc-700 bg-transparent px-4 py-2.5 text-sm font-semibold text-zinc-300 transition-all hover:bg-zinc-800"
                         >
-                            Cancelar
+                            {{ __('common.cancel') }}
                         </button>
                         <button
                             type="submit"
                             :disabled="form.processing"
                             class="rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-bold text-white transition-all hover:bg-indigo-500 disabled:opacity-55"
                         >
-                            Salvar
+                            {{ __('common.save') }}
                         </button>
                     </div>
                 </form>

@@ -1,5 +1,6 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { __ } from '@/i18n';
 import { Head, Link, router } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 
@@ -35,11 +36,7 @@ const isComplete = computed(() => {
 
 const submitTest = () => {
     if (!isComplete.value) {
-        if (
-            !confirm(
-                'Você ainda não respondeu a todas as perguntas. Tem certeza de que deseja enviar?',
-            )
-        ) {
+        if (!confirm(__('student.test.confirm_incomplete'))) {
             return;
         }
     }
@@ -89,7 +86,11 @@ const submitTest = () => {
                         {{ test.title }}
                     </h2>
                     <p class="text-xs text-zinc-500">
-                        Trilha: {{ subject.name }}
+                        {{
+                            __('student.material.track', {
+                                name: subject.name,
+                            })
+                        }}
                     </p>
                 </div>
             </div>
@@ -105,21 +106,24 @@ const submitTest = () => {
                 >
                     <div>
                         <h3 class="mb-1 text-sm font-bold text-white">
-                            Status da Atividade
+                            {{ __('student.test.activity_status') }}
                         </h3>
                         <p class="text-xs text-zinc-400">
-                            Responda às questões e clique em "Enviar Atividade"
-                            para creditar seus pontos.
+                            {{ __('student.test.instruction') }}
                         </p>
                     </div>
                     <!-- Barra de progresso rápida -->
                     <div class="w-full text-xs font-semibold md:w-48">
                         <div class="mb-1 flex justify-between">
-                            <span class="text-zinc-500">Respondido</span>
-                            <span class="text-yellow-400"
-                                >{{ answeredCount }} /
-                                {{ test.questions.length }}</span
-                            >
+                            <span class="text-zinc-500">{{
+                                __('student.test.answered')
+                            }}</span>
+                            <span class="text-yellow-400">{{
+                                __('student.test.answered_count', {
+                                    count: answeredCount,
+                                    total: test.questions.length,
+                                })
+                            }}</span>
                         </div>
                         <div
                             class="h-1.5 w-full overflow-hidden rounded-full bg-zinc-800"
@@ -144,7 +148,11 @@ const submitTest = () => {
                         <h4
                             class="flex gap-2 text-sm font-bold uppercase tracking-wider text-zinc-400"
                         >
-                            <span>Questão {{ qIdx + 1 }}</span>
+                            <span>{{
+                                __('student.test.question', {
+                                    number: qIdx + 1,
+                                })
+                            }}</span>
                         </h4>
                         <p
                             class="text-base font-semibold leading-relaxed text-white"
@@ -195,13 +203,15 @@ const submitTest = () => {
             <div class="flex flex-col">
                 <span
                     class="text-xs font-bold uppercase tracking-wider text-zinc-500"
-                    >Desafio Avaliativo</span
+                    >{{ __('student.test.graded_challenge') }}</span
                 >
                 <span class="text-sm font-semibold text-zinc-200"
-                    >Recompensa Máxima:
-                    <span class="font-bold text-yellow-400"
-                        >+{{ test.points_reward }} XP</span
-                    ></span
+                    >{{ __('student.test.max_reward') }}
+                    <span class="font-bold text-yellow-400">{{
+                        __('student.test.reward_xp', {
+                            points: test.points_reward,
+                        })
+                    }}</span></span
                 >
             </div>
 
@@ -232,7 +242,7 @@ const submitTest = () => {
                             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                         ></path>
                     </svg>
-                    Enviar Atividade
+                    {{ __('student.test.submit') }}
                 </button>
             </div>
         </div>

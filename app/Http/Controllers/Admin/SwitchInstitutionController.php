@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Admin;
 
+use App\Actions\Admin\SwitchInstitutionAction;
 use App\Http\Controllers\Controller;
 use App\Models\Institution;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 
 class SwitchInstitutionController extends Controller
@@ -14,7 +16,7 @@ class SwitchInstitutionController extends Controller
     /**
      * Alterna a instituição ativa (contexto de gerenciamento) do administrador.
      */
-    public function switch(Institution $institution)
+    public function __invoke(Institution $institution, SwitchInstitutionAction $switchInstitution): RedirectResponse
     {
         /** @var User $user */
         $user = Auth::user();
@@ -26,9 +28,7 @@ class SwitchInstitutionController extends Controller
             'Você não tem permissão para gerenciar esta instituição.',
         );
 
-        // Atualiza a instituição de contexto ativa
-        $user->institution_id = $institution->id;
-        $user->save();
+        $switchInstitution($user, $institution);
 
         return redirect()->back()->with('success', "Contexto alterado para {$institution->name}!");
     }

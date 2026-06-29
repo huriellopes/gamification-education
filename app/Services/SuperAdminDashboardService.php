@@ -10,16 +10,44 @@ use App\Http\Resources\SuperAdmin\SubjectResource;
 use App\Http\Resources\UserResource;
 use App\Models\Institution;
 use App\Models\Report;
+use App\Models\ScoreHistory;
 use App\Models\SiteVisit;
 use App\Models\Subject;
 use App\Models\Support;
 use App\Models\User;
+use App\Services\Concerns\BuildsDailyChart;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Spatie\DeletedModels\Models\DeletedModel;
 
 class SuperAdminDashboardService
 {
+    use BuildsDailyChart;
+
+    /**
+     * System-wide XP earned over the last 7 days.
+     *
+     * @return list<array<string, int|string>>
+     */
+    public function getPerformanceChart(): array
+    {
+        $raw = ScoreHistory::dailyPointsSince(now()->subDays(6)->startOfDay());
+
+        return $this->dailyChart($raw, 'points');
+    }
+
+    /**
+     * Public site visits over the last 7 days.
+     *
+     * @return list<array<string, int|string>>
+     */
+    public function getSiteVisitsChart(): array
+    {
+        $raw = SiteVisit::dailyCountsSince(now()->subDays(6)->startOfDay());
+
+        return $this->dailyChart($raw, 'visits');
+    }
+
     /**
      * Get system metrics.
      */
@@ -63,7 +91,7 @@ class SuperAdminDashboardService
         return UserResource::collection(
             User::query()
                 ->where('role', '!=', UserRole::SUPER_ADMIN)
-                ->with(['institution', 'institutions'])
+                ->with(['institution', 'institutions', 'enrolledClassrooms:id'])
                 ->get(),
         )->resolve();
     }

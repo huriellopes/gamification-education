@@ -1,4 +1,5 @@
 <script setup>
+import { __ } from '@/i18n';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
@@ -28,19 +29,23 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Gerenciar Instituições" />
+    <Head :title="__('admin.institutions.title')" />
 
     <AuthenticatedLayout>
         <template #header>
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-bold leading-tight text-zinc-100">
-                    Instituições de Ensino
+                    {{ __('admin.institutions.header') }}
                 </h2>
                 <button
                     @click="isFormOpen = !isFormOpen"
                     class="bg-indigo-650 rounded-xl px-4 py-2 text-xs font-bold text-white transition-all hover:bg-indigo-700"
                 >
-                    {{ isFormOpen ? 'Fechar Formulário' : 'Nova Instituição' }}
+                    {{
+                        isFormOpen
+                            ? __('admin.institutions.close_form')
+                            : __('admin.institutions.new_institution')
+                    }}
                 </button>
             </div>
         </template>
@@ -53,21 +58,25 @@ const submit = () => {
                     class="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6 shadow-xl backdrop-blur-md"
                 >
                     <h3 class="mb-4 text-lg font-bold text-white">
-                        Cadastrar Nova Instituição
+                        {{ __('admin.institutions.register_new') }}
                     </h3>
                     <form @submit.prevent="submit" class="space-y-4">
                         <div>
                             <label
                                 for="name"
                                 class="mb-1 block text-xs font-bold uppercase tracking-wider text-zinc-400"
-                                >Nome da Instituição</label
+                                >{{
+                                    __('admin.institutions.name_label')
+                                }}</label
                             >
                             <input
                                 id="name"
                                 v-model="form.name"
                                 type="text"
                                 required
-                                placeholder="Ex: Escola Técnica de TI"
+                                :placeholder="
+                                    __('admin.institutions.name_placeholder')
+                                "
                                 class="bg-zinc-955 w-full rounded-xl border border-zinc-800 px-4 py-2.5 text-sm text-zinc-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                             />
                             <span
@@ -81,13 +90,17 @@ const submit = () => {
                             <label
                                 for="description"
                                 class="mb-1 block text-xs font-bold uppercase tracking-wider text-zinc-400"
-                                >Descrição</label
+                                >{{ __('common.description') }}</label
                             >
                             <textarea
                                 id="description"
                                 v-model="form.description"
                                 rows="3"
-                                placeholder="Breve resumo da instituição ou localização..."
+                                :placeholder="
+                                    __(
+                                        'admin.institutions.description_placeholder',
+                                    )
+                                "
                                 class="bg-zinc-955 w-full rounded-xl border border-zinc-800 px-4 py-2.5 text-sm text-zinc-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                             ></textarea>
                             <span
@@ -103,14 +116,14 @@ const submit = () => {
                                 :disabled="form.processing"
                                 class="bg-indigo-650 rounded-xl px-5 py-2.5 text-xs font-bold text-white transition-all hover:bg-indigo-700 disabled:opacity-50"
                             >
-                                Salvar Instituição
+                                {{ __('admin.institutions.save_institution') }}
                             </button>
                             <button
                                 type="button"
                                 @click="isFormOpen = false"
                                 class="rounded-xl bg-zinc-800 px-5 py-2.5 text-xs font-bold text-zinc-400 transition-all hover:bg-zinc-700"
                             >
-                                Cancelar
+                                {{ __('common.cancel') }}
                             </button>
                         </div>
                     </form>
@@ -132,7 +145,8 @@ const submit = () => {
                             class="mt-2 line-clamp-3 min-h-[60px] text-sm text-zinc-400"
                         >
                             {{
-                                inst.description || 'Sem descrição cadastrada.'
+                                inst.description ||
+                                __('admin.institutions.no_description')
                             }}
                         </p>
 
@@ -155,7 +169,7 @@ const submit = () => {
                                     />
                                 </svg>
                                 <span
-                                    >Alunos:
+                                    >{{ __('admin.institutions.students') }}
                                     <strong>{{
                                         inst.users_count || 0
                                     }}</strong></span
@@ -177,7 +191,7 @@ const submit = () => {
                                     />
                                 </svg>
                                 <span
-                                    >Matérias:
+                                    >{{ __('admin.institutions.subjects') }}
                                     <strong>{{
                                         inst.subjects_count || 0
                                     }}</strong></span
@@ -190,8 +204,7 @@ const submit = () => {
                         v-if="institutions.length === 0"
                         class="col-span-full rounded-2xl border border-dashed border-zinc-800 p-12 text-center text-zinc-500"
                     >
-                        Nenhuma instituição de ensino cadastrada ainda. Clique
-                        em "Nova Instituição" para começar!
+                        {{ __('admin.institutions.empty_state') }}
                     </div>
                 </div>
             </div>

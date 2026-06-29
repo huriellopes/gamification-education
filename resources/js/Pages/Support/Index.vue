@@ -1,6 +1,6 @@
 <script setup>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Button from '@/Components/Button.vue';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import { HelpCircle, Mail, MessageSquare, Send } from '@lucide/vue';
 
@@ -14,84 +14,108 @@ const submitSupport = () => {
         preserveScroll: true,
         onSuccess: () => {
             form.reset();
-        }
+        },
     });
 };
 </script>
 
 <template>
-    <Head title="Suporte Técnico" />
+    <Head :title="__('misc.support.head_title')" />
 
     <AuthenticatedLayout>
         <template #header>
             <h2 class="text-xl font-bold leading-tight text-zinc-100">
-                Suporte Técnico & Atendimento
+                {{ __('misc.support.header') }}
             </h2>
         </template>
 
-        <div class="bg-zinc-950 py-6 text-zinc-100 max-w-4xl mx-auto space-y-8">
-            <div class="rounded-2xl border border-zinc-800 bg-zinc-900/30 p-6 backdrop-blur-md space-y-4">
-                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+        <div class="mx-auto max-w-4xl space-y-8 bg-zinc-950 py-6 text-zinc-100">
+            <div
+                class="space-y-4 rounded-2xl border border-zinc-800 bg-zinc-900/30 p-6 backdrop-blur-md"
+            >
+                <h3
+                    class="flex items-center gap-2 text-lg font-bold text-white"
+                >
                     <HelpCircle class="h-5 w-5 text-indigo-400" />
-                    Como podemos ajudar?
+                    {{ __('misc.support.help_title') }}
                 </h3>
                 <p class="text-sm text-zinc-400">
-                    Se você encontrou algum problema técnico, tem dúvidas sobre o funcionamento do ranking, ou precisa de suporte para gerenciar sua conta, utilize um dos canais oficiais abaixo.
+                    {{ __('misc.support.help_text') }}
                 </p>
 
                 <!-- WhatsApp & Email Direct Links -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                <div class="grid grid-cols-1 gap-4 pt-2 sm:grid-cols-2">
                     <!-- WhatsApp -->
                     <a
                         href="https://wa.me/5511999999999?text=Olá! Estou na plataforma GamificaEdu e preciso de suporte técnico."
                         target="_blank"
                         rel="noopener noreferrer"
-                        class="flex items-center justify-center gap-3 px-5 py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm shadow-lg transition-all active:scale-98"
-                        title="Falar via WhatsApp"
+                        class="active:scale-98 flex items-center justify-center gap-3 rounded-2xl bg-emerald-600 px-5 py-4 text-sm font-bold text-white shadow-lg transition-all hover:bg-emerald-500"
+                        :title="__('misc.support.whatsapp')"
                     >
                         <MessageSquare class="h-5 w-5" />
-                        <span class="hidden md:inline">Falar via WhatsApp</span>
+                        <span class="hidden md:inline">{{
+                            __('misc.support.whatsapp')
+                        }}</span>
                     </a>
 
                     <!-- Email -->
                     <a
                         href="mailto:suporte@gamificaedu.com.br?subject=Suporte Técnico GamificaEdu"
-                        class="flex items-center justify-center gap-3 px-5 py-4 rounded-2xl bg-zinc-800 hover:bg-zinc-700 text-white font-bold text-sm shadow-md border border-zinc-700/50 transition-all active:scale-98"
-                        title="Enviar E-mail Direto"
+                        class="active:scale-98 flex items-center justify-center gap-3 rounded-2xl border border-zinc-700/50 bg-zinc-800 px-5 py-4 text-sm font-bold text-white shadow-md transition-all hover:bg-zinc-700"
+                        :title="__('misc.support.email')"
                     >
-                        <Mail class="h-5 w-5 text-zinc-450" />
-                        <span class="hidden md:inline">Enviar E-mail Direto</span>
+                        <Mail class="text-zinc-450 h-5 w-5" />
+                        <span class="hidden md:inline">{{
+                            __('misc.support.email')
+                        }}</span>
                     </a>
                 </div>
             </div>
 
             <!-- Form para Chamado Direct -->
-            <div class="rounded-2xl border border-zinc-800 bg-zinc-900/30 p-6 backdrop-blur-md space-y-6">
+            <div
+                class="space-y-6 rounded-2xl border border-zinc-800 bg-zinc-900/30 p-6 backdrop-blur-md"
+            >
                 <div>
-                    <h3 class="text-lg font-bold text-white">Abrir um Chamado</h3>
-                    <p class="text-xs text-zinc-400">Envie uma mensagem direta detalhando seu problema e o Super Admin retornará o contato o mais breve possível.</p>
+                    <h3 class="text-lg font-bold text-white">
+                        {{ __('misc.support.open_ticket_title') }}
+                    </h3>
+                    <p class="text-xs text-zinc-400">
+                        {{ __('misc.support.open_ticket_text') }}
+                    </p>
                 </div>
 
                 <form @submit.prevent="submitSupport" class="space-y-4">
                     <div>
-                        <label class="mb-2 block text-xs font-bold uppercase text-zinc-400">Assunto / Tópico</label>
+                        <label
+                            class="mb-2 block text-xs font-bold uppercase text-zinc-400"
+                            >{{ __('misc.support.subject_label') }}</label
+                        >
                         <input
                             v-model="form.subject"
                             type="text"
                             required
-                            placeholder="Ex: Erro ao iniciar matéria, Problema com pontos XP..."
-                            class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-sm text-zinc-200 placeholder-zinc-650 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                            :placeholder="
+                                __('misc.support.subject_placeholder')
+                            "
+                            class="placeholder-zinc-650 w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-sm text-zinc-200 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                         />
                     </div>
 
                     <div>
-                        <label class="mb-2 block text-xs font-bold uppercase text-zinc-400">Mensagem / Detalhes</label>
+                        <label
+                            class="mb-2 block text-xs font-bold uppercase text-zinc-400"
+                            >{{ __('misc.support.message_label') }}</label
+                        >
                         <textarea
                             v-model="form.message"
                             required
                             rows="5"
-                            placeholder="Descreva com detalhes o que está acontecendo. Se possível, informe passos para reproduzir o problema."
-                            class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-sm text-zinc-200 placeholder-zinc-650 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                            :placeholder="
+                                __('misc.support.message_placeholder')
+                            "
+                            class="placeholder-zinc-650 w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-sm text-zinc-200 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                         ></textarea>
                     </div>
 
@@ -99,11 +123,15 @@ const submitSupport = () => {
                         <Button
                             type="submit"
                             :disabled="form.processing"
-                            class="bg-indigo-600 hover:bg-indigo-500 font-bold flex items-center gap-2"
-                            title="Enviar Chamado"
+                            class="flex items-center gap-2 bg-indigo-600 font-bold hover:bg-indigo-500"
+                            :title="__('misc.support.send_ticket')"
                         >
                             <Send class="h-4 w-4" />
-                            <span class="hidden md:inline">{{ form.processing ? 'Enviando chamado...' : 'Enviar Chamado' }}</span>
+                            <span class="hidden md:inline">{{
+                                form.processing
+                                    ? __('misc.support.sending_ticket')
+                                    : __('misc.support.send_ticket')
+                            }}</span>
                         </Button>
                     </div>
                 </form>

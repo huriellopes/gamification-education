@@ -4,7 +4,10 @@ on:
   push:
     branches: [ main, master ]
   pull_request:
-    branches: [ main, master ]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   code-integrity:
@@ -17,13 +20,16 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2'
-          extensions: mbstring, xml, ctype, iconv, mysql, sqlite, pdo_sqlite
+          # Dependencies (e.g. symfony/http-foundation ^8.1) require PHP >= 8.4.1.
+          # Keep this in sync with the Sail container (currently PHP 8.5).
+          php-version: '8.4'
+          extensions: mbstring, xml, ctype, iconv, bcmath, intl, pdo, sqlite, pdo_sqlite
           coverage: none
+          tools: composer:v2
 
       - name: Get Composer Cache Directory
         id: composer-cache
-        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+        run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
 
       - name: Cache Composer Dependencies
         uses: actions/cache@v4
@@ -34,8 +40,7 @@ jobs:
             ${{ runner.os }}-composer-
 
       - name: Install Composer Dependencies
-        run: |
-          composer install --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+        run: composer install --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
       - name: Copy .env
         run: php -r "file_exists('.env') || copy('.env.example', '.env');"
@@ -59,12 +64,13 @@ jobs:
         run: ./vendor/bin/pint --test
 
       - name: Run PHPStan (Static Analysis)
-        run: ./vendor/bin/phpstan analyse
+        run: ./vendor/bin/phpstan analyse --no-progress --memory-limit=1G
 
       - name: Run ESLint (Vue/JS Linter)
-        run: npm run lint
+        # No --fix in CI: lint should report, not rewrite files. Errors fail the build;
+        # prettier-style warnings are reported but non-blocking (run `npm run lint` locally to fix).
+        run: npx eslint resources/js --ext .js,.vue --ignore-path .gitignore
 
       - name: Run Pest Tests
-        run: |
-          php -r "file_exists('database/database.sqlite') || touch('database/database.sqlite');"
-          ./vendor/bin/pest
+        # DB connection comes from the committed .env.testing (sqlite :memory:).
+        run: ./vendor/bin/pest --ci

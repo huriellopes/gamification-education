@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Teacher\Question;
 
+use App\Actions\Teacher\DeleteQuestionAction;
 use App\Http\Controllers\Controller;
 use App\Models\Question;
 use App\Models\Subject;
@@ -16,7 +17,7 @@ class DestroyQuestionController extends Controller
     /**
      * Exclui uma questão.
      */
-    public function __invoke(Question $question): RedirectResponse
+    public function __invoke(Question $question, DeleteQuestionAction $deleteQuestion): RedirectResponse
     {
         /** @var Test $test */
         $test = $question->test;
@@ -24,7 +25,7 @@ class DestroyQuestionController extends Controller
         $subject = $test->subject;
         Gate::authorize('manageContent', $subject);
 
-        $question->delete();
+        $deleteQuestion($question);
 
         return redirect()->back()->with('success', 'Questão excluída com sucesso!');
     }

@@ -1,6 +1,7 @@
 <script setup>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import DataTable from '@/Components/DataTable.vue';
+import { __ } from '@/i18n';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, router } from '@inertiajs/vue3';
 import { computed, ref, watch } from 'vue';
 
@@ -32,10 +33,19 @@ const props = defineProps({
 });
 
 const rankingHeaders = [
-    { key: 'position', label: 'Posição', sortable: true },
-    { key: 'name', label: 'Estudante', sortable: true },
-    { key: 'institution', label: 'Instituição', sortable: true },
-    { key: 'points', label: 'Pontuação (XP)', sortable: true, align: 'right' },
+    { key: 'position', label: __('misc.ranking.col_position'), sortable: true },
+    { key: 'name', label: __('misc.ranking.col_student'), sortable: true },
+    {
+        key: 'institution',
+        label: __('misc.ranking.col_institution'),
+        sortable: true,
+    },
+    {
+        key: 'points',
+        label: __('misc.ranking.col_points'),
+        sortable: true,
+        align: 'right',
+    },
 ];
 
 // Abas de ranking: 'global', 'institution', 'subject'
@@ -92,12 +102,12 @@ const setTab = (tabName) => {
 </script>
 
 <template>
-    <Head title="Ranking e Classificação" />
+    <Head :title="__('misc.ranking.head_title')" />
 
     <AuthenticatedLayout>
         <template #header>
             <h2 class="text-xl font-bold leading-tight text-zinc-100">
-                Arena de Competição — Leaderboard
+                {{ __('misc.ranking.header') }}
             </h2>
         </template>
 
@@ -119,7 +129,7 @@ const setTab = (tabName) => {
                                     : 'border border-zinc-800 bg-zinc-900 text-zinc-400 hover:text-white'
                             "
                         >
-                            Global
+                            {{ __('misc.ranking.tab_global') }}
                         </button>
                         <button
                             v-if="$page.props.auth.user.institution_id"
@@ -131,7 +141,7 @@ const setTab = (tabName) => {
                                     : 'border border-zinc-800 bg-zinc-900 text-zinc-400 hover:text-white'
                             "
                         >
-                            Minha Instituição
+                            {{ __('misc.ranking.tab_institution') }}
                         </button>
                     </div>
 
@@ -141,7 +151,13 @@ const setTab = (tabName) => {
                             v-model="localSelectedSubjectId"
                             class="w-full rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-2 text-xs text-zinc-300 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                         >
-                            <option value="">Filtrar por Matéria...</option>
+                            <option value="">
+                                {{
+                                    __(
+                                        'misc.ranking.filter_subject_placeholder',
+                                    )
+                                }}
+                            </option>
                             <option
                                 v-for="subj in subjects"
                                 :key="subj.id"
@@ -158,19 +174,20 @@ const setTab = (tabName) => {
                     <h3
                         class="text-xl font-extrabold tracking-tight text-white"
                     >
-                        <span v-if="activeTab === 'global'"
-                            >🏆 Classificação Geral</span
-                        >
+                        <span v-if="activeTab === 'global'">{{
+                            __('misc.ranking.title_global')
+                        }}</span>
                         <span v-else-if="activeTab === 'institution'"
-                            >🏫 Ranking da
+                            >{{ __('misc.ranking.title_institution') }}
                             {{ $page.props.auth.user.institution?.name }}</span
                         >
                         <span v-else-if="activeTab === 'subject'"
-                            >📚 Desempenho em: {{ selectedSubject?.name }}</span
+                            >{{ __('misc.ranking.title_subject') }}
+                            {{ selectedSubject?.name }}</span
                         >
                     </h3>
                     <p class="mt-1 text-xs text-zinc-500">
-                        Os melhores estudantes baseados em XP e desempenho.
+                        {{ __('misc.ranking.subtitle') }}
                     </p>
                 </div>
 
@@ -178,7 +195,7 @@ const setTab = (tabName) => {
                     v-if="currentRanking.length === 0"
                     class="border-zinc-850 rounded-2xl border border-dashed p-16 text-center text-sm text-zinc-500"
                 >
-                    Nenhuma pontuação registrada nesta modalidade ainda.
+                    {{ __('misc.ranking.empty') }}
                 </div>
 
                 <div v-else class="space-y-12">
@@ -301,21 +318,32 @@ const setTab = (tabName) => {
                         <DataTable
                             :items="remainingRanks"
                             :columns="rankingHeaders"
-                            searchPlaceholder="Buscar por estudante ou instituição..."
+                            :searchPlaceholder="
+                                __('misc.ranking.search_placeholder')
+                            "
                         >
                             <template #position="{ item }">
-                                <span class="font-bold text-zinc-400">#{{ item.position }}</span>
+                                <span class="font-bold text-zinc-400"
+                                    >#{{ item.position }}</span
+                                >
                             </template>
                             <template #name="{ item }">
-                                <span class="font-semibold text-white">{{ item.name }}</span>
+                                <span class="font-semibold text-white">{{
+                                    item.name
+                                }}</span>
                             </template>
                             <template #institution="{ item }">
-                                <span class="text-zinc-400">{{ item.institution }}</span>
+                                <span class="text-zinc-400">{{
+                                    item.institution
+                                }}</span>
                             </template>
                             <template #points="{ item }">
                                 <span class="font-bold text-yellow-400">
                                     {{ item.points.toLocaleString() }}
-                                    <span class="text-[10px] font-semibold uppercase text-zinc-500">xp</span>
+                                    <span
+                                        class="text-[10px] font-semibold uppercase text-zinc-500"
+                                        >xp</span
+                                    >
                                 </span>
                             </template>
                         </DataTable>
