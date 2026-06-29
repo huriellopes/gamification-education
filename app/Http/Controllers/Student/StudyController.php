@@ -1,13 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Student;
 
-use App\Http\Controllers\Controller;
-use App\Models\Subject;
-use App\Models\StudyMaterial;
-use App\Models\TestAttempt;
 use App\Actions\CompleteStudyMaterialAction;
+use App\Http\Controllers\Controller;
+use App\Models\StudyMaterial;
+use App\Models\Subject;
+use App\Models\Test;
+use App\Models\TestAttempt;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 
 class StudyController extends Controller
@@ -17,12 +22,16 @@ class StudyController extends Controller
      */
     public function show(Subject $subject)
     {
+        Gate::authorize('view', $subject);
+
+        /** @var User $user */
         $user = Auth::user();
 
         // Carrega materiais de estudo e verifica se cada um foi completado pelo aluno
         $materials = $subject->studyMaterials()
             ->get()
             ->map(function ($material) use ($user) {
+                /** @var StudyMaterial $material */
                 $completed = $user->completedMaterials()
                     ->where('study_material_id', $material->id)
                     ->exists();
@@ -39,6 +48,7 @@ class StudyController extends Controller
         $tests = $subject->tests()
             ->get()
             ->map(function ($test) use ($user) {
+                /** @var Test $test */
                 $bestAttempt = TestAttempt::where('user_id', $user->id)
                     ->where('test_id', $test->id)
                     ->orderBy('score', 'desc')
@@ -70,6 +80,9 @@ class StudyController extends Controller
         // Garante que o material pertence à matéria
         abort_if($material->subject_id !== $subject->id, 404);
 
+        Gate::authorize('view', $material);
+
+        /** @var User $user */
         $user = Auth::user();
         $completed = $user->completedMaterials()
             ->where('study_material_id', $material->id)
@@ -89,6 +102,9 @@ class StudyController extends Controller
     {
         abort_if($material->subject_id !== $subject->id, 404);
 
+        Gate::authorize('complete', $material);
+
+        /** @var User $user */
         $user = Auth::user();
         $success = $action->execute($user, $material);
 
@@ -98,6 +114,6 @@ class StudyController extends Controller
         }
 
         return redirect()->route('student.subjects.show', $subject)
-            ->with('info', "Você já havia concluído este material anteriormente.");
+            ->with('info', 'Você já havia concluído este material anteriormente.');
     }
 }

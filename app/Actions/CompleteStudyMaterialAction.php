@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Actions;
 
-use App\Models\User;
 use App\Models\StudyMaterial;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 class CompleteStudyMaterialAction
@@ -17,10 +19,6 @@ class CompleteStudyMaterialAction
 
     /**
      * Completa a leitura do material pelo aluno e concede pontos se for a primeira vez.
-     *
-     * @param User $user
-     * @param StudyMaterial $material
-     * @return bool
      */
     public function execute(User $user, StudyMaterial $material): bool
     {
@@ -46,7 +44,7 @@ class CompleteStudyMaterialAction
                 $material->points_reward,
                 'material',
                 $material->id,
-                $description
+                $description,
             );
 
             return true;

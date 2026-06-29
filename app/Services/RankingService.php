@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Models\User;
-use App\Models\TestAttempt;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class RankingService
@@ -11,10 +13,9 @@ class RankingService
     /**
      * Retorna o ranking global dos alunos.
      *
-     * @param int $limit
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return \Illuminate\Database\Eloquent\Collection<int, User>
      */
-    public function getGlobalRanking(int $limit = 10)
+    public function getGlobalRanking(int $limit = 10): \Illuminate\Database\Eloquent\Collection
     {
         return User::with('institution')
             ->where('role', 'student')
@@ -26,11 +27,9 @@ class RankingService
     /**
      * Retorna o ranking dos alunos pertencentes a uma instituição específica.
      *
-     * @param int $institutionId
-     * @param int $limit
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return \Illuminate\Database\Eloquent\Collection<int, User>
      */
-    public function getInstitutionRanking(int $institutionId, int $limit = 10)
+    public function getInstitutionRanking(int $institutionId, int $limit = 10): \Illuminate\Database\Eloquent\Collection
     {
         return User::with('institution')
             ->where('role', 'student')
@@ -43,12 +42,8 @@ class RankingService
     /**
      * Retorna o ranking de alunos baseado no desempenho em uma matéria específica.
      * Soma a melhor pontuação de cada aluno em cada teste da matéria correspondente.
-     *
-     * @param int $subjectId
-     * @param int $limit
-     * @return \Illuminate\Support\Collection
      */
-    public function getSubjectRanking(int $subjectId, int $limit = 10)
+    public function getSubjectRanking(int $subjectId, int $limit = 10): Collection
     {
         return DB::table('test_attempts')
             ->join('tests', 'test_attempts.test_id', '=', 'tests.id')
@@ -58,7 +53,7 @@ class RankingService
                 'users.id as user_id',
                 'users.name as user_name',
                 'institutions.name as institution_name',
-                DB::raw('SUM(test_attempts.score) as total_subject_score')
+                DB::raw('SUM(test_attempts.score) as total_subject_score'),
             )
             ->where('tests.subject_id', $subjectId)
             ->where('users.role', 'student')

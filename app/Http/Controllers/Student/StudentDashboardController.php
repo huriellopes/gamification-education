@@ -1,11 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
-use App\Models\Subject;
+use App\Models\Institution;
 use App\Models\ScoreHistory;
+use App\Models\Subject;
 use App\Models\TestAttempt;
+use App\Models\User;
 use App\Services\RankingService;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -25,13 +29,14 @@ class StudentDashboardController extends Controller
 
         // Se o usuário não tem uma instituição associada, mostramos uma lista vazia de matérias
         $subjects = collect();
+
         if ($user->institution_id) {
             $subjects = Subject::where('institution_id', $user->institution_id)
                 ->with(['studyMaterials', 'tests'])
                 ->get()
                 ->map(function ($subject) use ($user) {
                     $totalMaterials = $subject->studyMaterials->count();
-                    
+
                     // Conta quantos materiais desta matéria o aluno concluiu
                     $completedMaterials = $user->completedMaterials()
                         ->where('subject_id', $subject->id)
@@ -62,14 +67,22 @@ class StudentDashboardController extends Controller
             ->get();
 
         // Top 5 ranking global para exibir no widget lateral
-        $leaderboard = $this->rankingService->getGlobalRanking(5)->map(function ($rankUser, $index) {
-            return [
+        $leaderboardRaw = $this->rankingService->getGlobalRanking(5);
+        /** @var array<int, array{position: int, name: string, points: int, institution: string}> $leaderboardItems */
+        $leaderboardItems = [];
+
+        foreach ($leaderboardRaw as $index => $rankUser) {
+            /** @var User $rankUser */
+            /** @var Institution|null $inst */
+            $inst = $rankUser->institution;
+            $leaderboardItems[] = [
                 'position' => $index + 1,
                 'name' => $rankUser->name,
                 'points' => $rankUser->points,
-                'institution' => $rankUser->institution ? $rankUser->institution->name : 'N/A',
+                'institution' => $inst ? $inst->name : 'N/A',
             ];
-        });
+        }
+        $leaderboard = collect($leaderboardItems);
 
         // Estatísticas rápidas
         $stats = [

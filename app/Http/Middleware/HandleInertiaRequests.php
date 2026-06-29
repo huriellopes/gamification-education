@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
@@ -29,10 +31,25 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $user = $request->user();
+
+        if ($user) {
+            $user->load('institution');
+
+            if ($user->isInstitutionAdmin()) {
+                $user->load('institutions');
+            }
+        }
+
         return [
             ...parent::share($request),
             'auth' => [
-                'user' => $request->user(),
+                'user' => $user,
+                'is_impersonating' => $request->session()->has('impersonator_id'),
+            ],
+            'flash' => [
+                'success' => fn () => $request->session()->get('success') ?? ($request->session()->get('flash')['success'] ?? null),
+                'error' => fn () => $request->session()->get('error') ?? ($request->session()->get('flash')['error'] ?? null),
             ],
         ];
     }

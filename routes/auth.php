@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\Auth\EmailVerificationPromptController;
+use App\Http\Controllers\Auth\MagicLoginController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
@@ -12,6 +15,12 @@ use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
+    Route::post('magic-login', [MagicLoginController::class, 'sendLink'])
+        ->name('magic-login.send');
+
+    Route::get('magic-login/{token}', [MagicLoginController::class, 'authenticate'])
+        ->name('magic-login.authenticate');
+
     Route::get('register', [RegisteredUserController::class, 'create'])
         ->name('register');
 
@@ -35,7 +44,15 @@ Route::middleware('guest')->group(function () {
         ->name('password.store');
 });
 
+use App\Http\Controllers\Auth\ForceChangePasswordController;
+
 Route::middleware('auth')->group(function () {
+    Route::get('force-change-password', [ForceChangePasswordController::class, 'show'])
+        ->name('password.force-change');
+
+    Route::post('force-change-password', [ForceChangePasswordController::class, 'update'])
+        ->name('password.force-change.update');
+
     Route::get('verify-email', EmailVerificationPromptController::class)
         ->name('verification.notice');
 

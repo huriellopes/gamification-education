@@ -5,12 +5,12 @@ const props = defineProps({
     points: {
         type: Number,
         required: true,
-        default: 0
+        default: 0,
     },
     size: {
         type: String,
-        default: 'md' // 'sm', 'md', 'lg'
-    }
+        default: 'md', // 'sm', 'md', 'lg'
+    },
 });
 
 const sizeClasses = computed(() => {
@@ -44,6 +44,12 @@ const sizeClasses = computed(() => {
                 clip-rule="evenodd"
             />
         </svg>
-        <span>{{ points.toLocaleString() }} <span class="font-medium text-yellow-500/70 text-xs uppercase tracking-wider">PTS</span></span>
+        <span
+            >{{ points.toLocaleString() }}
+            <span
+                class="text-xs font-medium uppercase tracking-wider text-yellow-500/70"
+                >PTS</span
+            ></span
+        >
     </div>
 </template>
