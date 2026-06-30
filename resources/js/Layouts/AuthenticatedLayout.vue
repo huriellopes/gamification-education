@@ -803,7 +803,7 @@ const switchInstitution = (id) => {
                             href="/"
                             target="_blank"
                             rel="noopener noreferrer"
-                            class="inline-flex items-center justify-center rounded-xl border border-zinc-700/50 bg-zinc-800 px-3.5 py-2.5 text-xs font-bold text-zinc-300 transition-all hover:bg-zinc-700 md:px-4"
+                            class="inline-flex items-center justify-center rounded-xl border border-zinc-700/50 bg-zinc-800 px-3 py-2.5 text-xs font-bold text-zinc-300 transition-all hover:bg-zinc-700 md:px-3.5 md:py-2"
                             :title="__('nav.navbar.go_public_site_title')"
                         >
                             <span>🌐</span>
