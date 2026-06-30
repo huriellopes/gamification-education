@@ -12,13 +12,13 @@ GamificaEdu é um ecossistema moderno voltado à educação básica e superior, 
 
 - **Backend**: Laravel 13 (PHP 8.4+)
 - **Frontend**: Vue 3 (Composition API) com InertiaJS (SPA)
-- **Estilização**: TailwindCSS (tema escuro premium e responsivo)
-- **Validação/DTO**: Form Requests + `spatie/laravel-data`
+- **Estilização**: TailwindCSS (tema escuro premium, determinístico e responsivo)
+- **Validação**: Form Requests (validação + autorização) e JsonResources (serialização)
 - **Fila/Jobs**: Laravel Queue (Banco de Dados / Redis)
 - **Ambiente**: Docker via **Laravel Sail** (PHP 8.5, MySQL 8.4, Redis, Mailpit)
 - **Bancos Suportados**: MySQL / PostgreSQL / SQLite
 - **i18n**: arquivos `lang/` (pt_BR e en) expostos ao frontend via helper `__()`
-- **Qualidade**: Pest (113 testes), PHPStan (nível 5 / Larastan), Laravel Pint, ESLint + Prettier
+- **Qualidade**: Pest (116 testes), PHPStan (nível 5 / Larastan), Laravel Pint, Rector e ESLint + Prettier — orquestrados via `composer quality`
 
 ---
 
@@ -26,13 +26,16 @@ GamificaEdu é um ecossistema moderno voltado à educação básica e superior, 
 
 O backend segue um padrão sênior de responsabilidade única:
 
-- **Controllers single-action** (`__invoke`) — uma ação por controller.
+- **Controllers single-action** (`__invoke`) — uma ação por controller, sem queries (apenas regra de negócio).
 - **Form Requests** para validação e autorização.
 - **Resources** para a serialização das respostas (Inertia).
 - **Actions** para operações de escrita no banco (casos transacionais).
 - **Services** para integrações e orquestrações (e.g. dashboards, ranking, e-mail).
-- **Enums** (`UserRole`, `GeneralStatus`) para integridade de dados.
-- **Models enxutas** com scopes e traits reutilizáveis (e.g. `HasRoles`).
+- **Policies** para autorização por modelo (auto-descobertas).
+- **Observers** para regras de ciclo de vida (e.g. geração de slug único de matéria/instituição).
+- **Events & Listeners** para efeitos colaterais desacoplados (e.g. `MilestoneReached`, atualização de último login).
+- **Enums** string-backed (`UserRole`, `GeneralStatus`, `ScoreSource`, `ReportStatus`, `SupportStatus`).
+- **Models enxutas** com scopes e traits reutilizáveis (`HasRoles`, `Activatable`, `BelongsToInstitution`).
 
 ---
 
@@ -54,12 +57,17 @@ O backend segue um padrão sênior de responsabilidade única:
 - **Sidebar dedicada**: Minhas Turmas, Meus Alunos e Matérias.
 - **Dashboard com métricas reais e reativas** (turmas, alunos, matérias) + **gráficos de desempenho** (por turma e por aluno), com auto-atualização.
 - **Cadastro de alunos** e vínculo a uma de suas turmas.
-- **Gestão de Matérias**: materiais (leituras), testes (quizzes) e banco de questões, além de geração automática de conteúdo (mock AI).
+- **Gestão de Matérias**: vincula a matéria a uma de suas turmas, gerencia materiais (leituras), testes (quizzes) e banco de questões — com validação de integridade (índice da resposta correta dentro das opções) e geração automática de conteúdo idempotente (mock AI).
 
 ### 🎓 Estudante
-- **Trilha de Estudos**: progresso dinâmico da disciplina.
+- **Trilha de Estudos**: matérias das turmas em que está matriculado, com progresso dinâmico.
 - **Atividades Interativas**: quizzes com correção automática e XP proporcional aos acertos.
 - **Leaderboard (Ranking)**: Global, por Instituição e por Matéria, com paginação, ordenação e pesquisa.
+
+### 🌐 Site Público
+- Landing page com métricas reais da plataforma e SEO (sitemap + Schema.org).
+- **Páginas legais**: **Política de Privacidade** (LGPD) e **Diretrizes de Uso** (bilíngues).
+- **Banner de consentimento de cookies** com links para as páginas legais.
 
 ---
 
@@ -71,6 +79,7 @@ Camada que conecta professores, matérias e alunos:
 - Um **professor pode ter várias turmas**.
 - Uma **turma pode ter várias matérias**.
 - **Alunos são matriculados em turmas** (professor, admin ou super admin podem vincular).
+- O professor responsável pela turma recebe automaticamente acesso ao conteúdo das matérias dela.
 
 ---
 
@@ -127,33 +136,41 @@ npm run dev                 # em outro
 
 ## 🧪 Qualidade e Testes
 
-Com Sail (prefixe `./vendor/bin/sail`) ou localmente:
+O `composer quality` executa toda a esteira na ordem: **Rector → Pint → PHPStan → ESLint → Pest**.
 
 ```bash
-# Testes (Pest)
-php artisan test
+# Esteira completa (prefixe ./vendor/bin/sail ao usar o Sail)
+composer quality
 
-# Code style (Laravel Pint)
-./vendor/bin/pint            # corrige
-./vendor/bin/pint --test     # apenas verifica
-
-# Análise estática (PHPStan / Larastan, nível 5)
-./vendor/bin/phpstan analyse
-
-# Lint do frontend (ESLint + Prettier)
-npm run lint                 # eslint --fix em resources/js
+# Comandos individuais
+composer pest            # Testes (Pest) — 116 testes
+composer pint            # Code style (Laravel Pint)
+composer phpstan         # Análise estática (PHPStan / Larastan, nível 5)
+composer rector          # Refatorações automáticas (Rector)
+composer rector:check    # Rector em modo dry-run
+composer lint:vue        # Lint do frontend (ESLint + Prettier)
 ```
 
 ### Integração Contínua
 
-O workflow `.github/workflows/quality.yml` executa, a cada push/PR: instalação de dependências, **Pint**, **PHPStan**, **ESLint**, build do Vite e a **suíte Pest** (PHP 8.4).
+- `.github/workflows/quality.yml` — a cada push/PR: instalação de dependências, **Rector (check)**, **Pint**, **PHPStan**, **ESLint**, build do Vite e a **suíte Pest** (PHP 8.4).
+- `.github/workflows/release.yml` — após o CI passar na `main`, **incrementa a versão**, grava o arquivo `VERSION`, cria a **tag `vX.Y.Z`** e a **GitHub Release** com notas geradas automaticamente.
+
+---
+
+## 🏷️ Versionamento e Releases
+
+- A versão única da aplicação fica no arquivo **`VERSION`** na raiz (atualmente `0.1.0`).
+- A versão é **exposta em todos os dashboards** (via `HandleInertiaRequests`) e atualizada automaticamente pelo workflow de release.
+- Bump de _patch_ é automático; um _minor/major_ manual no arquivo `VERSION` é respeitado pelo pipeline.
 
 ---
 
 ## 🌍 Internacionalização (i18n)
 
-- Strings de interface ficam em `lang/pt_BR/*.php` e `lang/en/*.php` (grupos: `ui`, `nav`, `admin`, `teacher`, `superadmin`, `student`, `misc`, `classrooms`).
-- O backend compartilha as traduções via Inertia; o frontend usa o helper global **`__('grupo.chave')`** (espelhando o `__()` do Laravel), com suporte a placeholders (`:name`).
+- Strings de interface ficam em `lang/pt_BR/*.php` e `lang/en/*.php`. Os grupos compartilhados com o frontend via Inertia são: `ui`, `nav`, `admin`, `teacher`, `superadmin`, `student`, `misc` e `classrooms`.
+- O frontend usa o helper global **`__('grupo.chave')`** (espelhando o `__()` do Laravel), com suporte a placeholders (`:name`).
+- Conteúdos extensos (e.g. páginas legais em `lang/{locale}/legal.php`) são entregues como _props_ da página — não trafegam no payload global de traduções.
 
 ---
 
