@@ -157,10 +157,10 @@ const enableAds = () => {
 
         <!-- Navigation -->
         <header
-            class="sticky top-0 z-50 border-b border-zinc-800/80 bg-zinc-950/60 backdrop-blur-xl transition-all duration-300"
+            class="sticky top-0 z-50 h-20 border-b border-zinc-800/80 bg-zinc-950/60 backdrop-blur-xl transition-all duration-300"
         >
             <div
-                class="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8"
+                class="mx-auto flex h-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8"
             >
                 <div class="flex items-center gap-3">
                     <div

@@ -82,7 +82,7 @@ const toggleSidebar = () => {
             >
                 <!-- Sidebar Header / Logo -->
                 <div
-                    class="flex h-20 items-center justify-between border-b border-zinc-800/80 px-4"
+                    class="flex h-20 shrink-0 items-center justify-between border-b border-zinc-800/80 px-4"
                 >
                     <!-- Collapsed Version (Clicking expands sidebar) -->
                     <div
@@ -755,7 +755,7 @@ const toggleSidebar = () => {
             >
                 <!-- Top Navbar -->
                 <nav
-                    class="relative z-40 flex h-20 items-center justify-between border-b border-zinc-800 bg-zinc-900 px-4 sm:px-6 lg:px-8"
+                    class="relative z-40 flex h-20 shrink-0 items-center justify-between border-b border-zinc-800 bg-zinc-900 px-4 sm:px-6 lg:px-8"
                     role="navigation"
                     :aria-label="__('nav.aria.top_nav')"
                 >

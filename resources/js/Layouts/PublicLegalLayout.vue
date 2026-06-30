@@ -30,10 +30,10 @@ defineProps({
     <div class="flex min-h-screen flex-col bg-zinc-950 text-zinc-100">
         <!-- Top bar -->
         <header
-            class="sticky top-0 z-30 border-b border-zinc-800/80 bg-zinc-950/80 backdrop-blur-xl"
+            class="sticky top-0 z-30 h-20 border-b border-zinc-800/80 bg-zinc-950/80 backdrop-blur-xl"
         >
             <div
-                class="mx-auto flex h-20 max-w-5xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8"
+                class="mx-auto flex h-full max-w-5xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8"
             >
                 <Link
                     href="/"
