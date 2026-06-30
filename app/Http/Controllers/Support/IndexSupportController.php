@@ -15,6 +15,11 @@ class IndexSupportController extends Controller
      */
     public function __invoke(): Response
     {
-        return Inertia::render('Support/Index');
+        return Inertia::render('Support/Index', [
+            'support' => [
+                'email' => config('support.email'),
+                'phone' => config('support.phone'),
+            ],
+        ]);
     }
 }

@@ -3,6 +3,28 @@ import Button from '@/Components/Button.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import { HelpCircle, Mail, MessageSquare, Send } from '@lucide/vue';
+import { computed } from 'vue';
+
+const props = defineProps({
+    support: {
+        type: Object,
+        default: () => ({ email: '', phone: '' }),
+    },
+});
+
+const whatsappUrl = computed(
+    () =>
+        `https://wa.me/${props.support.phone}?text=${encodeURIComponent(
+            'Olá! Estou na plataforma GamificaEdu e preciso de suporte técnico.',
+        )}`,
+);
+
+const mailtoUrl = computed(
+    () =>
+        `mailto:${props.support.email}?subject=${encodeURIComponent(
+            'Suporte Técnico GamificaEdu',
+        )}`,
+);
 
 const form = useForm({
     subject: '',
@@ -47,7 +69,7 @@ const submitSupport = () => {
                 <div class="grid grid-cols-1 gap-4 pt-2 sm:grid-cols-2">
                     <!-- WhatsApp -->
                     <a
-                        href="https://wa.me/5511999999999?text=Olá! Estou na plataforma GamificaEdu e preciso de suporte técnico."
+                        :href="whatsappUrl"
                         target="_blank"
                         rel="noopener noreferrer"
                         class="active:scale-98 flex items-center justify-center gap-3 rounded-2xl bg-emerald-600 px-5 py-4 text-sm font-bold text-white shadow-lg transition-all hover:bg-emerald-500"
@@ -61,7 +83,7 @@ const submitSupport = () => {
 
                     <!-- Email -->
                     <a
-                        href="mailto:suporte@gamificaedu.com.br?subject=Suporte Técnico GamificaEdu"
+                        :href="mailtoUrl"
                         class="active:scale-98 flex items-center justify-center gap-3 rounded-2xl border border-zinc-700/50 bg-zinc-800 px-5 py-4 text-sm font-bold text-white shadow-md transition-all hover:bg-zinc-700"
                         :title="__('misc.support.email')"
                     >
