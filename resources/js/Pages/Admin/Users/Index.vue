@@ -2,6 +2,7 @@
 import BaseModal from '@/Components/BaseModal.vue';
 import ConfirmModal from '@/Components/ConfirmModal.vue';
 import DataTable from '@/Components/DataTable.vue';
+import PageHeader from '@/Components/PageHeader.vue';
 import SelectInput from '@/Components/SelectInput.vue';
 import TextInput from '@/Components/TextInput.vue';
 import Tooltip from '@/Components/Tooltip.vue';
@@ -218,9 +219,7 @@ const toggleStatus = (user) => {
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="text-xl font-bold leading-tight text-zinc-100">
-                {{ __('admin.users.header') }}
-            </h2>
+            <PageHeader :title="__('admin.users.header')" />
         </template>
 
         <div class="bg-zinc-955 min-h-[calc(100vh-80px)] py-12 text-zinc-100">

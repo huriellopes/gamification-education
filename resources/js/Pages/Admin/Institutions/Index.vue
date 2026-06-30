@@ -1,4 +1,5 @@
 <script setup>
+import PageHeader from '@/Components/PageHeader.vue';
 import { __ } from '@/i18n';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
@@ -33,21 +34,20 @@ const submit = () => {
 
     <AuthenticatedLayout>
         <template #header>
-            <div class="flex items-center justify-between">
-                <h2 class="text-xl font-bold leading-tight text-zinc-100">
-                    {{ __('admin.institutions.header') }}
-                </h2>
-                <button
-                    @click="isFormOpen = !isFormOpen"
-                    class="bg-indigo-650 rounded-xl px-4 py-2 text-xs font-bold text-white transition-all hover:bg-indigo-700"
-                >
-                    {{
-                        isFormOpen
-                            ? __('admin.institutions.close_form')
-                            : __('admin.institutions.new_institution')
-                    }}
-                </button>
-            </div>
+            <PageHeader :title="__('admin.institutions.header')">
+                <template #actions>
+                    <button
+                        @click="isFormOpen = !isFormOpen"
+                        class="bg-indigo-650 rounded-xl px-4 py-2 text-xs font-bold text-white transition-all hover:bg-indigo-700"
+                    >
+                        {{
+                            isFormOpen
+                                ? __('admin.institutions.close_form')
+                                : __('admin.institutions.new_institution')
+                        }}
+                    </button>
+                </template>
+            </PageHeader>
         </template>
 
         <div class="min-h-[calc(100vh-80px)] bg-zinc-950 py-12 text-zinc-100">

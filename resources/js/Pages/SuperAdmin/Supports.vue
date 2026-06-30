@@ -2,6 +2,7 @@
 import BaseModal from '@/Components/BaseModal.vue';
 import Button from '@/Components/Button.vue';
 import DataTable from '@/Components/DataTable.vue';
+import PageHeader from '@/Components/PageHeader.vue';
 import TextareaInput from '@/Components/TextareaInput.vue';
 import { __ } from '@/i18n';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
@@ -90,9 +91,7 @@ const formatDateTime = (dateStr) => {
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="text-xl font-bold leading-tight text-zinc-100">
-                {{ __('superadmin.supports.header') }}
-            </h2>
+            <PageHeader :title="__('superadmin.supports.header')" />
         </template>
 
         <div class="bg-zinc-950 py-6 text-zinc-100">

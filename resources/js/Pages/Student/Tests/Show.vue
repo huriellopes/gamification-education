@@ -1,4 +1,5 @@
 <script setup>
+import PageHeader from '@/Components/PageHeader.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { __ } from '@/i18n';
 import { Head, Link, router } from '@inertiajs/vue3';
@@ -61,39 +62,36 @@ const submitTest = () => {
 
     <AuthenticatedLayout>
         <template #header>
-            <div class="flex items-center gap-4">
-                <Link
-                    :href="route('student.subjects.show', subject.id)"
-                    class="text-zinc-400 transition-colors hover:text-white"
-                >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke-width="2.5"
-                        stroke="currentColor"
-                        class="h-5 w-5"
+            <PageHeader :title="test.title">
+                <template #subtitle>
+                    {{
+                        __('student.material.track', {
+                            name: subject.name,
+                        })
+                    }}
+                </template>
+                <template #leading>
+                    <Link
+                        :href="route('student.subjects.show', subject.id)"
+                        class="text-zinc-400 transition-colors hover:text-white"
                     >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
-                        />
-                    </svg>
-                </Link>
-                <div>
-                    <h2 class="text-xl font-bold leading-tight text-zinc-100">
-                        {{ test.title }}
-                    </h2>
-                    <p class="text-xs text-zinc-500">
-                        {{
-                            __('student.material.track', {
-                                name: subject.name,
-                            })
-                        }}
-                    </p>
-                </div>
-            </div>
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="2.5"
+                            stroke="currentColor"
+                            class="h-5 w-5"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
+                            />
+                        </svg>
+                    </Link>
+                </template>
+            </PageHeader>
         </template>
 
         <div

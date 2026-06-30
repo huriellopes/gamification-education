@@ -2,6 +2,7 @@
 import BaseModal from '@/Components/BaseModal.vue';
 import ConfirmModal from '@/Components/ConfirmModal.vue';
 import DataTable from '@/Components/DataTable.vue';
+import PageHeader from '@/Components/PageHeader.vue';
 import SelectInput from '@/Components/SelectInput.vue';
 import TextInput from '@/Components/TextInput.vue';
 import Tooltip from '@/Components/Tooltip.vue';
@@ -185,21 +186,20 @@ const toggleStatus = (student) => {
 
     <AuthenticatedLayout>
         <template #header>
-            <div class="flex items-center justify-between">
-                <h2 class="text-xl font-bold leading-tight text-zinc-100">
-                    {{ __('teacher.students.header') }}
-                </h2>
-                <button
-                    @click="openCreateModal"
-                    class="flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-indigo-900/30 transition-all duration-200 hover:from-violet-500 hover:to-indigo-500"
-                    :title="__('teacher.students.register_student')"
-                >
-                    <Plus class="h-4 w-4 shrink-0" />
-                    <span class="hidden md:inline">{{
-                        __('teacher.students.register_student')
-                    }}</span>
-                </button>
-            </div>
+            <PageHeader :title="__('teacher.students.header')">
+                <template #actions>
+                    <button
+                        @click="openCreateModal"
+                        class="flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-indigo-900/30 transition-all duration-200 hover:from-violet-500 hover:to-indigo-500"
+                        :title="__('teacher.students.register_student')"
+                    >
+                        <Plus class="h-4 w-4 shrink-0" />
+                        <span class="hidden md:inline">{{
+                            __('teacher.students.register_student')
+                        }}</span>
+                    </button>
+                </template>
+            </PageHeader>
         </template>
 
         <div class="bg-zinc-955 min-h-[calc(100vh-80px)] py-12 text-zinc-100">

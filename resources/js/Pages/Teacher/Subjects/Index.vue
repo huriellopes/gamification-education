@@ -1,6 +1,7 @@
 <script setup>
 import BaseModal from '@/Components/BaseModal.vue';
 import ConfirmModal from '@/Components/ConfirmModal.vue';
+import PageHeader from '@/Components/PageHeader.vue';
 import SelectInput from '@/Components/SelectInput.vue';
 import TextareaInput from '@/Components/TextareaInput.vue';
 import TextInput from '@/Components/TextInput.vue';
@@ -102,23 +103,20 @@ const deleteSubject = () => {
 
     <AuthenticatedLayout>
         <template #header>
-            <div
-                class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
-            >
-                <h2 class="text-xl font-bold leading-tight text-zinc-100">
-                    {{ __('nav.aria.subjects') }}
-                </h2>
-                <button
-                    @click="openCreateModal"
-                    class="to-violet-650 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 px-4 py-2.5 text-xs font-bold text-white transition-all hover:brightness-110"
-                    :title="__('teacher.dashboard.new_subject')"
-                >
-                    <Plus class="h-4 w-4" />
-                    <span class="hidden md:inline">{{
-                        __('teacher.dashboard.new_subject')
-                    }}</span>
-                </button>
-            </div>
+            <PageHeader :title="__('nav.aria.subjects')">
+                <template #actions>
+                    <button
+                        @click="openCreateModal"
+                        class="to-violet-650 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 px-4 py-2.5 text-xs font-bold text-white transition-all hover:brightness-110"
+                        :title="__('teacher.dashboard.new_subject')"
+                    >
+                        <Plus class="h-4 w-4" />
+                        <span class="hidden md:inline">{{
+                            __('teacher.dashboard.new_subject')
+                        }}</span>
+                    </button>
+                </template>
+            </PageHeader>
         </template>
 
         <div class="min-h-[calc(100vh-80px)] bg-zinc-950 py-12 text-zinc-100">

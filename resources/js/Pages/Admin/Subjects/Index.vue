@@ -1,6 +1,7 @@
 <script setup>
 import BaseModal from '@/Components/BaseModal.vue';
 import ConfirmModal from '@/Components/ConfirmModal.vue';
+import PageHeader from '@/Components/PageHeader.vue';
 import SelectInput from '@/Components/SelectInput.vue';
 import TextareaInput from '@/Components/TextareaInput.vue';
 import TextInput from '@/Components/TextInput.vue';
@@ -182,18 +183,17 @@ const toggleStatus = (sub) => {
 
     <AuthenticatedLayout>
         <template #header>
-            <div class="flex items-center justify-between">
-                <h2 class="text-xl font-bold leading-tight text-zinc-100">
-                    {{ __('admin.subjects.header') }}
-                </h2>
-                <button
-                    @click="openCreateModal"
-                    class="to-violet-650 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 px-4 py-2.5 text-xs font-bold text-white transition-all hover:brightness-110"
-                >
-                    <Plus class="h-4 w-4" />
-                    {{ __('admin.subjects.new_subject') }}
-                </button>
-            </div>
+            <PageHeader :title="__('admin.subjects.header')">
+                <template #actions>
+                    <button
+                        @click="openCreateModal"
+                        class="to-violet-650 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 px-4 py-2.5 text-xs font-bold text-white transition-all hover:brightness-110"
+                    >
+                        <Plus class="h-4 w-4" />
+                        {{ __('admin.subjects.new_subject') }}
+                    </button>
+                </template>
+            </PageHeader>
         </template>
 
         <div class="bg-zinc-955 min-h-[calc(100vh-80px)] py-12 text-zinc-100">

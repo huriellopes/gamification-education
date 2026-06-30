@@ -3,6 +3,7 @@ import BaseModal from '@/Components/BaseModal.vue';
 import ConfirmModal from '@/Components/ConfirmModal.vue';
 import DataTable from '@/Components/DataTable.vue';
 import InputLabel from '@/Components/InputLabel.vue';
+import PageHeader from '@/Components/PageHeader.vue';
 import SelectInput from '@/Components/SelectInput.vue';
 import TextInput from '@/Components/TextInput.vue';
 import TextareaInput from '@/Components/TextareaInput.vue';
@@ -160,20 +161,19 @@ const confirmToggle = (classroom) => {
 
     <AuthenticatedLayout>
         <template #header>
-            <div class="flex items-center justify-between">
-                <h2 class="text-xl font-bold leading-tight text-zinc-100">
-                    {{ __('classrooms.admin_header') }}
-                </h2>
-                <button
-                    @click="openCreate"
-                    class="flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-5 py-2.5 text-sm font-bold text-white transition-all hover:brightness-110"
-                >
-                    <Plus class="h-4 w-4" />
-                    <span class="hidden md:inline">{{
-                        __('classrooms.new')
-                    }}</span>
-                </button>
-            </div>
+            <PageHeader :title="__('classrooms.admin_header')">
+                <template #actions>
+                    <button
+                        @click="openCreate"
+                        class="flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-5 py-2.5 text-sm font-bold text-white transition-all hover:brightness-110"
+                    >
+                        <Plus class="h-4 w-4" />
+                        <span class="hidden md:inline">{{
+                            __('classrooms.new')
+                        }}</span>
+                    </button>
+                </template>
+            </PageHeader>
         </template>
 
         <div class="min-h-[calc(100vh-80px)] bg-zinc-950 py-12 text-zinc-100">

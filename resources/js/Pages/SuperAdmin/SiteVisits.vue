@@ -1,5 +1,6 @@
 <script setup>
 import DataTable from '@/Components/DataTable.vue';
+import PageHeader from '@/Components/PageHeader.vue';
 import { __ } from '@/i18n';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
@@ -49,21 +50,20 @@ const formatDateTime = (dateStr) => {
 
     <AuthenticatedLayout>
         <template #header>
-            <div
-                class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
-            >
-                <h2 class="text-xl font-bold leading-tight text-zinc-100">
-                    {{ __('superadmin.site_visits.header') }}
-                </h2>
-                <!-- Export to Excel (.xlsx) -->
-                <a
-                    :href="route('super-admin.visits.export')"
-                    class="active:scale-98 inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-xs font-bold text-white shadow-md transition-all hover:bg-emerald-500"
-                >
-                    <FileSpreadsheet class="h-4 w-4" />
-                    <span>{{ __('superadmin.site_visits.export_excel') }}</span>
-                </a>
-            </div>
+            <PageHeader :title="__('superadmin.site_visits.header')">
+                <template #actions>
+                    <!-- Export to Excel (.xlsx) -->
+                    <a
+                        :href="route('super-admin.visits.export')"
+                        class="active:scale-98 inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-xs font-bold text-white shadow-md transition-all hover:bg-emerald-500"
+                    >
+                        <FileSpreadsheet class="h-4 w-4" />
+                        <span>{{
+                            __('superadmin.site_visits.export_excel')
+                        }}</span>
+                    </a>
+                </template>
+            </PageHeader>
         </template>
 
         <div class="bg-zinc-950 py-6 text-zinc-100">

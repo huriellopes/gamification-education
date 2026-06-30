@@ -1,4 +1,5 @@
 <script setup>
+import PageHeader from '@/Components/PageHeader.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
 
@@ -17,40 +18,37 @@ defineProps({
 
     <AuthenticatedLayout>
         <template #header>
-            <div class="flex items-center gap-4">
-                <Link
-                    :href="route('teacher.students.index')"
-                    class="text-zinc-400 transition-colors hover:text-white"
-                >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke-width="2.5"
-                        stroke="currentColor"
-                        class="h-5 w-5"
+            <PageHeader
+                :title="
+                    __('teacher.performance.header').replace(
+                        ':name',
+                        student.name,
+                    )
+                "
+                :subtitle="student.email"
+            >
+                <template #leading>
+                    <Link
+                        :href="route('teacher.students.index')"
+                        class="text-zinc-400 transition-colors hover:text-white"
                     >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
-                        />
-                    </svg>
-                </Link>
-                <div>
-                    <h2 class="text-xl font-bold leading-tight text-zinc-100">
-                        {{
-                            __('teacher.performance.header').replace(
-                                ':name',
-                                student.name,
-                            )
-                        }}
-                    </h2>
-                    <p class="text-zinc-550 text-xs">
-                        {{ student.email }}
-                    </p>
-                </div>
-            </div>
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="2.5"
+                            stroke="currentColor"
+                            class="h-5 w-5"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
+                            />
+                        </svg>
+                    </Link>
+                </template>
+            </PageHeader>
         </template>
 
         <div class="bg-zinc-955 min-h-[calc(100vh-80px)] py-12 text-zinc-100">

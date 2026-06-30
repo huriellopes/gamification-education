@@ -1,4 +1,5 @@
 <script setup>
+import PageHeader from '@/Components/PageHeader.vue';
 import { __ } from '@/i18n';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
@@ -22,11 +23,7 @@ defineProps({
 
     <AuthenticatedLayout>
         <template #header>
-            <h2
-                class="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200"
-            >
-                {{ __('profile.title') }}
-            </h2>
+            <PageHeader :title="__('profile.title')" />
         </template>
 
         <div class="py-8">

@@ -3,6 +3,7 @@ import BaseModal from '@/Components/BaseModal.vue';
 import Button from '@/Components/Button.vue';
 import ConfirmModal from '@/Components/ConfirmModal.vue';
 import DataTable from '@/Components/DataTable.vue';
+import PageHeader from '@/Components/PageHeader.vue';
 import Tooltip from '@/Components/Tooltip.vue';
 import { __ } from '@/i18n';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
@@ -145,32 +146,29 @@ const formatDateTime = (dateStr) => {
 
     <AuthenticatedLayout>
         <template #header>
-            <div
-                class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
-            >
-                <h2 class="text-xl font-bold leading-tight text-zinc-100">
-                    {{ __('superadmin.logs.header') }}
-                </h2>
-                <Button
-                    @click="pruneLogs"
-                    :disabled="isPruning"
-                    class="flex items-center gap-2 bg-amber-600 font-bold hover:bg-amber-500"
-                    :title="__('superadmin.logs.prune_title')"
-                >
-                    <template #icon>
-                        <span
-                            v-if="isPruning"
-                            class="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"
-                        ></span>
-                        <Trash2 v-else class="h-4 w-4" />
-                    </template>
-                    <span class="hidden md:inline">{{
-                        isPruning
-                            ? __('superadmin.logs.pruning')
-                            : __('superadmin.logs.prune_title')
-                    }}</span>
-                </Button>
-            </div>
+            <PageHeader :title="__('superadmin.logs.header')">
+                <template #actions>
+                    <Button
+                        @click="pruneLogs"
+                        :disabled="isPruning"
+                        class="flex items-center gap-2 bg-amber-600 font-bold hover:bg-amber-500"
+                        :title="__('superadmin.logs.prune_title')"
+                    >
+                        <template #icon>
+                            <span
+                                v-if="isPruning"
+                                class="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"
+                            ></span>
+                            <Trash2 v-else class="h-4 w-4" />
+                        </template>
+                        <span class="hidden md:inline">{{
+                            isPruning
+                                ? __('superadmin.logs.pruning')
+                                : __('superadmin.logs.prune_title')
+                        }}</span>
+                    </Button>
+                </template>
+            </PageHeader>
         </template>
 
         <div class="space-y-8 bg-zinc-950 py-6 text-zinc-100">

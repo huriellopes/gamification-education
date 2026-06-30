@@ -1,5 +1,6 @@
 <script setup>
 import Button from '@/Components/Button.vue';
+import PageHeader from '@/Components/PageHeader.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import { HelpCircle, Mail, MessageSquare, Send } from '@lucide/vue';
@@ -46,9 +47,7 @@ const submitSupport = () => {
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="text-xl font-bold leading-tight text-zinc-100">
-                {{ __('misc.support.header') }}
-            </h2>
+            <PageHeader :title="__('misc.support.header')" />
         </template>
 
         <div class="mx-auto max-w-4xl space-y-8 bg-zinc-950 py-6 text-zinc-100">

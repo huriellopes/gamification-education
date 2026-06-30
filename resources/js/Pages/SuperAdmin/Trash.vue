@@ -2,6 +2,7 @@
 import Button from '@/Components/Button.vue';
 import ConfirmModal from '@/Components/ConfirmModal.vue';
 import DataTable from '@/Components/DataTable.vue';
+import PageHeader from '@/Components/PageHeader.vue';
 import { __ } from '@/i18n';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, router } from '@inertiajs/vue3';
@@ -64,9 +65,7 @@ const confirmRestore = (del) => {
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="text-xl font-bold leading-tight text-zinc-100">
-                {{ __('superadmin.trash.header') }}
-            </h2>
+            <PageHeader :title="__('superadmin.trash.header')" />
         </template>
 
         <div class="bg-zinc-950 py-6 text-zinc-100">

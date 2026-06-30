@@ -3,6 +3,7 @@ import BaseModal from '@/Components/BaseModal.vue';
 import Button from '@/Components/Button.vue';
 import ConfirmModal from '@/Components/ConfirmModal.vue';
 import DataTable from '@/Components/DataTable.vue';
+import PageHeader from '@/Components/PageHeader.vue';
 import TextareaInput from '@/Components/TextareaInput.vue';
 import TextInput from '@/Components/TextInput.vue';
 import Tooltip from '@/Components/Tooltip.vue';
@@ -304,17 +305,16 @@ const confirmDeleteInstitution = (inst) => {
 
     <AuthenticatedLayout>
         <template #header>
-            <div class="flex items-center justify-between">
-                <h2 class="text-xl font-bold leading-tight text-zinc-100">
-                    {{ __('superadmin.institutions.header') }}
-                </h2>
-                <Button @click="openCreateInstitution">
-                    <template #icon><Plus class="h-4 w-4" /></template>
-                    <span class="hidden md:inline">{{
-                        __('superadmin.institutions.register')
-                    }}</span>
-                </Button>
-            </div>
+            <PageHeader :title="__('superadmin.institutions.header')">
+                <template #actions>
+                    <Button @click="openCreateInstitution">
+                        <template #icon><Plus class="h-4 w-4" /></template>
+                        <span class="hidden md:inline">{{
+                            __('superadmin.institutions.register')
+                        }}</span>
+                    </Button>
+                </template>
+            </PageHeader>
         </template>
 
         <div class="bg-zinc-950 py-6 text-zinc-100">

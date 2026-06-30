@@ -15,18 +15,22 @@ defineProps({
     <div
         class="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center"
     >
-        <div class="min-w-0">
-            <h1
-                class="text-2xl font-bold leading-tight text-zinc-100 sm:text-3xl"
-            >
-                <slot>{{ title }}</slot>
-            </h1>
-            <p
-                v-if="$slots.subtitle || subtitle"
-                class="mt-1 text-sm text-zinc-400"
-            >
-                <slot name="subtitle">{{ subtitle }}</slot>
-            </p>
+        <div class="flex min-w-0 items-center gap-3">
+            <!-- Slot opcional à esquerda do título (ex.: link de voltar). -->
+            <slot name="leading" />
+            <div class="min-w-0">
+                <h1
+                    class="text-2xl font-bold leading-tight text-zinc-100 sm:text-3xl"
+                >
+                    <slot>{{ title }}</slot>
+                </h1>
+                <p
+                    v-if="$slots.subtitle || subtitle"
+                    class="mt-1 text-sm text-zinc-400"
+                >
+                    <slot name="subtitle">{{ subtitle }}</slot>
+                </p>
+            </div>
         </div>
 
         <div

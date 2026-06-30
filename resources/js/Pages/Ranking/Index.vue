@@ -1,5 +1,6 @@
 <script setup>
 import DataTable from '@/Components/DataTable.vue';
+import PageHeader from '@/Components/PageHeader.vue';
 import { __ } from '@/i18n';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, router } from '@inertiajs/vue3';
@@ -106,9 +107,7 @@ const setTab = (tabName) => {
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="text-xl font-bold leading-tight text-zinc-100">
-                {{ __('misc.ranking.header') }}
-            </h2>
+            <PageHeader :title="__('misc.ranking.header')" />
         </template>
 
         <div

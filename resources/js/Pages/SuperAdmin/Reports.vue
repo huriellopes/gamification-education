@@ -1,6 +1,7 @@
 <script setup>
 import Button from '@/Components/Button.vue';
 import DataTable from '@/Components/DataTable.vue';
+import PageHeader from '@/Components/PageHeader.vue';
 import { __ } from '@/i18n';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, router, useForm } from '@inertiajs/vue3';
@@ -121,9 +122,7 @@ const formatDateTime = (dateStr) => {
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="text-xl font-bold leading-tight text-zinc-100">
-                {{ __('superadmin.reports.header') }}
-            </h2>
+            <PageHeader :title="__('superadmin.reports.header')" />
         </template>
 
         <div class="space-y-6 bg-zinc-950 py-6 text-zinc-100">
