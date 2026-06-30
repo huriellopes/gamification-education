@@ -1,5 +1,6 @@
 <script setup>
 import LeaderboardWidget from '@/Components/LeaderboardWidget.vue';
+import PageHeader from '@/Components/PageHeader.vue';
 import PointsBadge from '@/Components/PointsBadge.vue';
 import SubjectCard from '@/Components/SubjectCard.vue';
 import WelcomeWidget from '@/Components/WelcomeWidget.vue';
@@ -42,28 +43,23 @@ const levelProgress = computed(() => {
 
     <AuthenticatedLayout>
         <template #header>
-            <div
-                class="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center"
+            <PageHeader
+                :title="
+                    __('student.dashboard.greeting', {
+                        name: $page.props.auth.user.name,
+                    })
+                "
+                :subtitle="
+                    $page.props.auth.user.institution
+                        ? $page.props.auth.user.institution.name
+                        : __('student.dashboard.no_institution')
+                "
             >
-                <div>
-                    <h2 class="text-xl font-bold leading-tight text-zinc-100">
-                        {{
-                            __('student.dashboard.greeting', {
-                                name: $page.props.auth.user.name,
-                            })
-                        }}
-                    </h2>
-                    <p class="text-xs text-zinc-400">
-                        {{
-                            $page.props.auth.user.institution
-                                ? $page.props.auth.user.institution.name
-                                : __('student.dashboard.no_institution')
-                        }}
-                    </p>
-                </div>
-                <!-- Badge de Pontos Animado -->
-                <PointsBadge :points="stats.points" size="lg" />
-            </div>
+                <template #actions>
+                    <!-- Badge de Pontos Animado -->
+                    <PointsBadge :points="stats.points" size="lg" />
+                </template>
+            </PageHeader>
         </template>
 
         <div class="bg-zinc-955 min-h-[calc(100vh-80px)] py-12 text-zinc-100">

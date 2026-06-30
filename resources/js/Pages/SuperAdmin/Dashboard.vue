@@ -1,5 +1,6 @@
 <script setup>
 import MetricCard from '@/Components/MetricCard.vue';
+import PageHeader from '@/Components/PageHeader.vue';
 import WelcomeWidget from '@/Components/WelcomeWidget.vue';
 import { __ } from '@/i18n';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
@@ -121,9 +122,7 @@ const hideVisitsTooltip = () => {
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="text-xl font-bold leading-tight text-zinc-100">
-                {{ __('superadmin.dashboard.header') }}
-            </h2>
+            <PageHeader :title="__('superadmin.dashboard.header')" />
         </template>
 
         <div class="min-h-[calc(100vh-80px)] bg-zinc-950 py-6 text-zinc-100">

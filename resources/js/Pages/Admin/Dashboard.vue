@@ -2,6 +2,7 @@
 import Button from '@/Components/Button.vue';
 import DataTable from '@/Components/DataTable.vue';
 import MetricCard from '@/Components/MetricCard.vue';
+import PageHeader from '@/Components/PageHeader.vue';
 import WelcomeWidget from '@/Components/WelcomeWidget.vue';
 import { __ } from '@/i18n';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
@@ -180,13 +181,13 @@ const hideTooltip = () => {
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="text-xl font-bold leading-tight text-zinc-100">
+            <PageHeader>
                 {{ __('admin.dashboard.header') }}
                 {{
                     $page.props.auth.user.institution?.name ||
                     __('admin.dashboard.default_institution')
                 }}
-            </h2>
+            </PageHeader>
         </template>
 
         <div class="min-h-[calc(100vh-80px)] bg-zinc-950 py-12 text-zinc-100">
