@@ -32,6 +32,13 @@ return [
         'logout' => 'Sair da Conta',
         'profile_settings' => 'Ir para configurações do Perfil',
     ],
+    'section' => [
+        'management' => 'Gestão',
+        'system' => 'Sistema',
+        'teaching' => 'Ensino',
+        'community' => 'Comunidade',
+    ],
+
     'sidebar' => [
         'dashboard' => 'Dashboard',
         'institutions' => 'Instituições',

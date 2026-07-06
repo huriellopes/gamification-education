@@ -2,6 +2,7 @@
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Breadcrumbs from '@/Components/Breadcrumbs.vue';
 import NavbarActions from '@/Components/NavbarActions.vue';
+import SidebarSectionHeader from '@/Components/SidebarSectionHeader.vue';
 import Toast from '@/Components/Toast.vue';
 import Tooltip from '@/Components/Tooltip.vue';
 import { __ } from '@/i18n';
@@ -39,6 +40,39 @@ const toggleSidebar = () => {
         localStorage.setItem(
             'sidebar_collapsed',
             isSidebarCollapsed.value ? 'true' : 'false',
+        );
+    }
+};
+
+// Estado retrátil das seções da sidebar (persistido). Padrão: todas abertas.
+const loadOpenSections = () => {
+    const defaults = {
+        management: true,
+        system: true,
+        teaching: true,
+        community: true,
+    };
+    if (typeof window === 'undefined') {
+        return defaults;
+    }
+    try {
+        return {
+            ...defaults,
+            ...JSON.parse(localStorage.getItem('sidebar_sections') ?? '{}'),
+        };
+    } catch {
+        return defaults;
+    }
+};
+
+const sectionOpen = ref(loadOpenSections());
+
+const toggleSection = (key) => {
+    sectionOpen.value[key] = !sectionOpen.value[key];
+    if (typeof window !== 'undefined') {
+        localStorage.setItem(
+            'sidebar_sections',
+            JSON.stringify(sectionOpen.value),
         );
     }
 };
@@ -169,19 +203,568 @@ const toggleSidebar = () => {
                     <template
                         v-if="$page.props.auth.user.role === 'super_admin'"
                     >
-                        <!-- Instituições -->
+                        <SidebarSectionHeader
+                            :label="__('nav.section.management')"
+                            :icon="Settings"
+                            :collapsed="isSidebarCollapsed"
+                            :open="sectionOpen.management"
+                            @toggle="toggleSection('management')"
+                        />
+
+                        <div
+                            v-show="
+                                isSidebarCollapsed || sectionOpen.management
+                            "
+                            class="space-y-1.5"
+                        >
+                            <!-- Instituições -->
+                            <Tooltip
+                                :text="__('nav.tooltip.institutions')"
+                                position="right"
+                                :disabled="!isSidebarCollapsed"
+                                block
+                            >
+                                <Link
+                                    :href="
+                                        route('super-admin.institutions.index')
+                                    "
+                                    :class="[
+                                        route().current(
+                                            'super-admin.institutions.*',
+                                        )
+                                            ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/10'
+                                            : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-white',
+                                        isSidebarCollapsed
+                                            ? 'justify-center px-0'
+                                            : 'justify-start gap-3 px-3',
+                                    ]"
+                                    class="flex w-full items-center rounded-xl py-2.5 text-xs font-bold transition-all"
+                                    :aria-label="
+                                        __('nav.aria.manage_institutions')
+                                    "
+                                >
+                                    <School class="h-4 w-4 shrink-0" />
+                                    <span
+                                        v-if="!isSidebarCollapsed"
+                                        class="truncate"
+                                        >{{
+                                            __('nav.sidebar.institutions')
+                                        }}</span
+                                    >
+                                </Link>
+                            </Tooltip>
+
+                            <!-- Usuários -->
+                            <Tooltip
+                                :text="__('nav.tooltip.users')"
+                                position="right"
+                                :disabled="!isSidebarCollapsed"
+                                block
+                            >
+                                <Link
+                                    :href="route('super-admin.users.index')"
+                                    :class="[
+                                        route().current('super-admin.users.*')
+                                            ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/10'
+                                            : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-white',
+                                        isSidebarCollapsed
+                                            ? 'justify-center px-0'
+                                            : 'justify-start gap-3 px-3',
+                                    ]"
+                                    class="flex w-full items-center rounded-xl py-2.5 text-xs font-bold transition-all"
+                                    :aria-label="__('nav.aria.manage_users')"
+                                >
+                                    <Users class="h-4 w-4 shrink-0" />
+                                    <span
+                                        v-if="!isSidebarCollapsed"
+                                        class="truncate"
+                                        >{{ __('nav.sidebar.users') }}</span
+                                    >
+                                </Link>
+                            </Tooltip>
+
+                            <!-- Matérias -->
+                            <Tooltip
+                                :text="__('nav.tooltip.subjects')"
+                                position="right"
+                                :disabled="!isSidebarCollapsed"
+                                block
+                            >
+                                <Link
+                                    :href="route('super-admin.subjects.index')"
+                                    :class="[
+                                        route().current(
+                                            'super-admin.subjects.*',
+                                        )
+                                            ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/10'
+                                            : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-white',
+                                        isSidebarCollapsed
+                                            ? 'justify-center px-0'
+                                            : 'justify-start gap-3 px-3',
+                                    ]"
+                                    class="flex w-full items-center rounded-xl py-2.5 text-xs font-bold transition-all"
+                                    :aria-label="__('nav.aria.manage_subjects')"
+                                >
+                                    <BookOpen class="h-4 w-4 shrink-0" />
+                                    <span
+                                        v-if="!isSidebarCollapsed"
+                                        class="truncate"
+                                        >{{ __('nav.sidebar.subjects') }}</span
+                                    >
+                                </Link>
+                            </Tooltip>
+
+                            <!-- Classrooms -->
+                            <Tooltip
+                                :text="__('nav.tooltip.classrooms')"
+                                position="right"
+                                :disabled="!isSidebarCollapsed"
+                                block
+                            >
+                                <Link
+                                    :href="
+                                        route('super-admin.classrooms.index')
+                                    "
+                                    :class="[
+                                        route().current(
+                                            'super-admin.classrooms.*',
+                                        )
+                                            ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/10'
+                                            : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-white',
+                                        isSidebarCollapsed
+                                            ? 'justify-center px-0'
+                                            : 'justify-start gap-3 px-3',
+                                    ]"
+                                    class="flex w-full items-center rounded-xl py-2.5 text-xs font-bold transition-all"
+                                    :aria-label="
+                                        __('nav.aria.manage_classrooms')
+                                    "
+                                >
+                                    <GraduationCap class="h-4 w-4 shrink-0" />
+                                    <span
+                                        v-if="!isSidebarCollapsed"
+                                        class="truncate"
+                                        >{{
+                                            __('nav.sidebar.classrooms')
+                                        }}</span
+                                    >
+                                </Link>
+                            </Tooltip>
+                        </div>
+
+                        <SidebarSectionHeader
+                            :label="__('nav.section.system')"
+                            :icon="Terminal"
+                            :collapsed="isSidebarCollapsed"
+                            :open="sectionOpen.system"
+                            @toggle="toggleSection('system')"
+                        />
+
+                        <div
+                            v-show="isSidebarCollapsed || sectionOpen.system"
+                            class="space-y-1.5"
+                        >
+                            <!-- Relatórios -->
+                            <Tooltip
+                                :text="__('nav.tooltip.reports')"
+                                position="right"
+                                :disabled="!isSidebarCollapsed"
+                                block
+                            >
+                                <Link
+                                    :href="route('super-admin.reports.index')"
+                                    :class="[
+                                        route().current('super-admin.reports.*')
+                                            ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/10'
+                                            : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-white',
+                                        isSidebarCollapsed
+                                            ? 'justify-center px-0'
+                                            : 'justify-start gap-3 px-3',
+                                    ]"
+                                    class="flex w-full items-center rounded-xl py-2.5 text-xs font-bold transition-all"
+                                    :aria-label="__('nav.aria.system_reports')"
+                                >
+                                    <FileText class="h-4 w-4 shrink-0" />
+                                    <span
+                                        v-if="!isSidebarCollapsed"
+                                        class="truncate"
+                                        >{{ __('nav.sidebar.reports') }}</span
+                                    >
+                                </Link>
+                            </Tooltip>
+
+                            <!-- Logs do Sistema -->
+                            <Tooltip
+                                :text="__('nav.tooltip.logs_queue')"
+                                position="right"
+                                :disabled="!isSidebarCollapsed"
+                                block
+                            >
+                                <Link
+                                    :href="route('super-admin.logs.index')"
+                                    :class="[
+                                        route().current('super-admin.logs.*')
+                                            ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/10'
+                                            : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-white',
+                                        isSidebarCollapsed
+                                            ? 'justify-center px-0'
+                                            : 'justify-start gap-3 px-3',
+                                    ]"
+                                    class="flex w-full items-center rounded-xl py-2.5 text-xs font-bold transition-all"
+                                    :aria-label="__('nav.aria.system_logs')"
+                                >
+                                    <Terminal class="h-4 w-4 shrink-0" />
+                                    <span
+                                        v-if="!isSidebarCollapsed"
+                                        class="truncate"
+                                        >{{
+                                            __('nav.sidebar.logs_queue')
+                                        }}</span
+                                    >
+                                </Link>
+                            </Tooltip>
+
+                            <!-- Chamados -->
+                            <Tooltip
+                                :text="__('nav.tooltip.support_tickets')"
+                                position="right"
+                                :disabled="!isSidebarCollapsed"
+                                block
+                            >
+                                <Link
+                                    :href="route('super-admin.supports.index')"
+                                    :class="[
+                                        route().current(
+                                            'super-admin.supports.*',
+                                        )
+                                            ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/10'
+                                            : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-white',
+                                        isSidebarCollapsed
+                                            ? 'justify-center px-0'
+                                            : 'justify-start gap-3 px-3',
+                                    ]"
+                                    class="flex w-full items-center rounded-xl py-2.5 text-xs font-bold transition-all"
+                                    :aria-label="__('nav.aria.support_tickets')"
+                                >
+                                    <HelpCircle class="h-4 w-4 shrink-0" />
+                                    <span
+                                        v-if="!isSidebarCollapsed"
+                                        class="truncate"
+                                        >{{ __('nav.sidebar.support') }}</span
+                                    >
+                                </Link>
+                            </Tooltip>
+
+                            <!-- Visitas do Site -->
+                            <Tooltip
+                                :text="__('nav.tooltip.site_visits')"
+                                position="right"
+                                :disabled="!isSidebarCollapsed"
+                                block
+                            >
+                                <Link
+                                    :href="route('super-admin.visits.index')"
+                                    :class="[
+                                        route().current('super-admin.visits.*')
+                                            ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/10'
+                                            : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-white',
+                                        isSidebarCollapsed
+                                            ? 'justify-center px-0'
+                                            : 'justify-start gap-3 px-3',
+                                    ]"
+                                    class="flex w-full items-center rounded-xl py-2.5 text-xs font-bold transition-all"
+                                    :aria-label="__('nav.aria.site_visits')"
+                                >
+                                    <Eye class="h-4 w-4 shrink-0" />
+                                    <span
+                                        v-if="!isSidebarCollapsed"
+                                        class="truncate"
+                                        >{{
+                                            __('nav.sidebar.site_visits')
+                                        }}</span
+                                    >
+                                </Link>
+                            </Tooltip>
+
+                            <!-- Lixeira -->
+                            <Tooltip
+                                :text="__('nav.tooltip.trash')"
+                                position="right"
+                                :disabled="!isSidebarCollapsed"
+                                block
+                            >
+                                <Link
+                                    :href="route('super-admin.trash.index')"
+                                    :class="[
+                                        route().current('super-admin.trash.*')
+                                            ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/10'
+                                            : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-white',
+                                        isSidebarCollapsed
+                                            ? 'justify-center px-0'
+                                            : 'justify-start gap-3 px-3',
+                                    ]"
+                                    class="flex w-full items-center rounded-xl py-2.5 text-xs font-bold transition-all"
+                                    :aria-label="__('nav.aria.system_trash')"
+                                >
+                                    <Trash2 class="h-4 w-4 shrink-0" />
+                                    <span
+                                        v-if="!isSidebarCollapsed"
+                                        class="truncate"
+                                        >{{ __('nav.sidebar.trash') }}</span
+                                    >
+                                </Link>
+                            </Tooltip>
+                        </div>
+                    </template>
+
+                    <!-- ADMIN SPECIFIC PAGES -->
+                    <template v-if="$page.props.auth.user.role === 'admin'">
+                        <SidebarSectionHeader
+                            :label="__('nav.section.management')"
+                            :icon="Settings"
+                            :collapsed="isSidebarCollapsed"
+                            :open="sectionOpen.management"
+                            @toggle="toggleSection('management')"
+                        />
+
+                        <div
+                            v-show="
+                                isSidebarCollapsed || sectionOpen.management
+                            "
+                            class="space-y-1.5"
+                        >
+                            <!-- Matérias -->
+                            <Tooltip
+                                :text="__('nav.tooltip.subjects')"
+                                position="right"
+                                :disabled="!isSidebarCollapsed"
+                                block
+                            >
+                                <Link
+                                    :href="route('admin.subjects.index')"
+                                    :class="[
+                                        route().current('admin.subjects.*')
+                                            ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/10'
+                                            : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-white',
+                                        isSidebarCollapsed
+                                            ? 'justify-center px-0'
+                                            : 'justify-start gap-3 px-3',
+                                    ]"
+                                    class="flex w-full items-center rounded-xl py-2.5 text-xs font-bold transition-all"
+                                    :aria-label="__('nav.aria.subjects')"
+                                >
+                                    <BookOpen class="h-4 w-4 shrink-0" />
+                                    <span
+                                        v-if="!isSidebarCollapsed"
+                                        class="truncate"
+                                        >{{ __('nav.sidebar.subjects') }}</span
+                                    >
+                                </Link>
+                            </Tooltip>
+
+                            <!-- Classrooms -->
+                            <Tooltip
+                                :text="__('nav.tooltip.classrooms')"
+                                position="right"
+                                :disabled="!isSidebarCollapsed"
+                                block
+                            >
+                                <Link
+                                    :href="route('admin.classrooms.index')"
+                                    :class="[
+                                        route().current('admin.classrooms.*')
+                                            ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/10'
+                                            : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-white',
+                                        isSidebarCollapsed
+                                            ? 'justify-center px-0'
+                                            : 'justify-start gap-3 px-3',
+                                    ]"
+                                    class="flex w-full items-center rounded-xl py-2.5 text-xs font-bold transition-all"
+                                    :aria-label="
+                                        __('nav.aria.manage_classrooms')
+                                    "
+                                >
+                                    <GraduationCap class="h-4 w-4 shrink-0" />
+                                    <span
+                                        v-if="!isSidebarCollapsed"
+                                        class="truncate"
+                                        >{{
+                                            __('nav.sidebar.classrooms')
+                                        }}</span
+                                    >
+                                </Link>
+                            </Tooltip>
+
+                            <!-- Membros -->
+                            <Tooltip
+                                :text="__('nav.tooltip.members')"
+                                position="right"
+                                :disabled="!isSidebarCollapsed"
+                                block
+                            >
+                                <Link
+                                    :href="route('admin.users.index')"
+                                    :class="[
+                                        route().current('admin.users.*')
+                                            ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/10'
+                                            : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-white',
+                                        isSidebarCollapsed
+                                            ? 'justify-center px-0'
+                                            : 'justify-start gap-3 px-3',
+                                    ]"
+                                    class="flex w-full items-center rounded-xl py-2.5 text-xs font-bold transition-all"
+                                    :aria-label="
+                                        __('nav.aria.institution_members')
+                                    "
+                                >
+                                    <Users class="h-4 w-4 shrink-0" />
+                                    <span
+                                        v-if="!isSidebarCollapsed"
+                                        class="truncate"
+                                        >{{ __('nav.sidebar.members') }}</span
+                                    >
+                                </Link>
+                            </Tooltip>
+                        </div>
+                    </template>
+
+                    <!-- TEACHER SPECIFIC PAGES -->
+                    <template v-if="$page.props.auth.user.role === 'teacher'">
+                        <SidebarSectionHeader
+                            :label="__('nav.section.teaching')"
+                            :icon="GraduationCap"
+                            :collapsed="isSidebarCollapsed"
+                            :open="sectionOpen.teaching"
+                            @toggle="toggleSection('teaching')"
+                        />
+
+                        <div
+                            v-show="isSidebarCollapsed || sectionOpen.teaching"
+                            class="space-y-1.5"
+                        >
+                            <!-- Minhas Classrooms -->
+                            <Tooltip
+                                :text="__('nav.tooltip.my_classrooms')"
+                                position="right"
+                                :disabled="!isSidebarCollapsed"
+                                block
+                            >
+                                <Link
+                                    :href="route('teacher.classrooms.index')"
+                                    :class="[
+                                        route().current('teacher.classrooms.*')
+                                            ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/10'
+                                            : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-white',
+                                        isSidebarCollapsed
+                                            ? 'justify-center px-0'
+                                            : 'justify-start gap-3 px-3',
+                                    ]"
+                                    class="flex w-full items-center rounded-xl py-2.5 text-xs font-bold transition-all"
+                                    :aria-label="
+                                        __('nav.aria.manage_classrooms')
+                                    "
+                                >
+                                    <GraduationCap class="h-4 w-4 shrink-0" />
+                                    <span
+                                        v-if="!isSidebarCollapsed"
+                                        class="truncate"
+                                        >{{
+                                            __('nav.sidebar.my_classrooms')
+                                        }}</span
+                                    >
+                                </Link>
+                            </Tooltip>
+
+                            <!-- Meus Alunos -->
+                            <Tooltip
+                                :text="__('nav.tooltip.students')"
+                                position="right"
+                                :disabled="!isSidebarCollapsed"
+                                block
+                            >
+                                <Link
+                                    :href="route('teacher.students.index')"
+                                    :class="[
+                                        route().current('teacher.students.*')
+                                            ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/10'
+                                            : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-white',
+                                        isSidebarCollapsed
+                                            ? 'justify-center px-0'
+                                            : 'justify-start gap-3 px-3',
+                                    ]"
+                                    class="flex w-full items-center rounded-xl py-2.5 text-xs font-bold transition-all"
+                                    :aria-label="__('nav.aria.manage_students')"
+                                >
+                                    <Users class="h-4 w-4 shrink-0" />
+                                    <span
+                                        v-if="!isSidebarCollapsed"
+                                        class="truncate"
+                                        >{{ __('nav.sidebar.students') }}</span
+                                    >
+                                </Link>
+                            </Tooltip>
+
+                            <!-- Matérias -->
+                            <Tooltip
+                                :text="__('nav.tooltip.subjects')"
+                                position="right"
+                                :disabled="!isSidebarCollapsed"
+                                block
+                            >
+                                <Link
+                                    :href="route('teacher.subjects.index')"
+                                    :class="[
+                                        route().current(
+                                            'teacher.subjects.index',
+                                        )
+                                            ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/10'
+                                            : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-white',
+                                        isSidebarCollapsed
+                                            ? 'justify-center px-0'
+                                            : 'justify-start gap-3 px-3',
+                                    ]"
+                                    class="flex w-full items-center rounded-xl py-2.5 text-xs font-bold transition-all"
+                                    :aria-label="__('nav.aria.subjects')"
+                                >
+                                    <BookOpen class="h-4 w-4 shrink-0" />
+                                    <span
+                                        v-if="!isSidebarCollapsed"
+                                        class="truncate"
+                                        >{{ __('nav.sidebar.subjects') }}</span
+                                    >
+                                </Link>
+                            </Tooltip>
+                        </div>
+                    </template>
+
+                    <SidebarSectionHeader
+                        v-if="$page.props.auth.user.role !== 'super_admin'"
+                        :label="__('nav.section.community')"
+                        :icon="Trophy"
+                        :collapsed="isSidebarCollapsed"
+                        :open="sectionOpen.community"
+                        @toggle="toggleSection('community')"
+                    />
+
+                    <div
+                        v-show="
+                            $page.props.auth.user.role !== 'super_admin' &&
+                            (isSidebarCollapsed || sectionOpen.community)
+                        "
+                        class="space-y-1.5"
+                    >
+                        <!-- Ranking (All except Super Admin) -->
                         <Tooltip
-                            :text="__('nav.tooltip.institutions')"
+                            :text="__('nav.tooltip.ranking')"
                             position="right"
                             :disabled="!isSidebarCollapsed"
                             block
+                            v-if="$page.props.auth.user.role !== 'super_admin'"
                         >
                             <Link
-                                :href="route('super-admin.institutions.index')"
+                                :href="route('ranking.index')"
                                 :class="[
-                                    route().current(
-                                        'super-admin.institutions.*',
-                                    )
+                                    route().current('ranking.index')
                                         ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/10'
                                         : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-white',
                                     isSidebarCollapsed
@@ -189,28 +772,29 @@ const toggleSidebar = () => {
                                         : 'justify-start gap-3 px-3',
                                 ]"
                                 class="flex w-full items-center rounded-xl py-2.5 text-xs font-bold transition-all"
-                                :aria-label="__('nav.aria.manage_institutions')"
+                                :aria-label="__('nav.aria.xp_ranking')"
                             >
-                                <School class="h-4 w-4 shrink-0" />
+                                <Trophy class="h-4 w-4 shrink-0" />
                                 <span
                                     v-if="!isSidebarCollapsed"
                                     class="truncate"
-                                    >{{ __('nav.sidebar.institutions') }}</span
+                                    >{{ __('nav.sidebar.ranking') }}</span
                                 >
                             </Link>
                         </Tooltip>
 
-                        <!-- Usuários -->
+                        <!-- Suporte Técnico (Except Super Admin) - Dedicated Page link -->
                         <Tooltip
-                            :text="__('nav.tooltip.users')"
+                            :text="__('nav.tooltip.tech_support')"
                             position="right"
                             :disabled="!isSidebarCollapsed"
                             block
+                            v-if="$page.props.auth.user.role !== 'super_admin'"
                         >
                             <Link
-                                :href="route('super-admin.users.index')"
+                                :href="route('support.index')"
                                 :class="[
-                                    route().current('super-admin.users.*')
+                                    route().current('support.index')
                                         ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/10'
                                         : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-white',
                                     isSidebarCollapsed
@@ -218,456 +802,17 @@ const toggleSidebar = () => {
                                         : 'justify-start gap-3 px-3',
                                 ]"
                                 class="flex w-full items-center rounded-xl py-2.5 text-xs font-bold transition-all"
-                                :aria-label="__('nav.aria.manage_users')"
-                            >
-                                <Users class="h-4 w-4 shrink-0" />
-                                <span
-                                    v-if="!isSidebarCollapsed"
-                                    class="truncate"
-                                    >{{ __('nav.sidebar.users') }}</span
-                                >
-                            </Link>
-                        </Tooltip>
-
-                        <!-- Matérias -->
-                        <Tooltip
-                            :text="__('nav.tooltip.subjects')"
-                            position="right"
-                            :disabled="!isSidebarCollapsed"
-                            block
-                        >
-                            <Link
-                                :href="route('super-admin.subjects.index')"
-                                :class="[
-                                    route().current('super-admin.subjects.*')
-                                        ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/10'
-                                        : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-white',
-                                    isSidebarCollapsed
-                                        ? 'justify-center px-0'
-                                        : 'justify-start gap-3 px-3',
-                                ]"
-                                class="flex w-full items-center rounded-xl py-2.5 text-xs font-bold transition-all"
-                                :aria-label="__('nav.aria.manage_subjects')"
-                            >
-                                <BookOpen class="h-4 w-4 shrink-0" />
-                                <span
-                                    v-if="!isSidebarCollapsed"
-                                    class="truncate"
-                                    >{{ __('nav.sidebar.subjects') }}</span
-                                >
-                            </Link>
-                        </Tooltip>
-
-                        <!-- Classrooms -->
-                        <Tooltip
-                            :text="__('nav.tooltip.classrooms')"
-                            position="right"
-                            :disabled="!isSidebarCollapsed"
-                            block
-                        >
-                            <Link
-                                :href="route('super-admin.classrooms.index')"
-                                :class="[
-                                    route().current('super-admin.classrooms.*')
-                                        ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/10'
-                                        : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-white',
-                                    isSidebarCollapsed
-                                        ? 'justify-center px-0'
-                                        : 'justify-start gap-3 px-3',
-                                ]"
-                                class="flex w-full items-center rounded-xl py-2.5 text-xs font-bold transition-all"
-                                :aria-label="__('nav.aria.manage_classrooms')"
-                            >
-                                <GraduationCap class="h-4 w-4 shrink-0" />
-                                <span
-                                    v-if="!isSidebarCollapsed"
-                                    class="truncate"
-                                    >{{ __('nav.sidebar.classrooms') }}</span
-                                >
-                            </Link>
-                        </Tooltip>
-
-                        <!-- Relatórios -->
-                        <Tooltip
-                            :text="__('nav.tooltip.reports')"
-                            position="right"
-                            :disabled="!isSidebarCollapsed"
-                            block
-                        >
-                            <Link
-                                :href="route('super-admin.reports.index')"
-                                :class="[
-                                    route().current('super-admin.reports.*')
-                                        ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/10'
-                                        : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-white',
-                                    isSidebarCollapsed
-                                        ? 'justify-center px-0'
-                                        : 'justify-start gap-3 px-3',
-                                ]"
-                                class="flex w-full items-center rounded-xl py-2.5 text-xs font-bold transition-all"
-                                :aria-label="__('nav.aria.system_reports')"
-                            >
-                                <FileText class="h-4 w-4 shrink-0" />
-                                <span
-                                    v-if="!isSidebarCollapsed"
-                                    class="truncate"
-                                    >{{ __('nav.sidebar.reports') }}</span
-                                >
-                            </Link>
-                        </Tooltip>
-
-                        <!-- Logs do Sistema -->
-                        <Tooltip
-                            :text="__('nav.tooltip.logs_queue')"
-                            position="right"
-                            :disabled="!isSidebarCollapsed"
-                            block
-                        >
-                            <Link
-                                :href="route('super-admin.logs.index')"
-                                :class="[
-                                    route().current('super-admin.logs.*')
-                                        ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/10'
-                                        : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-white',
-                                    isSidebarCollapsed
-                                        ? 'justify-center px-0'
-                                        : 'justify-start gap-3 px-3',
-                                ]"
-                                class="flex w-full items-center rounded-xl py-2.5 text-xs font-bold transition-all"
-                                :aria-label="__('nav.aria.system_logs')"
-                            >
-                                <Terminal class="h-4 w-4 shrink-0" />
-                                <span
-                                    v-if="!isSidebarCollapsed"
-                                    class="truncate"
-                                    >{{ __('nav.sidebar.logs_queue') }}</span
-                                >
-                            </Link>
-                        </Tooltip>
-
-                        <!-- Chamados -->
-                        <Tooltip
-                            :text="__('nav.tooltip.support_tickets')"
-                            position="right"
-                            :disabled="!isSidebarCollapsed"
-                            block
-                        >
-                            <Link
-                                :href="route('super-admin.supports.index')"
-                                :class="[
-                                    route().current('super-admin.supports.*')
-                                        ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/10'
-                                        : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-white',
-                                    isSidebarCollapsed
-                                        ? 'justify-center px-0'
-                                        : 'justify-start gap-3 px-3',
-                                ]"
-                                class="flex w-full items-center rounded-xl py-2.5 text-xs font-bold transition-all"
-                                :aria-label="__('nav.aria.support_tickets')"
+                                :aria-label="__('nav.aria.tech_support')"
                             >
                                 <HelpCircle class="h-4 w-4 shrink-0" />
                                 <span
                                     v-if="!isSidebarCollapsed"
                                     class="truncate"
-                                    >{{ __('nav.sidebar.support') }}</span
+                                    >{{ __('nav.sidebar.tech_support') }}</span
                                 >
                             </Link>
                         </Tooltip>
-
-                        <!-- Visitas do Site -->
-                        <Tooltip
-                            :text="__('nav.tooltip.site_visits')"
-                            position="right"
-                            :disabled="!isSidebarCollapsed"
-                            block
-                        >
-                            <Link
-                                :href="route('super-admin.visits.index')"
-                                :class="[
-                                    route().current('super-admin.visits.*')
-                                        ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/10'
-                                        : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-white',
-                                    isSidebarCollapsed
-                                        ? 'justify-center px-0'
-                                        : 'justify-start gap-3 px-3',
-                                ]"
-                                class="flex w-full items-center rounded-xl py-2.5 text-xs font-bold transition-all"
-                                :aria-label="__('nav.aria.site_visits')"
-                            >
-                                <Eye class="h-4 w-4 shrink-0" />
-                                <span
-                                    v-if="!isSidebarCollapsed"
-                                    class="truncate"
-                                    >{{ __('nav.sidebar.site_visits') }}</span
-                                >
-                            </Link>
-                        </Tooltip>
-
-                        <!-- Lixeira -->
-                        <Tooltip
-                            :text="__('nav.tooltip.trash')"
-                            position="right"
-                            :disabled="!isSidebarCollapsed"
-                            block
-                        >
-                            <Link
-                                :href="route('super-admin.trash.index')"
-                                :class="[
-                                    route().current('super-admin.trash.*')
-                                        ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/10'
-                                        : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-white',
-                                    isSidebarCollapsed
-                                        ? 'justify-center px-0'
-                                        : 'justify-start gap-3 px-3',
-                                ]"
-                                class="flex w-full items-center rounded-xl py-2.5 text-xs font-bold transition-all"
-                                :aria-label="__('nav.aria.system_trash')"
-                            >
-                                <Trash2 class="h-4 w-4 shrink-0" />
-                                <span
-                                    v-if="!isSidebarCollapsed"
-                                    class="truncate"
-                                    >{{ __('nav.sidebar.trash') }}</span
-                                >
-                            </Link>
-                        </Tooltip>
-                    </template>
-
-                    <!-- ADMIN SPECIFIC PAGES -->
-                    <template v-if="$page.props.auth.user.role === 'admin'">
-                        <!-- Matérias -->
-                        <Tooltip
-                            :text="__('nav.tooltip.subjects')"
-                            position="right"
-                            :disabled="!isSidebarCollapsed"
-                            block
-                        >
-                            <Link
-                                :href="route('admin.subjects.index')"
-                                :class="[
-                                    route().current('admin.subjects.*')
-                                        ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/10'
-                                        : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-white',
-                                    isSidebarCollapsed
-                                        ? 'justify-center px-0'
-                                        : 'justify-start gap-3 px-3',
-                                ]"
-                                class="flex w-full items-center rounded-xl py-2.5 text-xs font-bold transition-all"
-                                :aria-label="__('nav.aria.subjects')"
-                            >
-                                <BookOpen class="h-4 w-4 shrink-0" />
-                                <span
-                                    v-if="!isSidebarCollapsed"
-                                    class="truncate"
-                                    >{{ __('nav.sidebar.subjects') }}</span
-                                >
-                            </Link>
-                        </Tooltip>
-
-                        <!-- Classrooms -->
-                        <Tooltip
-                            :text="__('nav.tooltip.classrooms')"
-                            position="right"
-                            :disabled="!isSidebarCollapsed"
-                            block
-                        >
-                            <Link
-                                :href="route('admin.classrooms.index')"
-                                :class="[
-                                    route().current('admin.classrooms.*')
-                                        ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/10'
-                                        : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-white',
-                                    isSidebarCollapsed
-                                        ? 'justify-center px-0'
-                                        : 'justify-start gap-3 px-3',
-                                ]"
-                                class="flex w-full items-center rounded-xl py-2.5 text-xs font-bold transition-all"
-                                :aria-label="__('nav.aria.manage_classrooms')"
-                            >
-                                <GraduationCap class="h-4 w-4 shrink-0" />
-                                <span
-                                    v-if="!isSidebarCollapsed"
-                                    class="truncate"
-                                    >{{ __('nav.sidebar.classrooms') }}</span
-                                >
-                            </Link>
-                        </Tooltip>
-
-                        <!-- Membros -->
-                        <Tooltip
-                            :text="__('nav.tooltip.members')"
-                            position="right"
-                            :disabled="!isSidebarCollapsed"
-                            block
-                        >
-                            <Link
-                                :href="route('admin.users.index')"
-                                :class="[
-                                    route().current('admin.users.*')
-                                        ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/10'
-                                        : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-white',
-                                    isSidebarCollapsed
-                                        ? 'justify-center px-0'
-                                        : 'justify-start gap-3 px-3',
-                                ]"
-                                class="flex w-full items-center rounded-xl py-2.5 text-xs font-bold transition-all"
-                                :aria-label="__('nav.aria.institution_members')"
-                            >
-                                <Users class="h-4 w-4 shrink-0" />
-                                <span
-                                    v-if="!isSidebarCollapsed"
-                                    class="truncate"
-                                    >{{ __('nav.sidebar.members') }}</span
-                                >
-                            </Link>
-                        </Tooltip>
-                    </template>
-
-                    <!-- TEACHER SPECIFIC PAGES -->
-                    <template v-if="$page.props.auth.user.role === 'teacher'">
-                        <!-- Minhas Classrooms -->
-                        <Tooltip
-                            :text="__('nav.tooltip.my_classrooms')"
-                            position="right"
-                            :disabled="!isSidebarCollapsed"
-                            block
-                        >
-                            <Link
-                                :href="route('teacher.classrooms.index')"
-                                :class="[
-                                    route().current('teacher.classrooms.*')
-                                        ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/10'
-                                        : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-white',
-                                    isSidebarCollapsed
-                                        ? 'justify-center px-0'
-                                        : 'justify-start gap-3 px-3',
-                                ]"
-                                class="flex w-full items-center rounded-xl py-2.5 text-xs font-bold transition-all"
-                                :aria-label="__('nav.aria.manage_classrooms')"
-                            >
-                                <GraduationCap class="h-4 w-4 shrink-0" />
-                                <span
-                                    v-if="!isSidebarCollapsed"
-                                    class="truncate"
-                                    >{{ __('nav.sidebar.my_classrooms') }}</span
-                                >
-                            </Link>
-                        </Tooltip>
-
-                        <!-- Meus Alunos -->
-                        <Tooltip
-                            :text="__('nav.tooltip.students')"
-                            position="right"
-                            :disabled="!isSidebarCollapsed"
-                            block
-                        >
-                            <Link
-                                :href="route('teacher.students.index')"
-                                :class="[
-                                    route().current('teacher.students.*')
-                                        ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/10'
-                                        : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-white',
-                                    isSidebarCollapsed
-                                        ? 'justify-center px-0'
-                                        : 'justify-start gap-3 px-3',
-                                ]"
-                                class="flex w-full items-center rounded-xl py-2.5 text-xs font-bold transition-all"
-                                :aria-label="__('nav.aria.manage_students')"
-                            >
-                                <Users class="h-4 w-4 shrink-0" />
-                                <span
-                                    v-if="!isSidebarCollapsed"
-                                    class="truncate"
-                                    >{{ __('nav.sidebar.students') }}</span
-                                >
-                            </Link>
-                        </Tooltip>
-
-                        <!-- Matérias -->
-                        <Tooltip
-                            :text="__('nav.tooltip.subjects')"
-                            position="right"
-                            :disabled="!isSidebarCollapsed"
-                            block
-                        >
-                            <Link
-                                :href="route('teacher.subjects.index')"
-                                :class="[
-                                    route().current('teacher.subjects.index')
-                                        ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/10'
-                                        : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-white',
-                                    isSidebarCollapsed
-                                        ? 'justify-center px-0'
-                                        : 'justify-start gap-3 px-3',
-                                ]"
-                                class="flex w-full items-center rounded-xl py-2.5 text-xs font-bold transition-all"
-                                :aria-label="__('nav.aria.subjects')"
-                            >
-                                <BookOpen class="h-4 w-4 shrink-0" />
-                                <span
-                                    v-if="!isSidebarCollapsed"
-                                    class="truncate"
-                                    >{{ __('nav.sidebar.subjects') }}</span
-                                >
-                            </Link>
-                        </Tooltip>
-                    </template>
-
-                    <!-- Ranking (All except Super Admin) -->
-                    <Tooltip
-                        :text="__('nav.tooltip.ranking')"
-                        position="right"
-                        :disabled="!isSidebarCollapsed"
-                        block
-                        v-if="$page.props.auth.user.role !== 'super_admin'"
-                    >
-                        <Link
-                            :href="route('ranking.index')"
-                            :class="[
-                                route().current('ranking.index')
-                                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/10'
-                                    : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-white',
-                                isSidebarCollapsed
-                                    ? 'justify-center px-0'
-                                    : 'justify-start gap-3 px-3',
-                            ]"
-                            class="flex w-full items-center rounded-xl py-2.5 text-xs font-bold transition-all"
-                            :aria-label="__('nav.aria.xp_ranking')"
-                        >
-                            <Trophy class="h-4 w-4 shrink-0" />
-                            <span v-if="!isSidebarCollapsed" class="truncate">{{
-                                __('nav.sidebar.ranking')
-                            }}</span>
-                        </Link>
-                    </Tooltip>
-
-                    <!-- Suporte Técnico (Except Super Admin) - Dedicated Page link -->
-                    <Tooltip
-                        :text="__('nav.tooltip.tech_support')"
-                        position="right"
-                        :disabled="!isSidebarCollapsed"
-                        block
-                        v-if="$page.props.auth.user.role !== 'super_admin'"
-                    >
-                        <Link
-                            :href="route('support.index')"
-                            :class="[
-                                route().current('support.index')
-                                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/10'
-                                    : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-white',
-                                isSidebarCollapsed
-                                    ? 'justify-center px-0'
-                                    : 'justify-start gap-3 px-3',
-                            ]"
-                            class="flex w-full items-center rounded-xl py-2.5 text-xs font-bold transition-all"
-                            :aria-label="__('nav.aria.tech_support')"
-                        >
-                            <HelpCircle class="h-4 w-4 shrink-0" />
-                            <span v-if="!isSidebarCollapsed" class="truncate">{{
-                                __('nav.sidebar.tech_support')
-                            }}</span>
-                        </Link>
-                    </Tooltip>
+                    </div>
                 </nav>
 
                 <!-- Sidebar Footer (Profile / Logout) -->
@@ -823,101 +968,218 @@ const toggleSidebar = () => {
                                     $page.props.auth.user.role === 'super_admin'
                                 "
                             >
-                                <Link
-                                    :href="
-                                        route('super-admin.institutions.index')
-                                    "
-                                    @click="showingNavigationDropdown = false"
-                                    class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold text-zinc-300 hover:bg-zinc-800"
-                                >
-                                    <School class="h-4.5 w-4.5" />
-                                    {{ __('nav.sidebar.institutions') }}
-                                </Link>
+                                <SidebarSectionHeader
+                                    :label="__('nav.section.management')"
+                                    :icon="Settings"
+                                    :open="sectionOpen.management"
+                                    @toggle="toggleSection('management')"
+                                />
 
-                                <Link
-                                    :href="route('super-admin.users.index')"
-                                    @click="showingNavigationDropdown = false"
-                                    class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold text-zinc-300 hover:bg-zinc-800"
+                                <div
+                                    v-show="sectionOpen.management"
+                                    class="space-y-2"
                                 >
-                                    <Users class="h-4.5 w-4.5" />
-                                    {{ __('nav.sidebar.users') }}
-                                </Link>
+                                    <Link
+                                        :href="
+                                            route(
+                                                'super-admin.institutions.index',
+                                            )
+                                        "
+                                        @click="
+                                            showingNavigationDropdown = false
+                                        "
+                                        class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold text-zinc-300 hover:bg-zinc-800"
+                                    >
+                                        <School class="h-4.5 w-4.5" />
+                                        {{ __('nav.sidebar.institutions') }}
+                                    </Link>
 
-                                <Link
-                                    :href="route('super-admin.subjects.index')"
-                                    @click="showingNavigationDropdown = false"
-                                    class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold text-zinc-300 hover:bg-zinc-800"
-                                >
-                                    <BookOpen class="h-4.5 w-4.5" />
-                                    {{ __('nav.sidebar.subjects') }}
-                                </Link>
+                                    <Link
+                                        :href="route('super-admin.users.index')"
+                                        @click="
+                                            showingNavigationDropdown = false
+                                        "
+                                        class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold text-zinc-300 hover:bg-zinc-800"
+                                    >
+                                        <Users class="h-4.5 w-4.5" />
+                                        {{ __('nav.sidebar.users') }}
+                                    </Link>
 
-                                <Link
-                                    :href="route('super-admin.reports.index')"
-                                    @click="showingNavigationDropdown = false"
-                                    class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold text-zinc-300 hover:bg-zinc-800"
-                                >
-                                    <FileText class="h-4.5 w-4.5" />
-                                    {{ __('nav.sidebar.reports') }}
-                                </Link>
+                                    <Link
+                                        :href="
+                                            route('super-admin.subjects.index')
+                                        "
+                                        @click="
+                                            showingNavigationDropdown = false
+                                        "
+                                        class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold text-zinc-300 hover:bg-zinc-800"
+                                    >
+                                        <BookOpen class="h-4.5 w-4.5" />
+                                        {{ __('nav.sidebar.subjects') }}
+                                    </Link>
+                                </div>
 
-                                <Link
-                                    :href="route('super-admin.logs.index')"
-                                    @click="showingNavigationDropdown = false"
-                                    class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold text-zinc-300 hover:bg-zinc-800"
-                                >
-                                    <Terminal class="h-4.5 w-4.5" />
-                                    {{ __('nav.sidebar.logs_queue') }}
-                                </Link>
+                                <SidebarSectionHeader
+                                    :label="__('nav.section.system')"
+                                    :icon="Terminal"
+                                    :open="sectionOpen.system"
+                                    @toggle="toggleSection('system')"
+                                />
 
-                                <Link
-                                    :href="route('super-admin.supports.index')"
-                                    @click="showingNavigationDropdown = false"
-                                    class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold text-zinc-300 hover:bg-zinc-800"
+                                <div
+                                    v-show="sectionOpen.system"
+                                    class="space-y-2"
                                 >
-                                    <HelpCircle class="h-4.5 w-4.5" />
-                                    {{ __('nav.sidebar.support') }}
-                                </Link>
+                                    <Link
+                                        :href="
+                                            route('super-admin.reports.index')
+                                        "
+                                        @click="
+                                            showingNavigationDropdown = false
+                                        "
+                                        class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold text-zinc-300 hover:bg-zinc-800"
+                                    >
+                                        <FileText class="h-4.5 w-4.5" />
+                                        {{ __('nav.sidebar.reports') }}
+                                    </Link>
 
-                                <Link
-                                    :href="route('super-admin.visits.index')"
-                                    @click="showingNavigationDropdown = false"
-                                    class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold text-zinc-300 hover:bg-zinc-800"
-                                >
-                                    <Eye class="h-4.5 w-4.5" />
-                                    {{ __('nav.sidebar.site_visits') }}
-                                </Link>
+                                    <Link
+                                        :href="route('super-admin.logs.index')"
+                                        @click="
+                                            showingNavigationDropdown = false
+                                        "
+                                        class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold text-zinc-300 hover:bg-zinc-800"
+                                    >
+                                        <Terminal class="h-4.5 w-4.5" />
+                                        {{ __('nav.sidebar.logs_queue') }}
+                                    </Link>
 
-                                <Link
-                                    :href="route('super-admin.trash.index')"
-                                    @click="showingNavigationDropdown = false"
-                                    class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold text-zinc-300 hover:bg-zinc-800"
-                                >
-                                    <Trash2 class="h-4.5 w-4.5" />
-                                    {{ __('nav.sidebar.trash') }}
-                                </Link>
+                                    <Link
+                                        :href="
+                                            route('super-admin.supports.index')
+                                        "
+                                        @click="
+                                            showingNavigationDropdown = false
+                                        "
+                                        class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold text-zinc-300 hover:bg-zinc-800"
+                                    >
+                                        <HelpCircle class="h-4.5 w-4.5" />
+                                        {{ __('nav.sidebar.support') }}
+                                    </Link>
+
+                                    <Link
+                                        :href="
+                                            route('super-admin.visits.index')
+                                        "
+                                        @click="
+                                            showingNavigationDropdown = false
+                                        "
+                                        class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold text-zinc-300 hover:bg-zinc-800"
+                                    >
+                                        <Eye class="h-4.5 w-4.5" />
+                                        {{ __('nav.sidebar.site_visits') }}
+                                    </Link>
+
+                                    <Link
+                                        :href="route('super-admin.trash.index')"
+                                        @click="
+                                            showingNavigationDropdown = false
+                                        "
+                                        class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold text-zinc-300 hover:bg-zinc-800"
+                                    >
+                                        <Trash2 class="h-4.5 w-4.5" />
+                                        {{ __('nav.sidebar.trash') }}
+                                    </Link>
+                                </div>
                             </template>
 
                             <template
                                 v-if="$page.props.auth.user.role === 'admin'"
                             >
-                                <Link
-                                    :href="route('admin.subjects.index')"
-                                    @click="showingNavigationDropdown = false"
-                                    class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold text-zinc-300 hover:bg-zinc-800"
-                                >
-                                    <BookOpen class="h-4.5 w-4.5" />
-                                    {{ __('nav.sidebar.subjects') }}
-                                </Link>
+                                <SidebarSectionHeader
+                                    :label="__('nav.section.management')"
+                                    :icon="Settings"
+                                    :open="sectionOpen.management"
+                                    @toggle="toggleSection('management')"
+                                />
 
-                                <Link
-                                    :href="route('admin.users.index')"
-                                    @click="showingNavigationDropdown = false"
-                                    class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold text-zinc-300 hover:bg-zinc-800"
+                                <div
+                                    v-show="sectionOpen.management"
+                                    class="space-y-2"
                                 >
-                                    <Users class="h-4.5 w-4.5" />
-                                    {{ __('nav.sidebar.members') }}
-                                </Link>
+                                    <Link
+                                        :href="route('admin.subjects.index')"
+                                        @click="
+                                            showingNavigationDropdown = false
+                                        "
+                                        class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold text-zinc-300 hover:bg-zinc-800"
+                                    >
+                                        <BookOpen class="h-4.5 w-4.5" />
+                                        {{ __('nav.sidebar.subjects') }}
+                                    </Link>
+
+                                    <Link
+                                        :href="route('admin.users.index')"
+                                        @click="
+                                            showingNavigationDropdown = false
+                                        "
+                                        class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold text-zinc-300 hover:bg-zinc-800"
+                                    >
+                                        <Users class="h-4.5 w-4.5" />
+                                        {{ __('nav.sidebar.members') }}
+                                    </Link>
+                                </div>
+                            </template>
+
+                            <template
+                                v-if="$page.props.auth.user.role === 'teacher'"
+                            >
+                                <SidebarSectionHeader
+                                    :label="__('nav.section.teaching')"
+                                    :icon="GraduationCap"
+                                    :open="sectionOpen.teaching"
+                                    @toggle="toggleSection('teaching')"
+                                />
+
+                                <div
+                                    v-show="sectionOpen.teaching"
+                                    class="space-y-2"
+                                >
+                                    <Link
+                                        :href="
+                                            route('teacher.classrooms.index')
+                                        "
+                                        @click="
+                                            showingNavigationDropdown = false
+                                        "
+                                        class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold text-zinc-300 hover:bg-zinc-800"
+                                    >
+                                        <GraduationCap class="h-4.5 w-4.5" />
+                                        {{ __('nav.sidebar.my_classrooms') }}
+                                    </Link>
+
+                                    <Link
+                                        :href="route('teacher.students.index')"
+                                        @click="
+                                            showingNavigationDropdown = false
+                                        "
+                                        class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold text-zinc-300 hover:bg-zinc-800"
+                                    >
+                                        <Users class="h-4.5 w-4.5" />
+                                        {{ __('nav.sidebar.students') }}
+                                    </Link>
+
+                                    <Link
+                                        :href="route('teacher.subjects.index')"
+                                        @click="
+                                            showingNavigationDropdown = false
+                                        "
+                                        class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold text-zinc-300 hover:bg-zinc-800"
+                                    >
+                                        <BookOpen class="h-4.5 w-4.5" />
+                                        {{ __('nav.sidebar.subjects') }}
+                                    </Link>
+                                </div>
                             </template>
 
                             <template
@@ -925,23 +1187,39 @@ const toggleSidebar = () => {
                                     $page.props.auth.user.role !== 'super_admin'
                                 "
                             >
-                                <Link
-                                    :href="route('ranking.index')"
-                                    @click="showingNavigationDropdown = false"
-                                    class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold text-zinc-300 hover:bg-zinc-800"
-                                >
-                                    <Trophy class="h-4.5 w-4.5" />
-                                    {{ __('nav.sidebar.ranking') }}
-                                </Link>
+                                <SidebarSectionHeader
+                                    :label="__('nav.section.community')"
+                                    :icon="Trophy"
+                                    :open="sectionOpen.community"
+                                    @toggle="toggleSection('community')"
+                                />
 
-                                <Link
-                                    :href="route('support.index')"
-                                    @click="showingNavigationDropdown = false"
-                                    class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold text-zinc-300 hover:bg-zinc-800"
+                                <div
+                                    v-show="sectionOpen.community"
+                                    class="space-y-2"
                                 >
-                                    <HelpCircle class="h-4.5 w-4.5" />
-                                    {{ __('nav.sidebar.tech_support') }}
-                                </Link>
+                                    <Link
+                                        :href="route('ranking.index')"
+                                        @click="
+                                            showingNavigationDropdown = false
+                                        "
+                                        class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold text-zinc-300 hover:bg-zinc-800"
+                                    >
+                                        <Trophy class="h-4.5 w-4.5" />
+                                        {{ __('nav.sidebar.ranking') }}
+                                    </Link>
+
+                                    <Link
+                                        :href="route('support.index')"
+                                        @click="
+                                            showingNavigationDropdown = false
+                                        "
+                                        class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold text-zinc-300 hover:bg-zinc-800"
+                                    >
+                                        <HelpCircle class="h-4.5 w-4.5" />
+                                        {{ __('nav.sidebar.tech_support') }}
+                                    </Link>
+                                </div>
                             </template>
                         </nav>
                     </div>

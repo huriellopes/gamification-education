@@ -32,6 +32,13 @@ return [
         'logout' => 'Log Out',
         'profile_settings' => 'Go to Profile settings',
     ],
+    'section' => [
+        'management' => 'Management',
+        'system' => 'System',
+        'teaching' => 'Teaching',
+        'community' => 'Community',
+    ],
+
     'sidebar' => [
         'dashboard' => 'Dashboard',
         'institutions' => 'Institutions',
