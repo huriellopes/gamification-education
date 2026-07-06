@@ -300,7 +300,7 @@ defineProps({
 
                         <div
                             v-if="materials.length === 0 && tests.length === 0"
-                            class="border-zinc-850 rounded-xl border border-dashed p-8 pl-0 text-center text-sm text-zinc-400"
+                            class="rounded-xl border border-dashed border-zinc-850 p-8 pl-0 text-center text-sm text-zinc-400"
                         >
                             {{ __('student.subject.empty') }}
                         </div>

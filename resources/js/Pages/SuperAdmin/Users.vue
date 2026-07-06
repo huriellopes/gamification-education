@@ -545,7 +545,7 @@ const formatDateTime = (dateStr) => {
                 </div>
 
                 <div
-                    class="border-zinc-850 flex justify-end gap-3 border-t pt-4"
+                    class="flex justify-end gap-3 border-t border-zinc-850 pt-4"
                 >
                     <Button
                         variant="secondary"

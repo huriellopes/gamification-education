@@ -522,7 +522,7 @@ const confirmDeleteInstitution = (inst) => {
                 </div>
 
                 <!-- Address Section (ViaCEP auto lookup) -->
-                <div class="border-zinc-850 space-y-4 border-t pt-4">
+                <div class="space-y-4 border-t border-zinc-850 pt-4">
                     <h4 class="text-sm font-bold text-white">
                         {{ __('superadmin.institutions.address_section') }}
                     </h4>
@@ -657,7 +657,7 @@ const confirmDeleteInstitution = (inst) => {
                 </div>
 
                 <!-- Phones List -->
-                <div class="border-zinc-850 space-y-4 border-t pt-4">
+                <div class="space-y-4 border-t border-zinc-850 pt-4">
                     <div class="flex items-center justify-between">
                         <h4 class="text-sm font-bold text-white">
                             {{ __('superadmin.institutions.phones_section') }}
@@ -706,7 +706,7 @@ const confirmDeleteInstitution = (inst) => {
                 </div>
 
                 <div
-                    class="border-zinc-850 flex justify-end gap-3 border-t pt-4"
+                    class="flex justify-end gap-3 border-t border-zinc-850 pt-4"
                 >
                     <Button
                         variant="secondary"

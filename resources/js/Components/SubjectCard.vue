@@ -70,7 +70,7 @@ const progressColor = computed(() => {
 
                 <!-- Estatísticas de Atividade -->
                 <div
-                    class="border-zinc-850 flex items-center justify-between border-t pt-3 text-xs"
+                    class="flex items-center justify-between border-t border-zinc-850 pt-3 text-xs"
                 >
                     <div class="flex items-center gap-1.5 text-zinc-400">
                         <svg
@@ -110,7 +110,7 @@ const progressColor = computed(() => {
                 <!-- Botão de Acesso -->
                 <Link
                     :href="route('student.subjects.show', subject.id)"
-                    class="hover:bg-indigo-650 mt-2 block w-full rounded-xl bg-zinc-800 py-2.5 text-center text-xs font-bold text-white transition-all duration-200 hover:shadow-[0_0_15px_rgba(99,102,241,0.2)]"
+                    class="mt-2 block w-full rounded-xl bg-zinc-800 py-2.5 text-center text-xs font-bold text-white transition-all duration-200 hover:bg-indigo-650 hover:shadow-[0_0_15px_rgba(99,102,241,0.2)]"
                 >
                     {{ __('misc.subject.access_track') }}
                 </Link>

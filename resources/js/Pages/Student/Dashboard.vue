@@ -162,7 +162,7 @@ const levelProgress = computed(() => {
 
                         <div
                             v-if="subjects.length === 0"
-                            class="border-zinc-850 rounded-2xl border border-dashed p-12 text-center text-sm text-zinc-400"
+                            class="rounded-2xl border border-dashed border-zinc-850 p-12 text-center text-sm text-zinc-400"
                         >
                             {{ __('student.dashboard.no_subjects') }}
                         </div>

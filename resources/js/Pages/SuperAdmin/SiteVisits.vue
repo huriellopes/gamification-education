@@ -102,7 +102,7 @@ const formatDateTime = (dateStr) => {
                     </template>
                     <template #ip_address="{ item }">
                         <span
-                            class="border-zinc-850 inline-flex items-center rounded-lg border bg-zinc-950 px-2 py-1 font-mono text-xs font-bold text-indigo-400"
+                            class="inline-flex items-center rounded-lg border border-zinc-850 bg-zinc-950 px-2 py-1 font-mono text-xs font-bold text-indigo-400"
                         >
                             {{ item.ip_address }}
                         </span>

@@ -192,7 +192,7 @@ const setTab = (tabName) => {
 
                 <div
                     v-if="currentRanking.length === 0"
-                    class="border-zinc-850 rounded-2xl border border-dashed p-16 text-center text-sm text-zinc-400"
+                    class="rounded-2xl border border-dashed border-zinc-850 p-16 text-center text-sm text-zinc-400"
                 >
                     {{ __('misc.ranking.empty') }}
                 </div>

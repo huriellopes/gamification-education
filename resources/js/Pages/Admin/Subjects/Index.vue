@@ -187,7 +187,7 @@ const toggleStatus = (sub) => {
                 <template #actions>
                     <button
                         @click="openCreateModal"
-                        class="to-violet-650 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 px-4 py-2.5 text-xs font-bold text-white transition-all hover:brightness-110"
+                        class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-650 px-4 py-2.5 text-xs font-bold text-white transition-all hover:brightness-110"
                     >
                         <Plus class="h-4 w-4" />
                         {{ __('admin.subjects.new_subject') }}
@@ -316,7 +316,7 @@ const toggleStatus = (sub) => {
                         </div>
 
                         <div
-                            class="border-zinc-850 mt-6 flex flex-col gap-3 border-t pt-4"
+                            class="mt-6 flex flex-col gap-3 border-t border-zinc-850 pt-4"
                         >
                             <div
                                 class="flex items-center justify-between text-xs text-zinc-400"
@@ -337,7 +337,7 @@ const toggleStatus = (sub) => {
 
                             <Link
                                 :href="route('admin.subjects.show', sub.id)"
-                                class="hover:bg-indigo-650 block w-full rounded-xl bg-zinc-800 py-2.5 text-center text-xs font-bold text-white transition-all"
+                                class="block w-full rounded-xl bg-zinc-800 py-2.5 text-center text-xs font-bold text-white transition-all hover:bg-indigo-650"
                             >
                                 {{ __('admin.subjects.manage_content') }} &rarr;
                             </Link>

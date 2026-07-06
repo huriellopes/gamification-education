@@ -31,7 +31,7 @@ const isHovered = ref(false);
     >
         <slot />
         <div
-            class="border-zinc-850 text-zinc-150 pointer-events-none absolute z-50 whitespace-nowrap rounded-lg border bg-zinc-950 px-2.5 py-1.5 text-xs font-semibold shadow-2xl backdrop-blur-md transition-all duration-150 ease-out"
+            class="text-zinc-150 pointer-events-none absolute z-50 whitespace-nowrap rounded-lg border border-zinc-850 bg-zinc-950 px-2.5 py-1.5 text-xs font-semibold shadow-2xl backdrop-blur-md transition-all duration-150 ease-out"
             :class="[
                 isHovered && !disabled
                     ? 'visible scale-100 opacity-100'

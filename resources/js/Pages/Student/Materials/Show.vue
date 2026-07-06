@@ -181,7 +181,7 @@ const parseMarkdown = (text) => {
                     v-else
                     @click="completeLeitura"
                     :disabled="isSubmitting"
-                    class="bg-indigo-650 flex items-center gap-2 rounded-xl px-6 py-3 text-xs font-bold text-white shadow-[0_0_15px_rgba(99,102,241,0.3)] transition-all duration-200 hover:scale-105 hover:bg-indigo-700 disabled:opacity-50"
+                    class="flex items-center gap-2 rounded-xl bg-indigo-650 px-6 py-3 text-xs font-bold text-white shadow-[0_0_15px_rgba(99,102,241,0.3)] transition-all duration-200 hover:scale-105 hover:bg-indigo-700 disabled:opacity-50"
                 >
                     <svg
                         v-if="isSubmitting"

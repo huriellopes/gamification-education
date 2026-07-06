@@ -687,7 +687,7 @@ const deleteQuestion = () => {
                                                         oIdx ===
                                                         q.correct_option_index
                                                             ? 'border border-emerald-500/20 bg-emerald-500/10 font-semibold text-emerald-400'
-                                                            : 'text-zinc-550 border-zinc-850 border bg-zinc-950'
+                                                            : 'text-zinc-550 border border-zinc-850 bg-zinc-950'
                                                     "
                                                 >
                                                     {{ opt }}

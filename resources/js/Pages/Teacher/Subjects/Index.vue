@@ -107,7 +107,7 @@ const deleteSubject = () => {
                 <template #actions>
                     <button
                         @click="openCreateModal"
-                        class="to-violet-650 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 px-4 py-2.5 text-xs font-bold text-white transition-all hover:brightness-110"
+                        class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-650 px-4 py-2.5 text-xs font-bold text-white transition-all hover:brightness-110"
                         :title="__('teacher.dashboard.new_subject')"
                     >
                         <Plus class="h-4 w-4" />

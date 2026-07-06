@@ -206,7 +206,7 @@ const formatDateTime = (dateStr) => {
                     class="space-y-3 rounded-xl border border-zinc-800 bg-zinc-950 p-4"
                 >
                     <div
-                        class="border-zinc-850 flex flex-col gap-1 border-b pb-2 text-xs font-semibold text-zinc-400 sm:flex-row sm:justify-between"
+                        class="flex flex-col gap-1 border-b border-zinc-850 pb-2 text-xs font-semibold text-zinc-400 sm:flex-row sm:justify-between"
                     >
                         <div>
                             {{ __('superadmin.supports.requester_label') }}
@@ -270,7 +270,7 @@ const formatDateTime = (dateStr) => {
                         </div>
                     </div>
 
-                    <div class="border-zinc-850 flex justify-end border-t pt-4">
+                    <div class="flex justify-end border-t border-zinc-850 pt-4">
                         <Button
                             variant="secondary"
                             type="button"
@@ -301,7 +301,7 @@ const formatDateTime = (dateStr) => {
                     </div>
 
                     <div
-                        class="border-zinc-850 flex justify-end gap-3 border-t pt-4"
+                        class="flex justify-end gap-3 border-t border-zinc-850 pt-4"
                     >
                         <Button
                             variant="secondary"

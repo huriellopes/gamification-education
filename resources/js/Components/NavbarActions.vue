@@ -67,7 +67,7 @@ const switchInstitution = (id) => {
                 <template #trigger>
                     <button
                         type="button"
-                        class="border-zinc-850 inline-flex items-center justify-center gap-1.5 rounded-xl border bg-zinc-950 px-3 py-2.5 text-xs font-bold text-zinc-300 transition-all hover:bg-zinc-900 md:px-3.5 md:py-2"
+                        class="inline-flex items-center justify-center gap-1.5 rounded-xl border border-zinc-850 bg-zinc-950 px-3 py-2.5 text-xs font-bold text-zinc-300 transition-all hover:bg-zinc-900 md:px-3.5 md:py-2"
                         :title="__('nav.navbar.switch_unit')"
                     >
                         <span class="hidden md:inline">{{

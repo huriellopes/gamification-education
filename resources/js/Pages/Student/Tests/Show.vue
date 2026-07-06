@@ -169,7 +169,7 @@ const submitTest = () => {
                                 :class="
                                     selectedAnswers[q.id] === oIdx
                                         ? 'border-indigo-500 bg-indigo-500/10 text-indigo-400 shadow-[0_0_15px_rgba(99,102,241,0.15)]'
-                                        : 'border-zinc-850 hover:border-zinc-750 bg-zinc-900/40 text-zinc-300 hover:bg-zinc-800/20'
+                                        : 'hover:border-zinc-750 border-zinc-850 bg-zinc-900/40 text-zinc-300 hover:bg-zinc-800/20'
                                 "
                             >
                                 <span>{{ opt }}</span>

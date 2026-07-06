@@ -38,7 +38,7 @@ const submit = () => {
                 <template #actions>
                     <button
                         @click="isFormOpen = !isFormOpen"
-                        class="bg-indigo-650 rounded-xl px-4 py-2 text-xs font-bold text-white transition-all hover:bg-indigo-700"
+                        class="rounded-xl bg-indigo-650 px-4 py-2 text-xs font-bold text-white transition-all hover:bg-indigo-700"
                     >
                         {{
                             isFormOpen
@@ -114,7 +114,7 @@ const submit = () => {
                             <button
                                 type="submit"
                                 :disabled="form.processing"
-                                class="bg-indigo-650 rounded-xl px-5 py-2.5 text-xs font-bold text-white transition-all hover:bg-indigo-700 disabled:opacity-50"
+                                class="rounded-xl bg-indigo-650 px-5 py-2.5 text-xs font-bold text-white transition-all hover:bg-indigo-700 disabled:opacity-50"
                             >
                                 {{ __('admin.institutions.save_institution') }}
                             </button>
@@ -151,7 +151,7 @@ const submit = () => {
                         </p>
 
                         <div
-                            class="border-zinc-850 mt-6 flex items-center justify-between border-t pt-4 text-xs"
+                            class="mt-6 flex items-center justify-between border-t border-zinc-850 pt-4 text-xs"
                         >
                             <div class="flex items-center gap-1 text-zinc-400">
                                 <svg
