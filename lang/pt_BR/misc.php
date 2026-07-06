@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 return [
+    'seo_description' => 'GamificaEdu é uma plataforma de aprendizado gamificado voltada ao ensino básico e superior, engajando alunos por meio de trilhas de aprendizagem, testes e pontuação (XP).',
+
     'ranking' => [
         'head_title' => 'Ranking e Classificação',
         'header' => 'Arena de Competição — Leaderboard',

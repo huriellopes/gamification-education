@@ -113,7 +113,7 @@ const submitTest = () => {
                     <!-- Barra de progresso rápida -->
                     <div class="w-full text-xs font-semibold md:w-48">
                         <div class="mb-1 flex justify-between">
-                            <span class="text-zinc-500">{{
+                            <span class="text-zinc-400">{{
                                 __('student.test.answered')
                             }}</span>
                             <span class="text-yellow-400">{{
@@ -200,7 +200,7 @@ const submitTest = () => {
         >
             <div class="flex flex-col">
                 <span
-                    class="text-xs font-bold uppercase tracking-wider text-zinc-500"
+                    class="text-xs font-bold uppercase tracking-wider text-zinc-400"
                     >{{ __('student.test.graded_challenge') }}</span
                 >
                 <span class="text-sm font-semibold text-zinc-200"

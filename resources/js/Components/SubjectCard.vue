@@ -47,7 +47,7 @@ const progressColor = computed(() => {
                 <!-- Barra de Progresso de Leitura -->
                 <div>
                     <div class="mb-1 flex justify-between text-xs">
-                        <span class="text-zinc-500">{{
+                        <span class="text-zinc-400">{{
                             __('misc.subject.materials_read')
                         }}</span>
                         <span class="font-bold text-zinc-300"
@@ -72,7 +72,7 @@ const progressColor = computed(() => {
                 <div
                     class="border-zinc-850 flex items-center justify-between border-t pt-3 text-xs"
                 >
-                    <div class="flex items-center gap-1.5 text-zinc-500">
+                    <div class="flex items-center gap-1.5 text-zinc-400">
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
@@ -96,7 +96,7 @@ const progressColor = computed(() => {
                                 ? subject.best_test_score >= 40
                                     ? 'bg-emerald-500/10 text-emerald-400'
                                     : 'bg-yellow-500/10 text-yellow-400'
-                                : 'text-zinc-500'
+                                : 'text-zinc-400'
                         "
                     >
                         {{

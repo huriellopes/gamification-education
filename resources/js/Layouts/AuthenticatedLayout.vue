@@ -1,4 +1,5 @@
 <script setup>
+import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Breadcrumbs from '@/Components/Breadcrumbs.vue';
 import NavbarActions from '@/Components/NavbarActions.vue';
 import Toast from '@/Components/Toast.vue';
@@ -45,6 +46,12 @@ const toggleSidebar = () => {
 
 <template>
     <div class="flex h-screen flex-col overflow-hidden">
+        <a
+            href="#main-content"
+            class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-indigo-600 focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:text-white"
+        >
+            {{ __('nav.skip_to_content') }}
+        </a>
         <Toast />
         <!-- Impersonation Banner -->
         <div
@@ -91,11 +98,7 @@ const toggleSidebar = () => {
                         class="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl px-1.5 py-1 transition-all hover:bg-zinc-800/50"
                         :title="__('nav.aria.expand_sidebar')"
                     >
-                        <div
-                            class="shrink-0 rounded-lg bg-indigo-600 p-1.5 text-white"
-                        >
-                            <GraduationCap class="h-5 w-5" />
-                        </div>
+                        <ApplicationLogo class="h-8 w-8 shrink-0" />
                         <ChevronRight
                             class="h-3.5 w-3.5 shrink-0 text-zinc-400"
                         />
@@ -104,11 +107,7 @@ const toggleSidebar = () => {
                     <!-- Expanded Version -->
                     <template v-else>
                         <div class="flex items-center gap-3 overflow-hidden">
-                            <div
-                                class="shrink-0 rounded-lg bg-indigo-600 p-1.5 text-white"
-                            >
-                                <GraduationCap class="h-5 w-5" />
-                            </div>
+                            <ApplicationLogo class="h-8 w-8 shrink-0" />
                             <span
                                 class="truncate text-sm font-extrabold tracking-wider text-white"
                                 >GamificaEdu</span
@@ -689,7 +688,7 @@ const toggleSidebar = () => {
                                     >{{ $page.props.auth.user.name }}</span
                                 >
                                 <span
-                                    class="block truncate text-[10px] text-zinc-500"
+                                    class="block truncate text-[10px] text-zinc-400"
                                     >{{ $page.props.auth.user.email }}</span
                                 >
                             </div>
@@ -698,7 +697,7 @@ const toggleSidebar = () => {
                             :href="route('logout')"
                             method="post"
                             as="button"
-                            class="shrink-0 rounded-lg p-1 text-zinc-500 transition-colors hover:bg-red-500/10 hover:text-red-400"
+                            class="shrink-0 rounded-lg p-1 text-zinc-400 transition-colors hover:bg-red-500/10 hover:text-red-400"
                             :aria-label="__('nav.aria.logout')"
                         >
                             <LogOut class="h-4 w-4" />
@@ -742,7 +741,7 @@ const toggleSidebar = () => {
 
                     <div
                         v-if="$page.props.version"
-                        class="mt-3 text-center font-mono text-[10px] text-zinc-600"
+                        class="mt-3 text-center font-mono text-[10px] text-zinc-400"
                     >
                         v{{ $page.props.version }}
                     </div>
@@ -790,11 +789,7 @@ const toggleSidebar = () => {
                     >
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-2">
-                                <div
-                                    class="rounded-lg bg-indigo-600 p-1.5 text-white"
-                                >
-                                    <GraduationCap class="h-5 w-5" />
-                                </div>
+                                <ApplicationLogo class="h-8 w-8 shrink-0" />
                                 <span
                                     class="text-sm font-extrabold tracking-wider text-white"
                                     >GamificaEdu</span

@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 return [
+    'seo_description' => 'GamificaEdu is a gamified learning platform for basic and higher education, engaging students through learning tracks, quizzes and points (XP).',
+
     'ranking' => [
         'head_title' => 'Ranking and Leaderboard',
         'header' => 'Competition Arena — Leaderboard',

@@ -185,14 +185,14 @@ const setTab = (tabName) => {
                             {{ selectedSubject?.name }}</span
                         >
                     </h3>
-                    <p class="mt-1 text-xs text-zinc-500">
+                    <p class="mt-1 text-xs text-zinc-400">
                         {{ __('misc.ranking.subtitle') }}
                     </p>
                 </div>
 
                 <div
                     v-if="currentRanking.length === 0"
-                    class="border-zinc-850 rounded-2xl border border-dashed p-16 text-center text-sm text-zinc-500"
+                    class="border-zinc-850 rounded-2xl border border-dashed p-16 text-center text-sm text-zinc-400"
                 >
                     {{ __('misc.ranking.empty') }}
                 </div>
@@ -215,7 +215,7 @@ const setTab = (tabName) => {
                                 {{ podium.second.name }}
                             </div>
                             <div
-                                class="mb-2 w-full truncate text-[9px] text-zinc-500"
+                                class="mb-2 w-full truncate text-[9px] text-zinc-400"
                             >
                                 {{ podium.second.institution }}
                             </div>
@@ -286,7 +286,7 @@ const setTab = (tabName) => {
                                 {{ podium.third.name }}
                             </div>
                             <div
-                                class="mb-2 w-full truncate text-[9px] text-zinc-500"
+                                class="mb-2 w-full truncate text-[9px] text-zinc-400"
                             >
                                 {{ podium.third.institution }}
                             </div>
@@ -340,7 +340,7 @@ const setTab = (tabName) => {
                                 <span class="font-bold text-yellow-400">
                                     {{ item.points.toLocaleString() }}
                                     <span
-                                        class="text-[10px] font-semibold uppercase text-zinc-500"
+                                        class="text-[10px] font-semibold uppercase text-zinc-400"
                                         >xp</span
                                     >
                                 </span>

@@ -1,0 +1,14 @@
+<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="GamificaEdu">
+  <defs>
+    <linearGradient id="gedu-badge" x1="8" y1="6" x2="56" y2="58" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#818cf8"/>
+      <stop offset="0.55" stop-color="#6366f1"/>
+      <stop offset="1" stop-color="#7c3aed"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="4" width="56" height="56" rx="16" fill="url(#gedu-badge)"/>
+  <path d="M32 18 54 27 32 36 10 27 32 18Z" fill="#ffffff" stroke-linejoin="round"/>
+  <path d="M21 30.5V38c0 4.5 5 7 11 7s11-2.5 11-7v-7.5L32 35 21 30.5Z" fill="#ffffff" fill-opacity="0.92" stroke-linejoin="round"/>
+  <path d="M54 27v12" stroke="#fbbf24" stroke-width="2.4" stroke-linecap="round"/>
+  <circle cx="54" cy="42" r="3" fill="#fbbf24"/>
+</svg>

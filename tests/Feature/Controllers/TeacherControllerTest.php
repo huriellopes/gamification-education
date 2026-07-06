@@ -383,6 +383,13 @@ test('teacher responsible for a classroom can manage content of its subjects', f
 });
 
 test('teacher can manage students and view their performance', function () {
+    // Turma do próprio professor (necessária para vincular e ver o aluno)
+    $classroom = Classroom::create([
+        'institution_id' => $this->institution->id,
+        'teacher_id' => $this->teacher->id,
+        'name' => 'Minha Turma',
+    ]);
+
     // Index
     $this->actingAs($this->teacher)
         ->get(route('teacher.students.index'))
@@ -392,13 +399,14 @@ test('teacher can manage students and view their performance', function () {
             ->has('students'),
         );
 
-    // Store Student
+    // Store Student (matriculado na turma do professor)
     $this->actingAs($this->teacher)
         ->post(route('teacher.students.store'), [
             'name' => 'New Student',
             'email' => 'newstudent@example.com',
             'password' => 'password123',
             'role' => 'student',
+            'classroom_id' => $classroom->id,
         ])
         ->assertRedirect();
 
@@ -450,4 +458,26 @@ test('teacher can manage students and view their performance', function () {
     $this->assertDatabaseMissing('users', [
         'id' => $newStudent->id,
     ]);
+});
+
+test('teacher cannot view performance of a student not in their classrooms', function () {
+    // $this->student pertence à mesma instituição, mas não está matriculado
+    // em nenhuma turma do professor.
+    $this->actingAs($this->teacher)
+        ->get(route('teacher.students.performance', $this->student->id))
+        ->assertForbidden();
+
+    // Aluno de outra instituição também é bloqueado.
+    $otherInstitution = Institution::create(['name' => 'Outra Escola']);
+    $foreignStudent = User::create([
+        'name' => 'Aluno Externo',
+        'email' => 'externo@example.com',
+        'password' => bcrypt('password'),
+        'role' => 'student',
+        'institution_id' => $otherInstitution->id,
+    ]);
+
+    $this->actingAs($this->teacher)
+        ->get(route('teacher.students.performance', $foreignStudent->id))
+        ->assertForbidden();
 });

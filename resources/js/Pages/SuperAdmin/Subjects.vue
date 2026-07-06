@@ -195,7 +195,7 @@ const confirmDeleteSubject = (sub) => {
                     "
                 >
                     <template #id="{ item }">
-                        <span class="font-mono text-zinc-500"
+                        <span class="font-mono text-zinc-400"
                             >#{{ item.id }}</span
                         >
                     </template>
@@ -203,7 +203,7 @@ const confirmDeleteSubject = (sub) => {
                         <div class="text-zinc-150 font-semibold">
                             {{ item.name }}
                         </div>
-                        <div class="max-w-xs truncate text-xs text-zinc-500">
+                        <div class="max-w-xs truncate text-xs text-zinc-400">
                             {{
                                 item.description ||
                                 __('superadmin.subjects.no_description')

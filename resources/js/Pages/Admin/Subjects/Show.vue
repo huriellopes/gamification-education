@@ -81,7 +81,7 @@ const saveTeachers = () => {
                     class="rounded-2xl border border-zinc-800 bg-zinc-900/30 p-6"
                 >
                     <h3
-                        class="text-xs font-bold uppercase tracking-wider text-zinc-500"
+                        class="text-xs font-bold uppercase tracking-wider text-zinc-400"
                     >
                         {{ __('admin.subject_show.subject_description') }}
                     </h3>
@@ -134,7 +134,7 @@ const saveTeachers = () => {
                                 class="h-2 w-2 rounded-full bg-indigo-500"
                             ></span>
                             <span>{{ tchr.name }}</span>
-                            <span class="text-xs text-zinc-500"
+                            <span class="text-xs text-zinc-400"
                                 >({{ tchr.email }})</span
                             >
                         </div>
@@ -143,7 +143,7 @@ const saveTeachers = () => {
                                 !subject.teachers ||
                                 subject.teachers.length === 0
                             "
-                            class="py-2 text-sm text-zinc-500"
+                            class="py-2 text-sm text-zinc-400"
                         >
                             {{ __('admin.subject_show.no_teachers') }}
                         </div>
@@ -157,7 +157,7 @@ const saveTeachers = () => {
                         <h3
                             class="flex items-center gap-2 text-lg font-bold text-white"
                         >
-                            <span class="text-zinc-500">📚</span>
+                            <span class="text-zinc-400">📚</span>
                             {{ __('admin.subject_show.study_materials') }} ({{
                                 subject.study_materials?.length || 0
                             }})
@@ -173,7 +173,7 @@ const saveTeachers = () => {
                                     <h4 class="text-sm font-bold text-zinc-100">
                                         {{ mat.title }}
                                     </h4>
-                                    <p class="mt-1 text-xs text-zinc-500">
+                                    <p class="mt-1 text-xs text-zinc-400">
                                         {{
                                             __(
                                                 'admin.subject_show.points_per_reading',
@@ -186,7 +186,7 @@ const saveTeachers = () => {
 
                             <div
                                 v-if="subject.study_materials?.length === 0"
-                                class="rounded-xl border border-dashed border-zinc-800 p-8 text-center text-sm text-zinc-500"
+                                class="rounded-xl border border-dashed border-zinc-800 p-8 text-center text-sm text-zinc-400"
                             >
                                 {{ __('admin.subject_show.no_materials') }}
                             </div>
@@ -198,7 +198,7 @@ const saveTeachers = () => {
                         <h3
                             class="flex items-center gap-2 text-lg font-bold text-white"
                         >
-                            <span class="text-zinc-500">⚔️</span>
+                            <span class="text-zinc-400">⚔️</span>
                             {{ __('admin.subject_show.tests_quizzes') }} ({{
                                 subject.tests?.length || 0
                             }})
@@ -231,7 +231,7 @@ const saveTeachers = () => {
 
                                 <!-- Mini-Listagem de Questões do Teste -->
                                 <div class="border-t border-zinc-800 pt-3">
-                                    <h5 class="text-xs font-bold text-zinc-500">
+                                    <h5 class="text-xs font-bold text-zinc-400">
                                         {{ __('admin.subject_show.questions') }}
                                         ({{ test.questions?.length }})
                                     </h5>
@@ -259,7 +259,7 @@ const saveTeachers = () => {
                                                         oIdx ===
                                                         q.correct_option_index
                                                             ? 'border border-emerald-500/20 bg-emerald-500/10 font-semibold text-emerald-400'
-                                                            : 'border border-zinc-800 bg-zinc-950 text-zinc-500'
+                                                            : 'border border-zinc-800 bg-zinc-950 text-zinc-400'
                                                     "
                                                 >
                                                     {{ opt }}
@@ -271,7 +271,7 @@ const saveTeachers = () => {
                             </div>
                             <div
                                 v-if="subject.tests?.length === 0"
-                                class="rounded-xl border border-dashed border-zinc-800 p-8 text-center text-sm text-zinc-500"
+                                class="rounded-xl border border-dashed border-zinc-800 p-8 text-center text-sm text-zinc-400"
                             >
                                 {{ __('admin.subject_show.no_tests') }}
                             </div>
@@ -312,14 +312,14 @@ const saveTeachers = () => {
                                 <div class="font-medium text-white">
                                     {{ tchr.name }}
                                 </div>
-                                <div class="text-xs text-zinc-500">
+                                <div class="text-xs text-zinc-400">
                                     {{ tchr.email }}
                                 </div>
                             </div>
                         </label>
                         <div
                             v-if="availableTeachers.length === 0"
-                            class="py-4 text-center text-sm text-zinc-500"
+                            class="py-4 text-center text-sm text-zinc-400"
                         >
                             {{
                                 __('admin.subject_show.no_teachers_registered')

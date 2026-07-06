@@ -192,7 +192,7 @@ const confirmToggle = (classroom) => {
                             </div>
                             <div
                                 v-if="item.description"
-                                class="max-w-xs truncate text-xs text-zinc-500"
+                                class="max-w-xs truncate text-xs text-zinc-400"
                             >
                                 {{ item.description }}
                             </div>
@@ -204,7 +204,7 @@ const confirmToggle = (classroom) => {
                                 class="text-sm text-zinc-300"
                                 >{{ item.teacher.name }}</span
                             >
-                            <span v-else class="text-xs italic text-zinc-500">{{
+                            <span v-else class="text-xs italic text-zinc-400">{{
                                 __('classrooms.no_teacher')
                             }}</span>
                         </template>
@@ -283,7 +283,7 @@ const confirmToggle = (classroom) => {
 
                         <template #empty>
                             <div
-                                class="py-10 text-center text-sm text-zinc-500"
+                                class="py-10 text-center text-sm text-zinc-400"
                             >
                                 {{ __('classrooms.empty') }}
                             </div>
@@ -351,7 +351,7 @@ const confirmToggle = (classroom) => {
 
                 <div>
                     <InputLabel :value="__('classrooms.form_subjects')" />
-                    <p class="mb-2 text-xs text-zinc-500">
+                    <p class="mb-2 text-xs text-zinc-400">
                         {{ __('classrooms.form_subjects_hint') }}
                     </p>
                     <div
@@ -372,7 +372,7 @@ const confirmToggle = (classroom) => {
                             <span class="truncate">{{ s.name }}</span>
                         </label>
                     </div>
-                    <p v-else class="text-xs italic text-zinc-500">
+                    <p v-else class="text-xs italic text-zinc-400">
                         {{ __('classrooms.form_no_subjects_available') }}
                     </p>
                 </div>

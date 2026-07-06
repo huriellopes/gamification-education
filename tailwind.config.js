@@ -20,6 +20,14 @@ export default {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
+            // Shades intermediárias usadas na UI que não existem na paleta
+            // padrão do Tailwind (600↔700 e 800↔900). Sem estas definições as
+            // classes `*-650` / `zinc-850` não geram estilo algum.
+            colors: {
+                indigo: { 650: '#493fd8' },
+                violet: { 650: '#7531e3' },
+                zinc: { 850: '#1f1f23' },
+            },
         },
     },
 

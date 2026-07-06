@@ -17,7 +17,7 @@ defineProps({
 <template>
     <Tooltip :text="text" :position="position">
         <HelpCircle
-            class="hover:text-zinc-350 h-4 w-4 cursor-help text-zinc-500 transition-colors"
+            class="hover:text-zinc-350 h-4 w-4 cursor-help text-zinc-400 transition-colors"
         />
     </Tooltip>
 </template>

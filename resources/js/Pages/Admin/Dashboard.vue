@@ -514,7 +514,7 @@ const hideTooltip = () => {
                             </a>
                             <span
                                 v-else
-                                class="animate-pulse text-xs font-bold text-zinc-500"
+                                class="animate-pulse text-xs font-bold text-zinc-400"
                                 >{{ __('admin.dashboard.waiting') }}</span
                             >
                         </template>
@@ -605,7 +605,7 @@ const hideTooltip = () => {
                             >
                             <span
                                 v-else
-                                class="text-xs font-semibold text-zinc-500"
+                                class="text-xs font-semibold text-zinc-400"
                                 >{{
                                     students.findIndex(
                                         (s) => s.id === item.id,
@@ -651,14 +651,14 @@ const hideTooltip = () => {
                                 <div class="font-semibold text-white">
                                     {{ tchr.name }}
                                 </div>
-                                <div class="text-xs text-zinc-500">
+                                <div class="text-xs text-zinc-400">
                                     {{ tchr.email }}
                                 </div>
                             </div>
                         </div>
                         <div
                             v-if="teachers.length === 0"
-                            class="col-span-full py-8 text-center text-sm text-zinc-500"
+                            class="col-span-full py-8 text-center text-sm text-zinc-400"
                         >
                             {{ __('admin.dashboard.no_teachers') }}
                         </div>

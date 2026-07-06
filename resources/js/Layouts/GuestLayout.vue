@@ -10,8 +10,11 @@ import { Link } from '@inertiajs/vue3';
     >
         <Toast />
         <div>
-            <Link href="/">
-                <ApplicationLogo class="h-20 w-20 fill-current text-gray-500" />
+            <Link href="/" class="flex flex-col items-center gap-3">
+                <ApplicationLogo class="h-20 w-20 drop-shadow-xl" />
+                <span class="text-lg font-extrabold tracking-wider text-white">
+                    Gamifica<span class="text-indigo-400">Edu</span>
+                </span>
             </Link>
         </div>
 

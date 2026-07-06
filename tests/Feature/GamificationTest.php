@@ -11,6 +11,7 @@ use App\Models\Subject;
 use App\Models\Test;
 use App\Models\User;
 use App\Services\RankingService;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -126,6 +127,46 @@ test('student can submit test attempt and earn points proportional', function ()
     expect($badAttempt->score)->toBe(0);
     $this->student->refresh();
     expect($this->student->points)->toBe(50);
+});
+
+test('study material pivot rejects duplicate completion', function () {
+    $this->student->completedMaterials()->attach($this->material->id, [
+        'completed_at' => now(),
+    ]);
+
+    expect(fn () => $this->student->completedMaterials()->attach($this->material->id, [
+        'completed_at' => now(),
+    ]))->toThrow(QueryException::class);
+
+    $this->assertDatabaseCount('study_material_user', 1);
+});
+
+test('subject ranking counts only the best attempt per test', function () {
+    $action = app(SubmitTestAttemptAction::class);
+    $ranking = app(RankingService::class);
+
+    // Aluno refaz o teste: 25 (1 acerto) e depois 50 (2 acertos).
+    $action->execute($this->student, $this->test, [$this->q1->id => 0, $this->q2->id => 0]);
+    $action->execute($this->student, $this->test, [$this->q1->id => 0, $this->q2->id => 1]);
+
+    $bob = User::create([
+        'name' => 'Bob Student',
+        'email' => 'bob@example.com',
+        'password' => bcrypt('password'),
+        'role' => 'student',
+        'points' => 0,
+        'institution_id' => $this->institution->id,
+    ]);
+    // Bob acerta uma questão em uma única tentativa (25).
+    $action->execute($bob, $this->test, [$this->q1->id => 0, $this->q2->id => 0]);
+
+    $result = $ranking->getSubjectRanking($this->subject->id);
+
+    // Alice deve somar apenas a melhor nota (50), não 25 + 50 = 75.
+    expect((int) $result[0]->total_subject_score)->toBe(50);
+    expect($result[0]->user_name)->toBe('Alice Student');
+    expect((int) $result[1]->total_subject_score)->toBe(25);
+    expect($result[1]->user_name)->toBe('Bob Student');
 });
 
 test('ranking service returns correctly', function () {

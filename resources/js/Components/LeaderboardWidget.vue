@@ -34,7 +34,7 @@ defineProps({
 
         <div
             v-if="users.length === 0"
-            class="py-6 text-center text-sm text-zinc-500"
+            class="py-6 text-center text-sm text-zinc-400"
         >
             {{ __('misc.leaderboard.empty') }}
         </div>
@@ -65,7 +65,7 @@ defineProps({
                             class="flex h-6 w-6 items-center justify-center rounded-full border border-amber-700/30 bg-amber-700/10 text-amber-500"
                             >🥉</span
                         >
-                        <span v-else class="font-medium text-zinc-500"
+                        <span v-else class="font-medium text-zinc-400"
                             >#{{ user.position }}</span
                         >
                     </div>
@@ -73,7 +73,7 @@ defineProps({
                         <div class="text-sm font-semibold text-zinc-200">
                             {{ user.name }}
                         </div>
-                        <div class="text-[10px] text-zinc-500">
+                        <div class="text-[10px] text-zinc-400">
                             {{ user.institution }}
                         </div>
                     </div>
@@ -83,7 +83,7 @@ defineProps({
                         user.points.toLocaleString()
                     }}</span>
                     <span
-                        class="block text-[9px] font-semibold uppercase text-zinc-500"
+                        class="block text-[9px] font-semibold uppercase text-zinc-400"
                         >pts</span
                     >
                 </div>

@@ -314,7 +314,7 @@ const deleteQuestion = () => {
                             __('teacher.subject_show.no_description')
                         }}
                     </p>
-                    <p class="mt-2 text-xs text-zinc-500">
+                    <p class="mt-2 text-xs text-zinc-400">
                         {{ __('teacher.subject_show.estimated_duration') }}
                         <strong class="text-zinc-400">{{
                             subject.duration || 'N/A'
@@ -436,7 +436,7 @@ const deleteQuestion = () => {
                             <h3
                                 class="flex items-center gap-2 text-lg font-bold text-white"
                             >
-                                <span class="text-zinc-500">📚</span>
+                                <span class="text-zinc-400">📚</span>
                                 {{
                                     __(
                                         'teacher.subject_show.materials_title',
@@ -512,7 +512,7 @@ const deleteQuestion = () => {
 
                             <div
                                 v-if="subject.study_materials?.length === 0"
-                                class="rounded-xl border border-dashed border-zinc-800 p-8 text-center text-sm text-zinc-500"
+                                class="rounded-xl border border-dashed border-zinc-800 p-8 text-center text-sm text-zinc-400"
                             >
                                 {{ __('teacher.subject_show.materials_empty') }}
                             </div>
@@ -699,7 +699,7 @@ const deleteQuestion = () => {
                             </div>
                             <div
                                 v-if="subject.tests?.length === 0"
-                                class="rounded-xl border border-dashed border-zinc-800 p-8 text-center text-sm text-zinc-500"
+                                class="rounded-xl border border-dashed border-zinc-800 p-8 text-center text-sm text-zinc-400"
                             >
                                 {{ __('teacher.subject_show.tests_empty') }}
                             </div>
@@ -979,7 +979,7 @@ const deleteQuestion = () => {
                         class="mt-1 block text-xs text-red-500"
                         >{{ questionForm.errors.options }}</span
                     >
-                    <p class="mt-2 text-[10px] text-zinc-500">
+                    <p class="mt-2 text-[10px] text-zinc-400">
                         {{ __('teacher.question_form.correct_hint') }}
                     </p>
                 </div>

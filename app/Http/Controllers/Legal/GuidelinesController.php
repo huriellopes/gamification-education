@@ -19,6 +19,10 @@ class GuidelinesController extends Controller
             'content' => trans('legal.guidelines'),
             'backToSite' => trans('legal.back_to_site'),
             'updatedPrefix' => trans('legal.updated_prefix'),
+            'seo' => [
+                'title' => trans('legal.guidelines.title') . ' — ' . config('app.name'),
+                'description' => trans('legal.guidelines.meta_description'),
+            ],
         ]);
     }
 }

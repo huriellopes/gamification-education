@@ -155,7 +155,7 @@ const breadcrumbs = computed(() => {
 <template>
     <nav class="mb-5 flex" :aria-label="__('nav.aria.breadcrumb')">
         <ol
-            class="inline-flex items-center space-x-1.5 text-xs font-semibold text-zinc-500"
+            class="inline-flex items-center space-x-1.5 text-xs font-semibold text-zinc-400"
         >
             <li
                 v-for="(crumb, idx) in breadcrumbs"

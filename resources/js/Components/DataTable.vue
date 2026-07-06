@@ -197,7 +197,7 @@ const totalPages = computed(() => {
                 <div
                     class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"
                 >
-                    <Search class="h-4 w-4 text-zinc-500" />
+                    <Search class="h-4 w-4 text-zinc-400" />
                 </div>
                 <input
                     v-model="searchQuery"
@@ -228,7 +228,7 @@ const totalPages = computed(() => {
                 </div>
 
                 <div v-if="items.length > 0" class="flex items-center gap-2">
-                    <span class="text-xs font-medium text-zinc-500">{{
+                    <span class="text-xs font-medium text-zinc-400">{{
                         __('misc.datatable.show')
                     }}</span>
                     <select
@@ -334,7 +334,7 @@ const totalPages = computed(() => {
                     <tr v-if="filteredItems.length === 0">
                         <td
                             :colspan="columns.length"
-                            class="py-8 text-center font-medium text-zinc-500"
+                            class="py-8 text-center font-medium text-zinc-400"
                         >
                             {{ __('common.no_results') }}
                         </td>
@@ -348,7 +348,7 @@ const totalPages = computed(() => {
             v-if="filteredItems.length > 0"
             class="flex flex-col items-center justify-between gap-3 border-t border-zinc-800/50 pt-4 sm:flex-row"
         >
-            <span class="text-xs font-medium text-zinc-500">
+            <span class="text-xs font-medium text-zinc-400">
                 <template v-if="localPageSize === -1">
                     {{
                         __('misc.datatable.showing_all', {

@@ -140,7 +140,7 @@ const parseMarkdown = (text) => {
         >
             <div class="flex flex-col">
                 <span
-                    class="text-xs font-bold uppercase tracking-wider text-zinc-500"
+                    class="text-xs font-bold uppercase tracking-wider text-zinc-400"
                     >{{ __('student.material.learning_actions') }}</span
                 >
                 <span class="text-sm font-semibold text-zinc-200"

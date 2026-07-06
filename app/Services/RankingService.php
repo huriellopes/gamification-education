@@ -45,18 +45,27 @@ class RankingService
      */
     public function getSubjectRanking(int $subjectId, int $limit = 10): Collection
     {
-        return DB::table('test_attempts')
+        // Melhor pontuação de cada aluno em cada teste da matéria. Sem isto,
+        // somar todas as tentativas infla o ranking de quem refaz os testes.
+        $bestPerTest = DB::table('test_attempts')
             ->join('tests', 'test_attempts.test_id', '=', 'tests.id')
-            ->join('users', 'test_attempts.user_id', '=', 'users.id')
+            ->where('tests.subject_id', $subjectId)
+            ->groupBy('test_attempts.user_id', 'test_attempts.test_id')
+            ->select(
+                'test_attempts.user_id',
+                DB::raw('MAX(test_attempts.score) as best_score'),
+            );
+
+        return DB::table('users')
+            ->joinSub($bestPerTest, 'best', 'best.user_id', '=', 'users.id')
             ->leftJoin('institutions', 'users.institution_id', '=', 'institutions.id')
+            ->where('users.role', 'student')
             ->select(
                 'users.id as user_id',
                 'users.name as user_name',
                 'institutions.name as institution_name',
-                DB::raw('SUM(test_attempts.score) as total_subject_score'),
+                DB::raw('SUM(best.best_score) as total_subject_score'),
             )
-            ->where('tests.subject_id', $subjectId)
-            ->where('users.role', 'student')
             ->groupBy('users.id', 'users.name', 'institutions.name')
             ->orderBy('total_subject_score', 'desc')
             ->limit($limit)

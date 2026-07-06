@@ -67,6 +67,13 @@ return [
         'confirm_title' => 'Confirm Password',
         'confirm_hint' => 'This is a secure area of the application. Please confirm your password before continuing.',
 
+        'force_title' => 'Password Change Required',
+        'force_heading' => 'New Password Required',
+        'force_subtitle' => 'For security reasons, you must set a new password on your first access.',
+        'new_password' => 'New Password',
+        'confirm_new_password' => 'Confirm New Password',
+        'force_submit' => 'Update Password & Access',
+
         'back_to_login' => 'Back to login',
         'forgot_title' => 'Forgot Password',
         'forgot_subtitle' => 'Enter your registered email and we will send you a link to reset your password.',
@@ -135,7 +142,7 @@ return [
             'xp_earned' => 'XP Points Earned',
             'online_responsive' => 'Online & Responsive',
         ],
-        'footer' => '© :year GamificaEdu. Built with Laravel, InertiaJS and VueJS.',
+        'footer' => '© :year GamificaEdu. All rights reserved.',
         'legal' => [
             'privacy' => 'Privacy Policy',
             'guidelines' => 'Usage Guidelines',

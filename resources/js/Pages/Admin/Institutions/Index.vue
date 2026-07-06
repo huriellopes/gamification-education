@@ -153,7 +153,7 @@ const submit = () => {
                         <div
                             class="border-zinc-850 mt-6 flex items-center justify-between border-t pt-4 text-xs"
                         >
-                            <div class="flex items-center gap-1 text-zinc-500">
+                            <div class="flex items-center gap-1 text-zinc-400">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     fill="none"
@@ -175,7 +175,7 @@ const submit = () => {
                                     }}</strong></span
                                 >
                             </div>
-                            <div class="flex items-center gap-1 text-zinc-500">
+                            <div class="flex items-center gap-1 text-zinc-400">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     fill="none"
@@ -202,7 +202,7 @@ const submit = () => {
 
                     <div
                         v-if="institutions.length === 0"
-                        class="col-span-full rounded-2xl border border-dashed border-zinc-800 p-12 text-center text-zinc-500"
+                        class="col-span-full rounded-2xl border border-dashed border-zinc-800 p-12 text-center text-zinc-400"
                     >
                         {{ __('admin.institutions.empty_state') }}
                     </div>

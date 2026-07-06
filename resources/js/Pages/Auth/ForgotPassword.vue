@@ -65,7 +65,7 @@ const submit = () => {
                 />
                 <div class="relative mt-1">
                     <span
-                        class="absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-500"
+                        class="absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-400"
                     >
                         <Mail class="h-5 w-5" />
                     </span>

@@ -88,7 +88,7 @@ defineProps({
                                     <h4 class="text-sm font-bold text-zinc-100">
                                         {{ att.test_title }}
                                     </h4>
-                                    <p class="mt-1 text-xs text-zinc-500">
+                                    <p class="mt-1 text-xs text-zinc-400">
                                         {{
                                             __(
                                                 'teacher.performance.submitted_at',
@@ -124,7 +124,7 @@ defineProps({
 
                             <div
                                 v-if="student.attempts.length === 0"
-                                class="py-8 text-center text-sm text-zinc-500"
+                                class="py-8 text-center text-sm text-zinc-400"
                             >
                                 {{ __('teacher.performance.attempts_empty') }}
                             </div>
@@ -150,7 +150,7 @@ defineProps({
                                     >
                                         {{ hist.description }}
                                     </h4>
-                                    <p class="mt-1 text-xs text-zinc-500">
+                                    <p class="mt-1 text-xs text-zinc-400">
                                         {{
                                             __(
                                                 'teacher.performance.granted_at',
@@ -173,7 +173,7 @@ defineProps({
 
                             <div
                                 v-if="student.score_history.length === 0"
-                                class="py-8 text-center text-sm text-zinc-500"
+                                class="py-8 text-center text-sm text-zinc-400"
                             >
                                 {{
                                     __(

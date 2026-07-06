@@ -2,6 +2,7 @@
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
+import { __ } from '@/i18n';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import { KeyRound, Lock } from '@lucide/vue';
@@ -20,7 +21,7 @@ const submit = () => {
 
 <template>
     <GuestLayout>
-        <Head title="Alteração de Senha Obrigatória" />
+        <Head :title="__('auth.force_title')" />
 
         <div class="mb-6 text-center">
             <div
@@ -31,11 +32,10 @@ const submit = () => {
             <h1
                 class="text-xl font-extrabold tracking-tight text-white sm:text-2xl"
             >
-                Nova Senha Obrigatória
+                {{ __('auth.force_heading') }}
             </h1>
             <p class="mt-2 text-sm text-zinc-400">
-                Por motivos de segurança, você deve cadastrar uma nova senha no
-                seu primeiro acesso.
+                {{ __('auth.force_subtitle') }}
             </p>
         </div>
 
@@ -43,12 +43,12 @@ const submit = () => {
             <div>
                 <InputLabel
                     for="password"
-                    value="Nova Senha"
+                    :value="__('auth.new_password')"
                     class="text-[10px] font-bold uppercase tracking-wider text-zinc-400"
                 />
                 <div class="relative mt-1">
                     <span
-                        class="absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-500"
+                        class="absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-400"
                     >
                         <Lock class="h-5 w-5" />
                     </span>
@@ -69,12 +69,12 @@ const submit = () => {
             <div>
                 <InputLabel
                     for="password_confirmation"
-                    value="Confirmar Nova Senha"
+                    :value="__('auth.confirm_new_password')"
                     class="text-[10px] font-bold uppercase tracking-wider text-zinc-400"
                 />
                 <div class="relative mt-1">
                     <span
-                        class="absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-500"
+                        class="absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-400"
                     >
                         <Lock class="h-5 w-5" />
                     </span>
@@ -99,7 +99,7 @@ const submit = () => {
                 :disabled="form.processing"
                 class="w-full rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 py-3 text-sm font-bold text-white transition-all hover:brightness-110 disabled:opacity-50"
             >
-                Atualizar Senha & Acessar
+                {{ __('auth.force_submit') }}
             </button>
         </form>
     </GuestLayout>

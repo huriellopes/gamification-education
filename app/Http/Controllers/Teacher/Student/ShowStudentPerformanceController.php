@@ -22,7 +22,14 @@ class ShowStudentPerformanceController extends Controller
     {
         /** @var User $user */
         $user = auth()->user();
-        abort_if((int) $student->institution_id !== (int) $user->institution_id || !$student->isStudent(), 403);
+
+        // O professor só acessa o desempenho de estudantes matriculados em uma
+        // de suas turmas (consistente com a listagem de "Meus Alunos").
+        $isOwnStudent = $student->isStudent() && $student->enrolledClassrooms()
+            ->where('teacher_id', $user->id)
+            ->exists();
+
+        abort_unless($isOwnStudent, 403);
 
         $student->load([
             'testAttempts.test',

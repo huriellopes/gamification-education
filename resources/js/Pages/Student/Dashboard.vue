@@ -124,7 +124,7 @@ const levelProgress = computed(() => {
                             <div
                                 class="mb-1.5 flex justify-between text-xs font-bold"
                             >
-                                <span class="text-zinc-500">{{
+                                <span class="text-zinc-400">{{
                                     __('student.dashboard.level_progress')
                                 }}</span>
                                 <span class="text-indigo-400">{{
@@ -153,7 +153,7 @@ const levelProgress = computed(() => {
                             <h3 class="text-lg font-bold text-white">
                                 {{ __('student.dashboard.my_tracks') }}
                             </h3>
-                            <span class="text-xs font-semibold text-zinc-500">{{
+                            <span class="text-xs font-semibold text-zinc-400">{{
                                 __('student.dashboard.subjects_available', {
                                     count: subjects.length,
                                 })
@@ -162,7 +162,7 @@ const levelProgress = computed(() => {
 
                         <div
                             v-if="subjects.length === 0"
-                            class="border-zinc-850 rounded-2xl border border-dashed p-12 text-center text-sm text-zinc-500"
+                            class="border-zinc-850 rounded-2xl border border-dashed p-12 text-center text-sm text-zinc-400"
                         >
                             {{ __('student.dashboard.no_subjects') }}
                         </div>
@@ -210,7 +210,7 @@ const levelProgress = computed(() => {
 
                             <div
                                 v-if="scoreHistory.length === 0"
-                                class="py-6 text-center text-xs text-zinc-500"
+                                class="py-6 text-center text-xs text-zinc-400"
                             >
                                 {{ __('student.dashboard.no_history') }}
                             </div>
@@ -226,7 +226,7 @@ const levelProgress = computed(() => {
                                             {{ log.description }}
                                         </p>
                                         <span
-                                            class="mt-0.5 block text-[9px] text-zinc-500"
+                                            class="mt-0.5 block text-[9px] text-zinc-400"
                                             >{{
                                                 new Date(
                                                     log.created_at,

@@ -74,7 +74,7 @@ const switchInstitution = (id) => {
                             __('nav.navbar.switch_unit')
                         }}</span>
                         <ArrowLeftRight
-                            class="h-3.5 w-3.5 shrink-0 text-zinc-500"
+                            class="h-3.5 w-3.5 shrink-0 text-zinc-400"
                         />
                     </button>
                 </template>
@@ -107,7 +107,7 @@ const switchInstitution = (id) => {
                     <span class="hidden md:inline">{{
                         formatShortName($page.props.auth.user.name)
                     }}</span>
-                    <Settings class="h-3.5 w-3.5 shrink-0 text-zinc-500" />
+                    <Settings class="h-3.5 w-3.5 shrink-0 text-zinc-400" />
                 </button>
             </template>
             <template #content>

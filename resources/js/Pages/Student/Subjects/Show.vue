@@ -67,7 +67,7 @@ defineProps({
                     class="rounded-2xl border border-zinc-800 bg-zinc-900/20 p-6"
                 >
                     <h3
-                        class="mb-1 text-xs font-bold uppercase tracking-wider text-zinc-500"
+                        class="mb-1 text-xs font-bold uppercase tracking-wider text-zinc-400"
                     >
                         {{ __('student.subject.syllabus') }}
                     </h3>
@@ -138,7 +138,7 @@ defineProps({
                                     >
                                         {{ material.title }}
                                     </h4>
-                                    <p class="mt-0.5 text-xs text-zinc-500">
+                                    <p class="mt-0.5 text-xs text-zinc-400">
                                         {{
                                             __(
                                                 'student.subject.reward_points',
@@ -232,7 +232,7 @@ defineProps({
                                     <!-- Extrato de acertos -->
                                     <div
                                         v-if="test.best_score !== null"
-                                        class="mt-2 flex items-center gap-2 text-xs text-zinc-500"
+                                        class="mt-2 flex items-center gap-2 text-xs text-zinc-400"
                                     >
                                         <span
                                             >{{
@@ -300,7 +300,7 @@ defineProps({
 
                         <div
                             v-if="materials.length === 0 && tests.length === 0"
-                            class="border-zinc-850 rounded-xl border border-dashed p-8 pl-0 text-center text-sm text-zinc-500"
+                            class="border-zinc-850 rounded-xl border border-dashed p-8 pl-0 text-center text-sm text-zinc-400"
                         >
                             {{ __('student.subject.empty') }}
                         </div>

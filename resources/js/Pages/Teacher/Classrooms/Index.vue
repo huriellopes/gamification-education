@@ -58,7 +58,7 @@ defineProps({
 
                         <div class="mt-4 space-y-2">
                             <p
-                                class="text-xs font-bold uppercase tracking-wider text-zinc-500"
+                                class="text-xs font-bold uppercase tracking-wider text-zinc-400"
                             >
                                 {{ __('classrooms.col_subjects') }}
                             </p>
@@ -85,7 +85,7 @@ defineProps({
                                     }}</span>
                                 </Link>
                             </div>
-                            <p v-else class="text-xs italic text-zinc-500">
+                            <p v-else class="text-xs italic text-zinc-400">
                                 {{ __('classrooms.no_subjects') }}
                             </p>
                         </div>
@@ -94,7 +94,7 @@ defineProps({
 
                 <div
                     v-else
-                    class="rounded-2xl border border-zinc-800 bg-zinc-900/30 py-16 text-center text-sm text-zinc-500"
+                    class="rounded-2xl border border-zinc-800 bg-zinc-900/30 py-16 text-center text-sm text-zinc-400"
                 >
                     {{ __('classrooms.teacher_empty') }}
                 </div>

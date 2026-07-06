@@ -292,7 +292,7 @@ const toggleStatus = (user) => {
                             <div class="font-semibold text-zinc-100">
                                 {{ item.name }}
                             </div>
-                            <div class="text-xs text-zinc-500">
+                            <div class="text-xs text-zinc-400">
                                 {{ item.email }}
                             </div>
                         </template>
@@ -304,7 +304,7 @@ const toggleStatus = (user) => {
                             >
                                 {{ item.classroom }}
                             </span>
-                            <span v-else class="text-xs italic text-zinc-600">{{
+                            <span v-else class="text-xs italic text-zinc-400">{{
                                 __('classrooms.enroll_none')
                             }}</span>
                         </template>
@@ -349,7 +349,7 @@ const toggleStatus = (user) => {
                                 <Tooltip :text="__('admin.users.edit_student')">
                                     <button
                                         @click="openEditModal(item)"
-                                        class="hover:bg-zinc-850 rounded-lg p-1.5 text-zinc-400 transition-colors hover:text-white"
+                                        class="rounded-lg p-1.5 text-zinc-400 transition-colors hover:bg-zinc-850 hover:text-white"
                                     >
                                         <Pencil class="h-4 w-4" />
                                     </button>
@@ -408,7 +408,7 @@ const toggleStatus = (user) => {
                             <div class="font-semibold text-zinc-100">
                                 {{ item.name }}
                             </div>
-                            <div class="text-xs text-zinc-500">
+                            <div class="text-xs text-zinc-400">
                                 {{ item.email }}
                             </div>
                         </template>
@@ -447,7 +447,7 @@ const toggleStatus = (user) => {
                                 <Tooltip :text="__('admin.users.edit_teacher')">
                                     <button
                                         @click="openEditModal(item)"
-                                        class="hover:bg-zinc-850 rounded-lg p-1.5 text-zinc-400 transition-colors hover:text-white"
+                                        class="rounded-lg p-1.5 text-zinc-400 transition-colors hover:bg-zinc-850 hover:text-white"
                                     >
                                         <Pencil class="h-4 w-4" />
                                     </button>

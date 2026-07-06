@@ -19,6 +19,10 @@ class PrivacyPolicyController extends Controller
             'content' => trans('legal.privacy'),
             'backToSite' => trans('legal.back_to_site'),
             'updatedPrefix' => trans('legal.updated_prefix'),
+            'seo' => [
+                'title' => trans('legal.privacy.title') . ' — ' . config('app.name'),
+                'description' => trans('legal.privacy.meta_description'),
+            ],
         ]);
     }
 }

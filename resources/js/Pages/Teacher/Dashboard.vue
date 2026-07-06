@@ -169,7 +169,7 @@ onUnmounted(() => {
                         </div>
                         <p
                             v-else
-                            class="py-8 text-center text-sm text-zinc-500"
+                            class="py-8 text-center text-sm text-zinc-400"
                         >
                             {{ __('teacher.dashboard.no_performance') }}
                         </p>
@@ -223,7 +223,7 @@ onUnmounted(() => {
                         </div>
                         <p
                             v-else
-                            class="py-8 text-center text-sm text-zinc-500"
+                            class="py-8 text-center text-sm text-zinc-400"
                         >
                             {{ __('teacher.dashboard.no_performance') }}
                         </p>

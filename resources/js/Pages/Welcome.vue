@@ -1,11 +1,12 @@
 <script setup>
+import ApplicationLogo from '@/Components/ApplicationLogo.vue';
+import HurvionSignature from '@/Components/HurvionSignature.vue';
 import { Head, Link, usePage } from '@inertiajs/vue3';
 import {
     ArrowRight,
     BookOpen,
     CheckCircle2,
     Cookie,
-    GraduationCap,
     LogIn,
     Menu,
     Sparkles,
@@ -52,31 +53,7 @@ onMounted(() => {
             enableAds();
         }
     }
-
-    // Injeta Schema.org JSON-LD estruturado programaticamente para SEO
-    const schemaScript = document.createElement('script');
-    schemaScript.type = 'application/ld+json';
-    schemaScript.id = 'schema-org-jsonld';
-    schemaScript.text = JSON.stringify({
-        '@context': 'https://schema.org',
-        '@type': 'EducationalApplication',
-        name: 'GamificaEdu',
-        operatingSystem: 'All',
-        applicationCategory: 'EducationalApplication',
-        description:
-            'Plataforma de aprendizado gamificado e gestão de ensino multidisciplinar.',
-        offers: {
-            '@type': 'Offer',
-            price: '0.00',
-            priceCurrency: 'BRL',
-        },
-        provider: {
-            '@type': 'Organization',
-            name: 'GamificaEdu Inc.',
-            url: 'https://gamificaedu.com.br',
-        },
-    });
-    document.head.appendChild(schemaScript);
+    // O JSON-LD (Schema.org) é renderizado server-side em app.blade.php.
 });
 
 const acceptCookies = () => {
@@ -109,44 +86,24 @@ const enableAds = () => {
 </script>
 
 <template>
+    <!--
+      Título de página (client-side). As demais metatags de SEO (description,
+      Open Graph, Twitter e JSON-LD) são renderizadas server-side em
+      resources/views/app.blade.php para que crawlers sem JS as leiam.
+    -->
     <Head>
         <title>GamificaEdu — Aprenda Jogando e Conquiste o Topo</title>
-        <meta
-            name="description"
-            content="GamificaEdu é uma plataforma de aprendizado gamificado voltada ao ensino básico e superior, engajando alunos por meio de trilhas de aprendizagem, testes e pontuação (XP)."
-        />
-        <meta
-            name="keywords"
-            content="gamificação, educação, aprendizado gamificado, trilha de estudos, quiz educacional, ranking escolar, leaderboards"
-        />
-        <meta
-            property="og:title"
-            content="GamificaEdu — Aprenda Jogando e Conquiste o Topo"
-        />
-        <meta
-            property="og:description"
-            content="Aumente o engajamento de seus alunos por meio de pontos, trilhas visuais e testes dinâmicos com GamificaEdu."
-        />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://gamificaedu.com.br" />
-        <meta
-            property="og:image"
-            content="https://gamificaedu.com.br/assets/images/og-image.jpg"
-        />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta
-            name="twitter:title"
-            content="GamificaEdu — Aprenda Jogando e Conquiste o Topo"
-        />
-        <meta
-            name="twitter:description"
-            content="Aumente o engajamento de seus alunos por meio de pontos, trilhas visuais e testes dinâmicos com GamificaEdu."
-        />
     </Head>
 
     <div
         class="relative min-h-screen overflow-hidden bg-zinc-950 font-sans text-zinc-100 selection:bg-indigo-600 selection:text-white"
     >
+        <a
+            href="#main-content"
+            class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-indigo-600 focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:text-white"
+        >
+            {{ __('nav.skip_to_content') }}
+        </a>
         <!-- Background Glow Effects -->
         <div
             class="pointer-events-none absolute left-[-10%] top-[-10%] h-[50%] w-[50%] rounded-full bg-indigo-900/10 blur-[150px]"
@@ -163,11 +120,10 @@ const enableAds = () => {
                 class="mx-auto flex h-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8"
             >
                 <div class="flex items-center gap-3">
-                    <div
-                        class="rounded-xl bg-indigo-600 p-2 text-white shadow-lg shadow-indigo-600/20"
-                    >
-                        <GraduationCap class="h-6 w-6" />
-                    </div>
+                    <ApplicationLogo
+                        class="h-10 w-10 drop-shadow-lg"
+                        aria-hidden="true"
+                    />
                     <span
                         class="bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-xl font-extrabold tracking-tight text-transparent"
                     >
@@ -257,6 +213,7 @@ const enableAds = () => {
 
         <!-- Hero Section -->
         <section
+            id="main-content"
             class="relative z-10 mx-auto max-w-7xl px-4 pb-16 pt-20 sm:px-6 lg:px-8"
         >
             <div class="mx-auto max-w-3xl space-y-6 text-center">
@@ -335,7 +292,7 @@ const enableAds = () => {
                         <span class="h-3 w-3 rounded-full bg-green-500"></span>
                     </div>
                     <div
-                        class="rounded-lg border border-zinc-800 bg-zinc-950 px-6 py-1 font-mono text-[10px] text-zinc-500"
+                        class="rounded-lg border border-zinc-800 bg-zinc-950 px-6 py-1 font-mono text-[10px] text-zinc-400"
                     >
                         https://gamifica.edu/student/dashboard
                     </div>
@@ -371,7 +328,7 @@ const enableAds = () => {
                                     class="h-2 w-[70%] rounded-full bg-indigo-500"
                                 ></div>
                             </div>
-                            <p class="text-[11px] text-zinc-500">
+                            <p class="text-[11px] text-zinc-400">
                                 {{ __('welcome.mockup.level_hint') }}
                             </p>
                         </div>
@@ -552,7 +509,7 @@ const enableAds = () => {
                             {{ stats.students }}
                         </p>
                         <p
-                            class="mt-2 text-xs font-bold uppercase tracking-wider text-zinc-500 sm:text-sm"
+                            class="mt-2 text-xs font-bold uppercase tracking-wider text-zinc-400 sm:text-sm"
                         >
                             {{ __('welcome.stats.active_students') }}
                         </p>
@@ -564,7 +521,7 @@ const enableAds = () => {
                             {{ stats.subjects }}
                         </p>
                         <p
-                            class="mt-2 text-xs font-bold uppercase tracking-wider text-zinc-500 sm:text-sm"
+                            class="mt-2 text-xs font-bold uppercase tracking-wider text-zinc-400 sm:text-sm"
                         >
                             {{ __('welcome.stats.subjects_offered') }}
                         </p>
@@ -576,7 +533,7 @@ const enableAds = () => {
                             {{ stats.xp }}
                         </p>
                         <p
-                            class="mt-2 text-xs font-bold uppercase tracking-wider text-zinc-500 sm:text-sm"
+                            class="mt-2 text-xs font-bold uppercase tracking-wider text-zinc-400 sm:text-sm"
                         >
                             {{ __('welcome.stats.xp_earned') }}
                         </p>
@@ -586,7 +543,7 @@ const enableAds = () => {
                             100%
                         </p>
                         <p
-                            class="mt-2 text-xs font-bold uppercase tracking-wider text-zinc-500 sm:text-sm"
+                            class="mt-2 text-xs font-bold uppercase tracking-wider text-zinc-400 sm:text-sm"
                         >
                             {{ __('welcome.stats.online_responsive') }}
                         </p>
@@ -597,7 +554,7 @@ const enableAds = () => {
 
         <!-- Footer -->
         <footer
-            class="mx-auto flex max-w-7xl flex-col items-center gap-4 px-4 py-12 text-center font-mono text-xs text-zinc-600 sm:px-6 lg:px-8"
+            class="mx-auto flex max-w-7xl flex-col items-center gap-4 px-4 py-12 text-center font-mono text-xs text-zinc-400 sm:px-6 lg:px-8"
         >
             <div class="flex items-center gap-4">
                 <Link
@@ -617,6 +574,7 @@ const enableAds = () => {
             <span>{{
                 __('welcome.footer', { year: new Date().getFullYear() })
             }}</span>
+            <HurvionSignature class="mt-2" />
         </footer>
 
         <!-- Cookie Consent Banner -->
@@ -654,7 +612,7 @@ const enableAds = () => {
                             >
                             {{ __('welcome.cookie.body') }}
                             <span
-                                class="mt-2 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-xs text-zinc-500 sm:justify-start"
+                                class="mt-2 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-xs text-zinc-400 sm:justify-start"
                             >
                                 <span>{{
                                     __('welcome.cookie.learn_more')

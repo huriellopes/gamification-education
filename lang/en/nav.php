@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 return [
+    'skip_to_content' => 'Skip to content',
     'aria' => [
         'main_nav' => 'Main Navigation Menu',
         'sidebar_nav' => 'Sidebar Navigation',

@@ -248,7 +248,7 @@ const formatDateTime = (dateStr) => {
                     "
                 >
                     <template #id="{ item }">
-                        <span class="font-mono font-bold text-zinc-500"
+                        <span class="font-mono font-bold text-zinc-400"
                             >#{{ item.id }}</span
                         >
                     </template>

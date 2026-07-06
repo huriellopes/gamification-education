@@ -49,8 +49,19 @@ class IndexRankingController extends Controller
         $selectedSubject = null;
 
         if ($subjectId) {
-            $subjectRanking = $this->rankingService->getSubjectRanking((int) $subjectId, 200);
-            $selectedSubject = Subject::find($subjectId);
+            $subject = Subject::find($subjectId);
+
+            // Um usuário vinculado a uma instituição só vê o ranking de matérias
+            // da própria instituição (super admin / contexto global veem todas).
+            $canViewSubject = $subject !== null
+                && (!$user?->institution_id || $subject->institution_id === $user->institution_id);
+
+            if ($canViewSubject) {
+                $selectedSubject = $subject;
+                $subjectRanking = $this->rankingService->getSubjectRanking((int) $subjectId, 200);
+            } else {
+                $subjectId = null;
+            }
         }
 
         return Inertia::render('Ranking/Index', [

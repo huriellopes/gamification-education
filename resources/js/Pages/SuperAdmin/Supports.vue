@@ -106,7 +106,7 @@ const formatDateTime = (dateStr) => {
                     "
                 >
                     <template #id="{ item }">
-                        <span class="font-mono text-zinc-500"
+                        <span class="font-mono text-zinc-400"
                             >#{{ item.id }}</span
                         >
                     </template>
@@ -114,7 +114,7 @@ const formatDateTime = (dateStr) => {
                         <div class="text-zinc-150 font-semibold">
                             {{ item.user_name }}
                         </div>
-                        <div class="text-[10px] text-zinc-500">
+                        <div class="text-[10px] text-zinc-400">
                             {{ item.user_email }}
                         </div>
                     </template>
@@ -129,7 +129,7 @@ const formatDateTime = (dateStr) => {
                             {{ item.subject }}
                         </div>
                         <div
-                            class="max-w-xs truncate text-[10px] text-zinc-500"
+                            class="max-w-xs truncate text-[10px] text-zinc-400"
                         >
                             {{ item.message }}
                         </div>
@@ -263,7 +263,7 @@ const formatDateTime = (dateStr) => {
                             {{ selectedSupport.reply }}
                         </p>
                         <div
-                            class="border-t border-emerald-500/10 pt-2 font-mono text-[10px] text-zinc-500"
+                            class="border-t border-emerald-500/10 pt-2 font-mono text-[10px] text-zinc-400"
                         >
                             {{ __('superadmin.supports.replied_at_label') }}
                             {{ formatDateTime(selectedSupport.replied_at) }}

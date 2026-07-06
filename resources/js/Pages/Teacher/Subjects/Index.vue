@@ -150,7 +150,7 @@ const deleteSubject = () => {
                                     >
                                         {{ sub.classroom.name }}
                                     </p>
-                                    <p class="mt-1 text-xs text-zinc-500">
+                                    <p class="mt-1 text-xs text-zinc-400">
                                         {{
                                             __(
                                                 'teacher.dashboard.duration',
@@ -204,7 +204,7 @@ const deleteSubject = () => {
                                 }}
                             </p>
                             <div
-                                class="flex items-center gap-4 text-xs font-semibold text-zinc-500"
+                                class="flex items-center gap-4 text-xs font-semibold text-zinc-400"
                             >
                                 <span class="inline-flex items-center gap-1">
                                     <FileText class="h-4 w-4" />
@@ -229,7 +229,7 @@ const deleteSubject = () => {
 
                     <div
                         v-if="subjects.length === 0"
-                        class="col-span-full py-16 text-center text-zinc-500"
+                        class="col-span-full py-16 text-center text-zinc-400"
                     >
                         {{ __('teacher.dashboard.empty') }}
                     </div>

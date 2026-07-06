@@ -67,6 +67,13 @@ return [
         'confirm_title' => 'Confirmar Senha',
         'confirm_hint' => 'Esta é uma área segura da aplicação. Confirme sua senha antes de continuar.',
 
+        'force_title' => 'Alteração de Senha Obrigatória',
+        'force_heading' => 'Nova Senha Obrigatória',
+        'force_subtitle' => 'Por motivos de segurança, você deve cadastrar uma nova senha no seu primeiro acesso.',
+        'new_password' => 'Nova Senha',
+        'confirm_new_password' => 'Confirmar Nova Senha',
+        'force_submit' => 'Atualizar Senha & Acessar',
+
         'back_to_login' => 'Voltar para o login',
         'forgot_title' => 'Recuperar Senha',
         'forgot_subtitle' => 'Informe o e-mail cadastrado e enviaremos um link para você redefinir a sua senha.',
@@ -135,7 +142,7 @@ return [
             'xp_earned' => 'Pontos XP Conquistados',
             'online_responsive' => 'Online e Responsivo',
         ],
-        'footer' => '© :year GamificaEdu. Desenvolvido em Laravel, InertiaJS e VueJS.',
+        'footer' => '© :year GamificaEdu. Todos os direitos reservados.',
         'legal' => [
             'privacy' => 'Política de Privacidade',
             'guidelines' => 'Diretrizes de Uso',

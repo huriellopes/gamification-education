@@ -286,7 +286,7 @@ const toggleStatus = (sub) => {
                             >
                                 {{ sub.name }}
                             </h4>
-                            <p class="mt-1 text-xs text-zinc-500">
+                            <p class="mt-1 text-xs text-zinc-400">
                                 {{ __('admin.subjects.status_label') }}
                                 <span
                                     class="font-semibold"
@@ -319,7 +319,7 @@ const toggleStatus = (sub) => {
                             class="border-zinc-850 mt-6 flex flex-col gap-3 border-t pt-4"
                         >
                             <div
-                                class="flex items-center justify-between text-xs text-zinc-500"
+                                class="flex items-center justify-between text-xs text-zinc-400"
                             >
                                 <span
                                     >{{ __('admin.subjects.materials') }}
@@ -346,7 +346,7 @@ const toggleStatus = (sub) => {
 
                     <div
                         v-if="subjects.length === 0"
-                        class="col-span-full rounded-2xl border border-dashed border-zinc-800 p-12 text-center text-zinc-500"
+                        class="col-span-full rounded-2xl border border-dashed border-zinc-800 p-12 text-center text-zinc-400"
                     >
                         {{ __('admin.subjects.empty_state') }}
                     </div>

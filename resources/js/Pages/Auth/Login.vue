@@ -120,7 +120,7 @@ const sendMagicLink = () => {
                 />
                 <div class="relative mt-1">
                     <span
-                        class="absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-500"
+                        class="absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-400"
                     >
                         <Mail class="h-5 w-5" />
                     </span>
@@ -148,14 +148,14 @@ const sendMagicLink = () => {
                     <Link
                         v-if="canResetPassword"
                         :href="route('password.request')"
-                        class="text-xs text-zinc-500 transition-colors hover:text-indigo-400"
+                        class="text-xs text-zinc-400 transition-colors hover:text-indigo-400"
                     >
                         {{ __('auth.forgot_password') }}
                     </Link>
                 </div>
                 <div class="relative mt-1">
                     <span
-                        class="absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-500"
+                        class="absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-400"
                     >
                         <Lock class="h-5 w-5" />
                     </span>
@@ -204,7 +204,7 @@ const sendMagicLink = () => {
                 />
                 <div class="relative mt-1">
                     <span
-                        class="absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-500"
+                        class="absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-400"
                     >
                         <Mail class="h-5 w-5" />
                     </span>

@@ -1,4 +1,5 @@
 <script setup>
+import HurvionSignature from '@/Components/HurvionSignature.vue';
 import { __ } from '@/i18n';
 import { Head, Link, usePage } from '@inertiajs/vue3';
 import { ArrowLeft, ArrowRight, GraduationCap, LogIn } from '@lucide/vue';
@@ -28,6 +29,12 @@ defineProps({
     </Head>
 
     <div class="flex min-h-screen flex-col bg-zinc-950 text-zinc-100">
+        <a
+            href="#main-content"
+            class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-indigo-600 focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:text-white"
+        >
+            {{ __('nav.skip_to_content') }}
+        </a>
         <!-- Top bar -->
         <header
             class="sticky top-0 z-30 h-20 border-b border-zinc-800/80 bg-zinc-950/80 backdrop-blur-xl"
@@ -74,7 +81,7 @@ defineProps({
         </header>
 
         <!-- Content -->
-        <main class="flex-1">
+        <main id="main-content" class="flex-1">
             <article
                 class="mx-auto max-w-3xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8"
             >
@@ -136,7 +143,7 @@ defineProps({
 
         <!-- Footer -->
         <footer
-            class="border-t border-zinc-900 px-4 py-10 text-center font-mono text-xs text-zinc-600 sm:px-6 lg:px-8"
+            class="border-t border-zinc-900 px-4 py-10 text-center font-mono text-xs text-zinc-400 sm:px-6 lg:px-8"
         >
             <div
                 class="mx-auto flex max-w-5xl flex-col items-center justify-center gap-3"
@@ -159,6 +166,7 @@ defineProps({
                 <span>{{
                     __('welcome.footer', { year: new Date().getFullYear() })
                 }}</span>
+                <HurvionSignature class="mt-2" />
             </div>
         </footer>
     </div>
