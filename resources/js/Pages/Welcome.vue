@@ -294,7 +294,7 @@ const enableAds = () => {
                     <div
                         class="rounded-lg border border-zinc-800 bg-zinc-950 px-6 py-1 font-mono text-[10px] text-zinc-400"
                     >
-                        https://gamifica.edu/student/dashboard
+                        https://gamificaedu.com/student/dashboard
                     </div>
                     <div class="w-12"></div>
                 </div>
