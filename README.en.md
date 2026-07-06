@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="public/images/og-image.png" alt="GamificaEdu — Learn by playing and reach the top" width="640">
+</p>
+
 # GamificaEdu 🚀
 
 🌐 [Português (Brasil)](README.md) · **English**
@@ -18,7 +22,33 @@ GamificaEdu is a modern ecosystem for K-12 and higher education, built with **La
 - **Environment**: Docker via **Laravel Sail** (PHP 8.5, MySQL 8.4, Redis, Mailpit)
 - **Supported Databases**: MySQL / PostgreSQL / SQLite
 - **i18n**: `lang/` files (pt_BR and en) exposed to the frontend via the `__()` helper
-- **Quality**: Pest (116 tests), PHPStan (level 5 / Larastan), Laravel Pint, Rector and ESLint + Prettier — orchestrated via `composer quality`
+- **Quality**: Pest (128 tests), PHPStan (level 5 / Larastan), Laravel Pint, Rector and ESLint + Prettier — orchestrated via `composer quality`
+
+---
+
+## 🎨 Visual Identity
+
+<img src="public/favicon.svg" width="64" align="left" hspace="14" alt="GamificaEdu mark" />
+
+The brand blends **education** (the graduation cap) and **gamification** (the achievement *badge*, with the **amber** tassel standing in for the XP spark). The same symbol serves as logo, favicon and PWA icon — and the **Indigo → Violet** gradient is the platform's signature, over a premium, deterministic dark theme.
+
+<br clear="left" />
+
+### Palette
+
+| Color | Usage | Hex |
+|-------|-------|-----|
+| **Indigo** | Brand · primary actions · focus | `#6366F1` |
+| **Violet** | Brand gradient | `#7C3AED` |
+| **Emerald** | Progress · XP earned · success | `#10B981` |
+| **Amber** | Achievements · podium · point badges | `#F59E0B` |
+| **Rose** | Errors · risk | `#F43F5E` |
+| **Zinc 950** | Base surface (dark) | `#09090B` |
+
+### Typography & Icons
+
+- **Figtree** (weights 400–900) — geometric, modern and highly legible on screens, from headings to UI labels.
+- **Lucide** — icon library (2px stroke, rounded corners), consistent with the brand.
 
 ---
 
