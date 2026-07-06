@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Auth;
 
-use App\Actions\ForceChangePasswordAction;
+use App\Actions\Auth\ForceChangePasswordAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\ForceChangePasswordRequest;
 use Illuminate\Http\RedirectResponse;

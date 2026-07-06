@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
-use App\Services\SiteVisitExportService;
+use App\Services\Report\SiteVisitExportService;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class ExportSiteVisitController extends Controller

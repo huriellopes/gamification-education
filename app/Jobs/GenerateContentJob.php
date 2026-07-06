@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Jobs;
 
-use App\Actions\GenerateStudyMaterialAction;
-use App\Actions\GenerateTestForSubjectAction;
+use App\Actions\Content\GenerateStudyMaterialAction;
+use App\Actions\Content\GenerateTestForSubjectAction;
 use App\Models\Subject;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;

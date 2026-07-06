@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Jobs;
 
-use App\Actions\GetMembersReportDataAction;
-use App\Actions\GetPerformanceReportDataAction;
+use App\Actions\Report\GetMembersReportDataAction;
+use App\Actions\Report\GetPerformanceReportDataAction;
 use App\Enums\ReportStatus;
 use App\Models\Report;
 use Illuminate\Bus\Queueable;

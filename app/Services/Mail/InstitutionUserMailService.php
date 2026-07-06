@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Services;
+namespace App\Services\Mail;
 
 use App\Mail\WelcomeUserMail;
 use App\Models\User;

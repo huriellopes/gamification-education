@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Actions;
+namespace App\Actions\Content;
 
 use App\Models\StudyMaterial;
 use App\Models\Subject;
-use App\Services\MaterialGenerationService;
+use App\Services\Content\MaterialGenerationService;
 
 class GenerateStudyMaterialAction
 {

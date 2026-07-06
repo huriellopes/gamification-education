@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Actions;
+namespace App\Actions\Content;
 
 use App\Models\Question;
 use App\Models\Subject;
 use App\Models\Test;
-use App\Services\MaterialGenerationService;
+use App\Services\Content\MaterialGenerationService;
 use Illuminate\Support\Facades\DB;
 
 class GenerateTestForSubjectAction

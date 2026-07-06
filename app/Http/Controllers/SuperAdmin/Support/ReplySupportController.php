@@ -8,7 +8,7 @@ use App\Actions\Support\ReplyToSupportAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SuperAdmin\Support\ReplySupportRequest;
 use App\Models\Support;
-use App\Services\SupportMailService;
+use App\Services\Mail\SupportMailService;
 use Illuminate\Http\RedirectResponse;
 
 class ReplySupportController extends Controller

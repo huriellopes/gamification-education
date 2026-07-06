@@ -6,7 +6,7 @@ namespace App\Http\Controllers\SuperAdmin\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\Classroom;
-use App\Services\SuperAdminDashboardService;
+use App\Services\Dashboard\SuperAdminDashboardService;
 use Inertia\Inertia;
 use Inertia\Response;
 

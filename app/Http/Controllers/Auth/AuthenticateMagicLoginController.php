@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Services\MagicLoginService;
+use App\Services\Auth\MagicLoginService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 

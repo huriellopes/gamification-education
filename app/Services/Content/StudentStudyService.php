@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Services;
+namespace App\Services\Content;
 
 use App\Models\StudyMaterial;
 use App\Models\Subject;

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
-use App\Actions\GenerateStudyMaterialAction;
-use App\Actions\GenerateTestForSubjectAction;
+use App\Actions\Content\GenerateStudyMaterialAction;
+use App\Actions\Content\GenerateTestForSubjectAction;
 use App\Models\Institution;
 use App\Models\Subject;
 use App\Models\User;

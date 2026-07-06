@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Student\Study;
 
-use App\Actions\CompleteStudyMaterialAction;
+use App\Actions\Student\CompleteStudyMaterialAction;
 use App\Http\Controllers\Controller;
 use App\Models\StudyMaterial;
 use App\Models\Subject;

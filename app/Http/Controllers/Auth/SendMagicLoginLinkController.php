@@ -7,7 +7,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\MagicLoginLinkRequest;
 use App\Models\User;
-use App\Services\MagicLoginService;
+use App\Services\Auth\MagicLoginService;
 use Illuminate\Http\RedirectResponse;
 
 class SendMagicLoginLinkController extends Controller

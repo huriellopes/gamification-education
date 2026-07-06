@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Services;
+namespace App\Services\Dashboard;
 
 use App\Models\ScoreHistory;
 use App\Models\Subject;
 use App\Models\TestAttempt;
 use App\Models\User;
+use App\Services\Ranking\RankingService;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
 class StudentDashboardService

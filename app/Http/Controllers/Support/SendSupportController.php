@@ -8,7 +8,7 @@ use App\Actions\Support\CreateSupportRequestAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Support\SendSupportRequest;
 use App\Models\User;
-use App\Services\SupportMailService;
+use App\Services\Mail\SupportMailService;
 use Illuminate\Http\RedirectResponse;
 
 class SendSupportController extends Controller

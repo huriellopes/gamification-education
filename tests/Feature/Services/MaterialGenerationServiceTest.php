@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Services\MaterialGenerationService;
+use App\Services\Content\MaterialGenerationService;
 
 test('generates preset material details correctly', function () {
     $service = new MaterialGenerationService();

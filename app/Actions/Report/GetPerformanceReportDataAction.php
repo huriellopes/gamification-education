@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Actions;
+namespace App\Actions\Report;
 
 use App\Enums\UserRole;
 use App\Models\Institution;

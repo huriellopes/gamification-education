@@ -8,7 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Student\SubjectResource;
 use App\Models\Subject;
 use App\Models\User;
-use App\Services\StudentStudyService;
+use App\Services\Content\StudentStudyService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;

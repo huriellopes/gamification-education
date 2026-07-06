@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Actions\AddPointsToUserAction;
+use App\Actions\Student\AddPointsToUserAction;
 use App\Enums\ScoreSource;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;

@@ -6,7 +6,7 @@ namespace App\Actions\SuperAdmin\User;
 
 use App\Models\Classroom;
 use App\Models\User;
-use App\Services\InstitutionUserMailService;
+use App\Services\Mail\InstitutionUserMailService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 

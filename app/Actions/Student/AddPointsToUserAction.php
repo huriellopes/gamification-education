@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Actions;
+namespace App\Actions\Student;
 
 use App\Enums\ScoreSource;
 use App\Events\MilestoneReached;

@@ -10,7 +10,7 @@ use App\Http\Resources\Ranking\RankingUserResource;
 use App\Http\Resources\Ranking\SubjectRankingEntryResource;
 use App\Models\Subject;
 use App\Models\User;
-use App\Services\RankingService;
+use App\Services\Ranking\RankingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;

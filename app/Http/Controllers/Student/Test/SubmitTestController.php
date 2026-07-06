@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Student\Test;
 
-use App\Actions\SubmitTestAttemptAction;
+use App\Actions\Student\SubmitTestAttemptAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Student\Test\SubmitTestRequest;
 use App\Models\Subject;

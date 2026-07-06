@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-use App\Actions\CompleteStudyMaterialAction;
-use App\Actions\SubmitTestAttemptAction;
+use App\Actions\Student\CompleteStudyMaterialAction;
+use App\Actions\Student\SubmitTestAttemptAction;
 use App\Models\Institution;
 use App\Models\Question;
 use App\Models\StudyMaterial;
 use App\Models\Subject;
 use App\Models\Test;
 use App\Models\User;
-use App\Services\RankingService;
+use App\Services\Ranking\RankingService;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 

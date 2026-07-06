@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\SuperAdmin\Subject;
 
 use App\Http\Controllers\Controller;
-use App\Services\SuperAdminDashboardService;
+use App\Services\Dashboard\SuperAdminDashboardService;
 use Inertia\Inertia;
 use Inertia\Response;
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Actions\RecordSiteVisitAction;
+use App\Actions\Public\RecordSiteVisitAction;
 use App\Models\Subject;
 use App\Models\User;
 use Illuminate\Foundation\Application;
