@@ -169,10 +169,10 @@ class PdfSummaryService
         $foundHeading = false;
 
         foreach ($lines as $line) {
-            $trimmed = trim($line);
+            $trimmed = mb_trim($line);
 
             if ($this->looksLikeHeading($trimmed)) {
-                if ($current['title'] !== '' || trim($current['body']) !== '') {
+                if ($current['title'] !== '' || mb_trim($current['body']) !== '') {
                     $sections[] = $current;
                 }
                 $current = ['title' => $trimmed, 'body' => ''];
@@ -184,7 +184,7 @@ class PdfSummaryService
             $current['body'] .= $line . "\n";
         }
 
-        if ($current['title'] !== '' || trim($current['body']) !== '') {
+        if ($current['title'] !== '' || mb_trim($current['body']) !== '') {
             $sections[] = $current;
         }
 
@@ -194,7 +194,7 @@ class PdfSummaryService
 
         return array_values(array_filter(
             $sections,
-            fn ($section) => $section['title'] !== '' && trim($section['body']) !== '',
+            fn ($section) => $section['title'] !== '' && mb_trim($section['body']) !== '',
         ));
     }
 
@@ -226,7 +226,7 @@ class PdfSummaryService
             }
         }
 
-        if (trim($buffer) !== '') {
+        if (mb_trim($buffer) !== '') {
             $sections[] = ['title' => '', 'body' => $buffer];
         }
 
@@ -263,7 +263,7 @@ class PdfSummaryService
 
     protected function cleanTitle(string $title): string
     {
-        $clean = trim((string) preg_replace('/^#{1,6}\s+/', '', $title));
+        $clean = mb_trim((string) preg_replace('/^#{1,6}\s+/', '', $title));
 
         return $clean !== '' ? $clean : 'Material';
     }
@@ -271,7 +271,7 @@ class PdfSummaryService
     protected function fallbackTitleForPart(string $fallbackTitle, int $index): string
     {
         $clean = pathinfo($fallbackTitle, PATHINFO_FILENAME);
-        $clean = trim((string) preg_replace('/[_-]+/', ' ', $clean));
+        $clean = mb_trim((string) preg_replace('/[_-]+/', ' ', $clean));
         $base = $clean !== '' ? mb_convert_case($clean, MB_CASE_TITLE) : 'Material';
 
         return "{$base} — Parte {$index}";
@@ -296,7 +296,7 @@ class PdfSummaryService
 
         $lines[] = '## Conteúdo';
         $lines[] = '';
-        $lines[] = trim($body);
+        $lines[] = mb_trim($body);
 
         return implode("\n", $lines);
     }
@@ -331,7 +331,7 @@ class PdfSummaryService
         $text = preg_replace('/[ \t]+/', ' ', $text) ?? $text;
         $text = preg_replace('/\n{3,}/', "\n\n", $text) ?? $text;
 
-        return trim($text);
+        return mb_trim($text);
     }
 
     /**
@@ -350,7 +350,7 @@ class PdfSummaryService
     protected function splitSentences(string $text): array
     {
         $flat = preg_replace('/\s+/', ' ', str_replace("\n", ' ', $text)) ?? $text;
-        $parts = preg_split('/(?<=[.!?])\s+(?=[A-ZÁÉÍÓÚÂÊÔÃÕÀÇ0-9])/u', trim($flat)) ?: [];
+        $parts = preg_split('/(?<=[.!?])\s+(?=[A-ZÁÉÍÓÚÂÊÔÃÕÀÇ0-9])/u', mb_trim($flat)) ?: [];
 
         return array_values(array_filter(
             array_map('trim', $parts),
@@ -366,14 +366,14 @@ class PdfSummaryService
      */
     protected function guessTitle(array $paragraphs, string $fallbackTitle): string
     {
-        $firstLine = trim(explode("\n", $paragraphs[0] ?? '')[0] ?? '');
+        $firstLine = mb_trim(explode("\n", $paragraphs[0] ?? '')[0] ?? '');
 
         if ($firstLine !== '' && mb_strlen($firstLine) <= 120) {
             return $firstLine;
         }
 
         $clean = pathinfo($fallbackTitle, PATHINFO_FILENAME);
-        $clean = trim((string) preg_replace('/[_-]+/', ' ', $clean));
+        $clean = mb_trim((string) preg_replace('/[_-]+/', ' ', $clean));
 
         return $clean !== '' ? mb_convert_case($clean, MB_CASE_TITLE) : 'Material importado';
     }

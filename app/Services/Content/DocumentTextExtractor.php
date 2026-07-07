@@ -26,7 +26,7 @@ class DocumentTextExtractor
             default => throw new RuntimeException('Formato não suportado. Envie um PDF ou PowerPoint (.pptx).'),
         };
 
-        $text = trim($text);
+        $text = mb_trim($text);
 
         if ($text === '') {
             throw new RuntimeException('O arquivo não contém texto extraível (pode ser digitalizado/somente imagens).');
@@ -74,7 +74,7 @@ class DocumentTextExtractor
                 continue;
             }
 
-            $slideText = trim(implode(' ', array_map(
+            $slideText = mb_trim(implode(' ', array_map(
                 static fn (string $fragment): string => html_entity_decode(strip_tags($fragment), ENT_QUOTES | ENT_HTML5, 'UTF-8'),
                 $found[1],
             )));

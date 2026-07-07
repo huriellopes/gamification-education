@@ -42,7 +42,7 @@ class VerifyTwoFactorChallengeController extends Controller
             $normalized = (string) preg_replace('/\s+/', '', (string) $code);
             $authenticated = $service->verify($user->two_factor_secret, $normalized);
         } elseif (filled($recoveryCode)) {
-            $recoveryCode = trim((string) $recoveryCode);
+            $recoveryCode = mb_trim((string) $recoveryCode);
 
             if (in_array($recoveryCode, $user->recoveryCodes(), true)) {
                 $user->replaceRecoveryCode($recoveryCode);
