@@ -332,6 +332,11 @@ const confirmToggle = (classroom) => {
                         class="mt-1 block w-full"
                         rows="2"
                     />
+                    <span
+                        v-if="form.errors.description"
+                        class="mt-1 block text-xs text-rose-400"
+                        >{{ form.errors.description }}</span
+                    >
                 </div>
 
                 <div>
@@ -347,6 +352,11 @@ const confirmToggle = (classroom) => {
                             {{ t.name }}
                         </option>
                     </SelectInput>
+                    <span
+                        v-if="form.errors.teacher_id"
+                        class="mt-1 block text-xs text-rose-400"
+                        >{{ form.errors.teacher_id }}</span
+                    >
                 </div>
 
                 <div>
@@ -375,6 +385,11 @@ const confirmToggle = (classroom) => {
                     <p v-else class="text-xs italic text-zinc-400">
                         {{ __('classrooms.form_no_subjects_available') }}
                     </p>
+                    <span
+                        v-if="form.errors.subject_ids"
+                        class="mt-1 block text-xs text-rose-400"
+                        >{{ form.errors.subject_ids }}</span
+                    >
                 </div>
 
                 <div class="flex justify-end gap-3 pt-2">

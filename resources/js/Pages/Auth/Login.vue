@@ -4,8 +4,17 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
+import { __ } from '@/i18n';
 import { Head, Link, useForm } from '@inertiajs/vue3';
-import { ArrowLeft, Lock, Mail, Sparkles, UserPlus } from '@lucide/vue';
+import {
+    ChevronLeft,
+    ChevronRight,
+    Loader2,
+    Lock,
+    Mail,
+    Sparkles,
+    UserPlus,
+} from '@lucide/vue';
 import { ref } from 'vue';
 
 defineProps({
@@ -17,7 +26,13 @@ defineProps({
     },
 });
 
-const activeTab = ref('password'); // 'password' ou 'magic'
+// Permite abrir a tela já no tab de link mágico via ?tab=magic
+// (usado, por exemplo, pelo botão "Entrar com Link Mágico" da landing page).
+const initialTab =
+    new URLSearchParams(window.location.search).get('tab') === 'magic'
+        ? 'magic'
+        : 'password';
+const activeTab = ref(initialTab); // 'password' ou 'magic'
 
 const form = useForm({
     email: '',
@@ -30,7 +45,35 @@ const magicForm = useForm({
     remember: false,
 });
 
+// Validação client-side antes de enviar: exibe mensagens estilizadas
+// (via InputError) em vez dos balões nativos do navegador. O backend
+// continua validando como camada final de segurança.
+const validateLogin = () => {
+    form.clearErrors();
+    let valid = true;
+
+    const email = form.email.trim();
+    if (!email) {
+        form.setError('email', __('auth.email_required'));
+        valid = false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        form.setError('email', __('auth.email_invalid'));
+        valid = false;
+    }
+
+    if (!form.password) {
+        form.setError('password', __('auth.password_required'));
+        valid = false;
+    }
+
+    return valid;
+};
+
 const submit = () => {
+    if (!validateLogin()) {
+        return;
+    }
+
     form.post(route('login'), {
         onFinish: () => form.reset('password'),
     });
@@ -51,9 +94,11 @@ const sendMagicLink = () => {
 
         <Link
             href="/"
-            class="mb-6 inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-400 transition-colors hover:text-white"
+            class="group mb-6 inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-400 transition-colors hover:text-white"
         >
-            <ArrowLeft class="h-4 w-4" />
+            <ChevronLeft
+                class="h-4 w-4 animate-chevron-left motion-reduce:animate-none"
+            />
             {{ __('common.back_home') }}
         </Link>
 
@@ -110,6 +155,7 @@ const sendMagicLink = () => {
         <form
             v-if="activeTab === 'password'"
             @submit.prevent="submit"
+            novalidate
             class="space-y-4"
         >
             <div>
@@ -133,6 +179,7 @@ const sendMagicLink = () => {
                         autofocus
                         :placeholder="__('auth.email_placeholder')"
                         autocomplete="username"
+                        @input="form.clearErrors('email')"
                     />
                 </div>
                 <InputError class="mt-2" :message="form.errors.email" />
@@ -167,6 +214,7 @@ const sendMagicLink = () => {
                         required
                         placeholder="••••••••"
                         autocomplete="current-password"
+                        @input="form.clearErrors('password')"
                     />
                 </div>
                 <InputError class="mt-2" :message="form.errors.password" />
@@ -182,9 +230,18 @@ const sendMagicLink = () => {
             <button
                 type="submit"
                 :disabled="form.processing"
-                class="w-full rounded-xl bg-gradient-to-r from-indigo-600 to-violet-650 py-3 text-sm font-bold text-white transition-all hover:brightness-110 disabled:opacity-50"
+                class="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-650 py-3 text-sm font-bold text-white transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
             >
-                {{ __('auth.login') }}
+                <template v-if="form.processing">
+                    <Loader2 class="h-4 w-4 animate-spin" />
+                    {{ __('auth.logging_in') }}
+                </template>
+                <template v-else>
+                    {{ __('auth.login') }}
+                    <ChevronRight
+                        class="h-4 w-4 animate-chevron-right motion-reduce:animate-none"
+                    />
+                </template>
             </button>
         </form>
 
