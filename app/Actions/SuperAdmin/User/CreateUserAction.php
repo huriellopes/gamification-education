@@ -40,19 +40,22 @@ class CreateUserAction
         $attributes['password'] = bcrypt($tempPassword);
         $attributes['must_change_password'] = true;
 
-        // Para admin, a primeira instituição é o contexto ativo inicial.
-        if ($role === 'admin' && $institutionIds === [] && !empty($validated['institution_id'])) {
+        // Admins e professores podem ser vinculados a várias instituições.
+        $multiInstitution = in_array($role, ['admin', 'teacher'], true);
+
+        // A primeira instituição selecionada é o contexto ativo inicial.
+        if ($multiInstitution && $institutionIds === [] && !empty($validated['institution_id'])) {
             $institutionIds = [$validated['institution_id']];
         }
 
-        if ($role === 'admin' && $institutionIds !== []) {
+        if ($multiInstitution && $institutionIds !== []) {
             $attributes['institution_id'] = $institutionIds[0];
         }
 
-        $user = DB::transaction(function () use ($attributes, $role, $institutionIds, $classroomId) {
+        $user = DB::transaction(function () use ($attributes, $role, $multiInstitution, $institutionIds, $classroomId) {
             $user = User::create($attributes);
 
-            if ($role === 'admin' && $institutionIds !== []) {
+            if ($multiInstitution && $institutionIds !== []) {
                 $user->institutions()->sync($institutionIds);
             } elseif (!empty($user->institution_id)) {
                 $user->institutions()->sync([$user->institution_id]);

@@ -79,6 +79,7 @@ return [
         'go_public_site_title' => 'Ir para o Site Público',
         'go_public_site' => 'Ir para Site Público',
         'switch_unit' => 'Alternar Unidade',
+        'active_institution' => 'Instituição ativa',
         'settings_profile' => 'Configurações e Perfil',
         'my_profile' => 'Meu Perfil',
         'logout' => 'Sair da Conta',

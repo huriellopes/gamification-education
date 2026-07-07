@@ -2,8 +2,11 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Admin\SwitchInstitutionController;
+use App\Http\Controllers\Teacher\Classroom\EnrollStudentsController;
 use App\Http\Controllers\Teacher\Classroom\IndexClassroomController;
 use App\Http\Controllers\Teacher\GenerateContentController;
+use App\Http\Controllers\Teacher\ImportSubjectPdfController;
 use App\Http\Controllers\Teacher\Question\DestroyQuestionController;
 use App\Http\Controllers\Teacher\Question\StoreQuestionController;
 use App\Http\Controllers\Teacher\Question\UpdateQuestionController;
@@ -30,13 +33,18 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth', 'role.teacher'])->prefix('teacher')->name('teacher.')->group(function () {
     Route::get('/dashboard', TeacherDashboardController::class)->name('dashboard');
 
+    // Troca de instituição ativa (professor que leciona em vários lugares)
+    Route::post('/switch-institution/{institution}', SwitchInstitutionController::class)->name('institutions.switch');
+
     // Minhas Classrooms
     Route::get('/classrooms', IndexClassroomController::class)->name('classrooms.index');
+    Route::post('/classrooms/{classroom}/students', EnrollStudentsController::class)->name('classrooms.students.store');
 
     // Matérias do professor
     Route::get('/subjects', TeacherIndexSubjectController::class)->name('subjects.index');
     Route::get('/subjects/{subject}', ShowSubjectContentController::class)->name('subjects.show');
     Route::post('/subjects/{subject}/generate', GenerateContentController::class)->name('subjects.generate');
+    Route::post('/subjects/{subject}/import-pdf', ImportSubjectPdfController::class)->name('subjects.import-pdf');
 
     // CRUD de Matérias
     Route::post('/subjects', TeacherStoreSubjectController::class)->name('subjects.store');

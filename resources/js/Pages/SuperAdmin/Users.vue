@@ -134,8 +134,8 @@ const openEditUser = (user) => {
 };
 
 const submitUser = () => {
-    // If not admin, clear multi-select to satisfy backend rules
-    if (userForm.role !== 'admin') {
+    // Aluno usa instituição única; admin e professor usam múltiplas.
+    if (userForm.role === 'student') {
         userForm.institution_ids = [];
     } else {
         userForm.institution_id = '';
@@ -494,8 +494,8 @@ const formatDateTime = (dateStr) => {
                     >
                 </div>
 
-                <!-- Single Institution (Student/Teacher) -->
-                <div v-if="userForm.role !== 'admin'">
+                <!-- Single Institution (Student) -->
+                <div v-if="userForm.role === 'student'">
                     <label
                         class="mb-2 block text-xs font-bold uppercase text-zinc-400"
                         >{{ __('superadmin.users.label_institution') }}</label
@@ -547,8 +547,12 @@ const formatDateTime = (dateStr) => {
                     >
                 </div>
 
-                <!-- Multi-institution (Admin) -->
-                <div v-else>
+                <!-- Multi-institution (Admin e Professor) -->
+                <div
+                    v-if="
+                        userForm.role === 'admin' || userForm.role === 'teacher'
+                    "
+                >
                     <label
                         class="mb-2 block text-xs font-bold uppercase text-zinc-400"
                         >{{
@@ -589,12 +593,12 @@ const formatDateTime = (dateStr) => {
                     >
                         {{ __('common.cancel') }}
                     </Button>
-                    <Button type="submit" :disabled="userForm.processing">
-                        {{
-                            userForm.processing
-                                ? __('superadmin.users.saving')
-                                : __('superadmin.users.save_user')
-                        }}
+                    <Button
+                        type="submit"
+                        :loading="userForm.processing"
+                        :loadingText="__('common.saving')"
+                    >
+                        {{ __('superadmin.users.save_user') }}
                     </Button>
                 </div>
             </form>

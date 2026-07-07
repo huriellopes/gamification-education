@@ -99,7 +99,11 @@ const submit = () => {
                 :disabled="form.processing"
                 class="w-full rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 py-3 text-sm font-bold text-white transition-all hover:brightness-110 disabled:opacity-50"
             >
-                {{ __('auth.force_submit') }}
+                {{
+                    form.processing
+                        ? __('common.saving')
+                        : __('auth.force_submit')
+                }}
             </button>
         </form>
     </GuestLayout>

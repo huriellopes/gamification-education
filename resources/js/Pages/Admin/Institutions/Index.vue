@@ -116,7 +116,13 @@ const submit = () => {
                                 :disabled="form.processing"
                                 class="rounded-xl bg-indigo-650 px-5 py-2.5 text-xs font-bold text-white transition-all hover:bg-indigo-700 disabled:opacity-50"
                             >
-                                {{ __('admin.institutions.save_institution') }}
+                                {{
+                                    form.processing
+                                        ? __('common.registering')
+                                        : __(
+                                              'admin.institutions.save_institution',
+                                          )
+                                }}
                             </button>
                             <button
                                 type="button"

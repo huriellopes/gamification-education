@@ -49,30 +49,50 @@ class MagicLoginService
      */
     public function authenticate(string $token, bool $remember): bool
     {
+        $user = $this->resolveUserFromToken($token);
+
+        if (!$user instanceof User) {
+            return false;
+        }
+
+        $this->completeLogin($user, $remember);
+
+        return true;
+    }
+
+    /**
+     * Valida o token, marca-o como usado e retorna o usuário — SEM efetuar o
+     * login (permite intercalar o desafio de 2FA antes de autenticar).
+     */
+    public function resolveUserFromToken(string $token): ?User
+    {
         /** @var MagicLoginToken|null $magicToken */
         $magicToken = MagicLoginToken::where('token', $token)->first();
 
         if (!$magicToken || !$magicToken->isValid()) {
-            return false;
+            return null;
         }
 
-        // Marca o token como usado
         $magicToken->used_at = Carbon::now();
         $magicToken->save();
 
-        /** @var User $user */
+        /** @var User|null $user */
         $user = $magicToken->user;
 
-        // Efetua o login
+        return $user;
+    }
+
+    /**
+     * Efetua o login e aplica a restrição de sessão única.
+     */
+    public function completeLogin(User $user, bool $remember): void
+    {
         Auth::login($user, $remember);
         session()->regenerate();
 
-        // Restrição de login único: invalida todas as outras sessões do usuário no banco de dados
         DB::table('sessions')
             ->where('user_id', $user->id)
             ->where('id', '!=', session()->getId())
             ->delete();
-
-        return true;
     }
 }

@@ -31,18 +31,21 @@ class UpdateUserAction
             $attributes['password'] = bcrypt($attributes['password']);
         }
 
-        if ($role === 'admin' && $institutionIds === [] && !empty($validated['institution_id'])) {
+        // Admins e professores podem ser vinculados a várias instituições.
+        $multiInstitution = in_array($role, ['admin', 'teacher'], true);
+
+        if ($multiInstitution && $institutionIds === [] && !empty($validated['institution_id'])) {
             $institutionIds = [$validated['institution_id']];
         }
 
-        if ($role === 'admin' && $institutionIds !== [] && !in_array($user->institution_id, $institutionIds, true)) {
+        if ($multiInstitution && $institutionIds !== [] && !in_array($user->institution_id, $institutionIds, true)) {
             $attributes['institution_id'] = $institutionIds[0];
         }
 
-        DB::transaction(function () use ($user, $attributes, $role, $institutionIds, $classroomId) {
+        DB::transaction(function () use ($user, $attributes, $multiInstitution, $institutionIds, $classroomId) {
             $user->update($attributes);
 
-            if ($role === 'admin' && $institutionIds !== []) {
+            if ($multiInstitution && $institutionIds !== []) {
                 $user->institutions()->sync($institutionIds);
             } elseif (!empty($user->institution_id)) {
                 $user->institutions()->sync([$user->institution_id]);

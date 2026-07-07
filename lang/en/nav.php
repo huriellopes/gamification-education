@@ -79,6 +79,7 @@ return [
         'go_public_site_title' => 'Go to Public Site',
         'go_public_site' => 'Go to Public Site',
         'switch_unit' => 'Switch Unit',
+        'active_institution' => 'Active institution',
         'settings_profile' => 'Settings and Profile',
         'my_profile' => 'My Profile',
         'logout' => 'Log Out',

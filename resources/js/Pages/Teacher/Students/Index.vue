@@ -456,9 +456,13 @@ const toggleStatus = (student) => {
                         class="rounded-xl bg-indigo-600 px-5 py-2.5 text-xs font-bold text-white transition-colors hover:bg-indigo-500 disabled:opacity-50"
                     >
                         {{
-                            isEditing
-                                ? __('teacher.student_form.save_changes')
-                                : __('teacher.student_form.register')
+                            form.processing
+                                ? isEditing
+                                    ? __('common.saving')
+                                    : __('common.registering')
+                                : isEditing
+                                  ? __('teacher.student_form.save_changes')
+                                  : __('teacher.student_form.register')
                         }}
                     </button>
                 </div>

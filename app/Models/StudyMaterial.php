@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Spatie\DeletedModels\Models\Concerns\KeepsDeletedModels;
 
-#[Fillable(['subject_id', 'title', 'content', 'points_reward'])]
+#[Fillable(['subject_id', 'title', 'content', 'points_reward', 'source_hash'])]
 class StudyMaterial extends Model
 {
     use KeepsDeletedModels;

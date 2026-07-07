@@ -74,6 +74,8 @@ return [
         'role_label' => 'Role / Profile',
         'role_student' => 'Student',
         'role_teacher' => 'Teacher',
+        'institutions_label' => 'Institutions (a teacher can teach at several)',
+        'institutions_empty' => 'No institutions available.',
         'full_name' => 'Full Name',
         'name_placeholder' => 'E.g.: John Smith',
         'email_placeholder' => 'E.g.: john@institution.com',

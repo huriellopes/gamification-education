@@ -120,7 +120,11 @@ const updatePassword = () => {
                     :disabled="form.processing"
                     class="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-5 py-2.5 text-sm font-bold text-white transition-all hover:brightness-110 disabled:opacity-50"
                 >
-                    {{ __('common.save') }}
+                    {{
+                        form.processing
+                            ? __('common.saving')
+                            : __('common.save')
+                    }}
                 </button>
 
                 <Transition

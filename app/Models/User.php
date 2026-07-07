@@ -26,7 +26,7 @@ use Spatie\DeletedModels\Models\Concerns\KeepsDeletedModels;
  * @property GeneralStatus $is_active
  */
 #[Fillable(['name', 'email', 'password', 'institution_id', 'role', 'points', 'is_active', 'must_change_password', 'last_login_at'])]
-#[Hidden(['password', 'remember_token'])]
+#[Hidden(['password', 'remember_token', 'two_factor_secret', 'two_factor_recovery_codes'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
@@ -97,6 +97,38 @@ class User extends Authenticatable
             ->withTimestamps();
     }
 
+    /**
+     * IDs das instituições que o usuário gerencia/pertence (pivot), com
+     * fallback para a instituição principal. Usado para escopar o que um
+     * admin pode atribuir (ex.: vincular um professor a várias instituições).
+     *
+     * @return list<int>
+     */
+    public function managedInstitutionIds(): array
+    {
+        $ids = $this->institutions()->pluck('institutions.id')->all();
+
+        if ($ids === [] && $this->institution_id !== null) {
+            $ids = [$this->institution_id];
+        }
+
+        return array_values(array_map('intval', $ids));
+    }
+
+    /**
+     * Um admin pode gerenciar o usuário-alvo quando compartilham ao menos uma
+     * instituição (o professor pode pertencer a várias) e o alvo não é super
+     * admin. Substitui a antiga comparação por instituição única.
+     */
+    public function canManageInstitutionUser(self $target): bool
+    {
+        if ($target->isSuperAdmin()) {
+            return false;
+        }
+
+        return array_intersect($this->managedInstitutionIds(), $target->managedInstitutionIds()) !== [];
+    }
+
     public static function activeStudentsCount(): int
     {
         return self::students()->active()->count();
@@ -110,6 +142,37 @@ class User extends Authenticatable
     public static function getSuperAdmin(): ?self
     {
         return self::where('role', UserRole::SUPER_ADMIN)->first();
+    }
+
+    /**
+     * Indica se o usuário concluiu (confirmou) a configuração do 2FA.
+     */
+    public function hasTwoFactorEnabled(): bool
+    {
+        return !is_null($this->two_factor_confirmed_at);
+    }
+
+    /**
+     * Códigos de recuperação (array) do usuário.
+     *
+     * @return list<string>
+     */
+    public function recoveryCodes(): array
+    {
+        return $this->two_factor_recovery_codes ?? [];
+    }
+
+    /**
+     * Consome (remove) um código de recuperação usado, persistindo a lista.
+     */
+    public function replaceRecoveryCode(string $code): void
+    {
+        $remaining = array_values(array_filter(
+            $this->recoveryCodes(),
+            fn (string $existing) => !hash_equals($existing, $code),
+        ));
+
+        $this->forceFill(['two_factor_recovery_codes' => $remaining])->save();
     }
 
     /**
@@ -127,6 +190,9 @@ class User extends Authenticatable
             'role' => UserRole::class,
             'must_change_password' => 'boolean',
             'last_login_at' => 'datetime',
+            'two_factor_secret' => 'encrypted',
+            'two_factor_recovery_codes' => 'encrypted:array',
+            'two_factor_confirmed_at' => 'datetime',
         ];
     }
 }
