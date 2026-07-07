@@ -48,6 +48,11 @@ jobs:
       - name: Generate App Key
         run: php artisan key:generate
 
+      # A chave NÃO é versionada (.env.testing sem APP_KEY, por segurança).
+      # Geramos uma chave efêmera para o ambiente de testes em cada execução.
+      - name: Generate Testing App Key
+        run: php artisan key:generate --env=testing
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
