@@ -6,6 +6,7 @@ namespace App\Http\Resources;
 
 use App\Models\Institution;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -36,7 +37,17 @@ class UserResource extends JsonResource
                     'name' => $institution->name,
                 ];
             }),
-            'institution_ids' => $this->institutions()->pluck('institution_id')->all(),
+            'institution_ids' => $this->institutions()->pluck('institution_id')->all()
+                ?: array_values(array_filter([$this->institution_id])),
+            'institutions' => $this->whenLoaded('institutions', function () {
+                /** @var Collection<int, Institution> $institutions */
+                $institutions = $this->institutions;
+
+                return $institutions->map(fn (Institution $institution) => [
+                    'id' => $institution->id,
+                    'name' => $institution->name,
+                ])->all();
+            }),
             'classroom_ids' => $this->whenLoaded('enrolledClassrooms', fn () => $this->enrolledClassrooms->pluck('id')->all()),
             'classroom' => $this->whenLoaded('enrolledClassrooms', fn () => $this->enrolledClassrooms->pluck('name')->join(', ')),
             'points' => $this->points,

@@ -35,7 +35,11 @@ const uniqueUserInstitutions = computed(() => {
 });
 
 const switchInstitution = (id) => {
-    router.post(route('admin.institutions.switch', id));
+    const routeName =
+        page.props.auth.user.role === 'teacher'
+            ? 'teacher.institutions.switch'
+            : 'admin.institutions.switch';
+    router.post(route(routeName, id));
 };
 </script>
 
@@ -55,10 +59,10 @@ const switchInstitution = (id) => {
             }}</span>
         </a>
 
-        <!-- Switcher de instituição (admin) -->
+        <!-- Switcher de instituição (admin ou professor com mais de uma) -->
         <div
             v-if="
-                $page.props.auth.user.role === 'admin' &&
+                ['admin', 'teacher'].includes($page.props.auth.user.role) &&
                 uniqueUserInstitutions.length > 1
             "
             class="relative"

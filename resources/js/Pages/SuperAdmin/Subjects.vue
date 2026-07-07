@@ -9,7 +9,7 @@ import TextInput from '@/Components/TextInput.vue';
 import TextareaInput from '@/Components/TextareaInput.vue';
 import Tooltip from '@/Components/Tooltip.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { slugify } from '@/Utils/mask';
+import { onlyDigits, slugify } from '@/Utils/mask';
 import { __ } from '@/i18n';
 import { Head, router, useForm } from '@inertiajs/vue3';
 import { CheckCircle, Pencil, Plus, Power, Trash2, XCircle } from '@lucide/vue';
@@ -91,6 +91,17 @@ watch(
     (newName) => {
         if (!isEditingSubject.value) {
             subjectForm.slug = slugify(newName);
+        }
+    },
+);
+
+// Duração deve ser numérica (em horas): remove qualquer caractere não-dígito.
+watch(
+    () => subjectForm.duration,
+    (value) => {
+        const digits = onlyDigits(value, 4);
+        if (digits !== value) {
+            subjectForm.duration = digits;
         }
     },
 );
@@ -404,6 +415,7 @@ const confirmDeleteSubject = (sub) => {
                         <TextInput
                             v-model="subjectForm.duration"
                             type="text"
+                            inputmode="numeric"
                             required
                             :placeholder="
                                 __('superadmin.subjects.duration_placeholder')
@@ -427,12 +439,12 @@ const confirmDeleteSubject = (sub) => {
                     >
                         {{ __('common.cancel') }}
                     </Button>
-                    <Button type="submit" :disabled="subjectForm.processing">
-                        {{
-                            subjectForm.processing
-                                ? __('superadmin.subjects.saving')
-                                : __('superadmin.subjects.save_subject')
-                        }}
+                    <Button
+                        type="submit"
+                        :loading="subjectForm.processing"
+                        :loadingText="__('common.saving')"
+                    >
+                        {{ __('superadmin.subjects.save_subject') }}
                     </Button>
                 </div>
             </form>

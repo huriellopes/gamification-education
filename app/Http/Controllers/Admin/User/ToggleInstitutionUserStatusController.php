@@ -19,7 +19,7 @@ class ToggleInstitutionUserStatusController extends Controller
     {
         /** @var User $admin */
         $admin = auth()->user();
-        abort_if($user->institution_id !== $admin->institution_id || $user->isSuperAdmin(), 403);
+        abort_unless($admin->canManageInstitutionUser($user), 403);
 
         $newStatus = $toggleStatus($user);
 

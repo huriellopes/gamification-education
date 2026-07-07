@@ -344,7 +344,11 @@ const saveTeachers = () => {
                             :disabled="form.processing"
                             class="rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-bold text-white transition-all hover:bg-indigo-500 disabled:opacity-55"
                         >
-                            {{ __('common.save') }}
+                            {{
+                                form.processing
+                                    ? __('common.saving')
+                                    : __('common.save')
+                            }}
                         </button>
                     </div>
                 </form>

@@ -90,7 +90,11 @@ const submit = () => {
                 :disabled="form.processing"
                 class="w-full rounded-xl bg-gradient-to-r from-indigo-600 to-violet-650 py-3 text-sm font-bold text-white transition-all hover:brightness-110 disabled:opacity-50"
             >
-                {{ __('auth.send_reset_link') }}
+                {{
+                    form.processing
+                        ? __('common.processing')
+                        : __('auth.send_reset_link')
+                }}
             </button>
         </form>
     </GuestLayout>

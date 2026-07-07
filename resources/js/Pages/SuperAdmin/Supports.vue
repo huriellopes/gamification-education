@@ -317,14 +317,11 @@ const formatDateTime = (dateStr) => {
                         </Button>
                         <Button
                             type="submit"
-                            :disabled="replyForm.processing"
+                            :loading="replyForm.processing"
+                            :loadingText="__('common.saving')"
                             class="bg-indigo-600 font-bold hover:bg-indigo-500"
                         >
-                            {{
-                                replyForm.processing
-                                    ? __('superadmin.supports.replying')
-                                    : __('superadmin.supports.send_reply')
-                            }}
+                            {{ __('superadmin.supports.send_reply') }}
                         </Button>
                     </div>
                 </form>

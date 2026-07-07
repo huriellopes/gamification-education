@@ -272,7 +272,7 @@ test('super admin can store new subject', function () {
             'name' => 'Matemática Avançada',
             'slug' => 'matematica-avancada',
             'description' => 'Cálculo diferencial e integral',
-            'duration' => '80 horas',
+            'duration' => '80',
             'institution_id' => $this->institution->id,
         ])
         ->assertRedirect();
@@ -280,7 +280,7 @@ test('super admin can store new subject', function () {
     $this->assertDatabaseHas('subjects', [
         'name' => 'Matemática Avançada',
         'slug' => 'matematica-avancada',
-        'duration' => '80 horas',
+        'duration' => '80',
         'institution_id' => $this->institution->id,
     ]);
 });
@@ -290,7 +290,7 @@ test('super admin can update subject', function () {
         'name' => 'História Geral',
         'slug' => 'historia-geral',
         'description' => 'Estudo da história mundial',
-        'duration' => '60 horas',
+        'duration' => '60',
         'institution_id' => $this->institution->id,
         'is_active' => GeneralStatus::ACTIVE,
     ]);
@@ -300,7 +300,7 @@ test('super admin can update subject', function () {
             'name' => 'História Contemporânea',
             'slug' => 'historia-contemporanea',
             'description' => 'Atualizado',
-            'duration' => '40 horas',
+            'duration' => '40',
             'institution_id' => $this->institution->id,
         ])
         ->assertRedirect();
@@ -309,7 +309,7 @@ test('super admin can update subject', function () {
         'id' => $subject->id,
         'name' => 'História Contemporânea',
         'slug' => 'historia-contemporanea',
-        'duration' => '40 horas',
+        'duration' => '40',
     ]);
 });
 

@@ -67,7 +67,7 @@ const teacherHeaders = [
     },
 ];
 
-defineProps({
+const props = defineProps({
     teachers: {
         type: Array,
         default: () => [],
@@ -77,6 +77,10 @@ defineProps({
         default: () => [],
     },
     classrooms: {
+        type: Array,
+        default: () => [],
+    },
+    institutions: {
         type: Array,
         default: () => [],
     },
@@ -93,6 +97,7 @@ const form = useForm({
     password: '',
     role: 'student',
     classroom_id: '',
+    institution_ids: [],
 });
 
 const isActive = (item) => {
@@ -115,6 +120,9 @@ const openCreateModal = () => {
     selectedUserId.value = null;
     form.reset();
     form.role = activeTab.value === 'teachers' ? 'teacher' : 'student';
+    // Conveniência: se o admin gerencia apenas uma instituição, já a marca.
+    form.institution_ids =
+        props.institutions.length === 1 ? [props.institutions[0].id] : [];
     isModalOpen.value = true;
 };
 
@@ -126,6 +134,7 @@ const openEditModal = (user) => {
     form.role = user.role;
     form.password = '';
     form.classroom_id = user.classroom_ids?.[0] ?? '';
+    form.institution_ids = user.institution_ids ?? [];
     isModalOpen.value = true;
 };
 
@@ -583,6 +592,41 @@ const toggleStatus = (user) => {
                     >
                 </div>
 
+                <div v-if="form.role === 'teacher'">
+                    <label
+                        class="mb-2 block text-xs font-bold uppercase text-zinc-400"
+                        >{{ __('admin.users.institutions_label') }}</label
+                    >
+                    <div
+                        class="max-h-40 space-y-2 overflow-y-auto rounded-xl border border-zinc-800 bg-zinc-950/40 p-3"
+                    >
+                        <p
+                            v-if="institutions.length === 0"
+                            class="text-xs text-zinc-500"
+                        >
+                            {{ __('admin.users.institutions_empty') }}
+                        </p>
+                        <label
+                            v-for="inst in institutions"
+                            :key="inst.id"
+                            class="flex cursor-pointer items-center gap-2 text-sm text-zinc-300 hover:text-white"
+                        >
+                            <input
+                                v-model="form.institution_ids"
+                                type="checkbox"
+                                :value="inst.id"
+                                class="h-4 w-4 rounded border-zinc-700 bg-zinc-900 text-indigo-600 focus:ring-indigo-500"
+                            />
+                            <span>{{ inst.name }}</span>
+                        </label>
+                    </div>
+                    <span
+                        v-if="form.errors.institution_ids"
+                        class="mt-1 block text-xs text-red-500"
+                        >{{ form.errors.institution_ids }}</span
+                    >
+                </div>
+
                 <div v-if="form.role === 'student'">
                     <label
                         class="mb-2 block text-xs font-bold uppercase text-zinc-400"
@@ -621,9 +665,13 @@ const toggleStatus = (user) => {
                         class="rounded-xl bg-indigo-600 px-5 py-2.5 text-xs font-bold text-white transition-colors hover:bg-indigo-500 disabled:opacity-50"
                     >
                         {{
-                            isEditing
-                                ? __('admin.users.confirm_save_title')
-                                : __('common.save')
+                            form.processing
+                                ? isEditing
+                                    ? __('common.saving')
+                                    : __('common.registering')
+                                : isEditing
+                                  ? __('admin.users.confirm_save_title')
+                                  : __('common.save')
                         }}
                     </button>
                 </div>

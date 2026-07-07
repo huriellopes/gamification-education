@@ -50,7 +50,7 @@ test('admin cannot update a subject from another institution', function () {
         ->put(route('admin.subjects.update', $this->subjectB), [
             'name' => 'Invadido',
             'slug' => 'invadido',
-            'duration' => '4h',
+            'duration' => '4',
         ])
         ->assertForbidden();
 

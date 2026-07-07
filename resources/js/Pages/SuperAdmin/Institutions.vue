@@ -784,12 +784,12 @@ const confirmDeleteInstitution = (inst) => {
                     >
                         {{ __('common.cancel') }}
                     </Button>
-                    <Button type="submit" :disabled="instForm.processing">
-                        {{
-                            instForm.processing
-                                ? __('superadmin.institutions.saving')
-                                : __('superadmin.institutions.save_institution')
-                        }}
+                    <Button
+                        type="submit"
+                        :loading="instForm.processing"
+                        :loadingText="__('common.saving')"
+                    >
+                        {{ __('superadmin.institutions.save_institution') }}
                     </Button>
                 </div>
             </form>

@@ -160,7 +160,11 @@ const submit = () => {
                 class="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-650 py-3 text-sm font-bold text-white transition-all hover:brightness-110 disabled:opacity-50"
             >
                 <UserPlus class="h-4 w-4" />
-                {{ __('auth.create_account') }}
+                {{
+                    form.processing
+                        ? __('common.registering')
+                        : __('auth.create_account')
+                }}
             </button>
         </form>
 

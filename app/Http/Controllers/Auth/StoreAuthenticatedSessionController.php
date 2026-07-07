@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -19,16 +20,26 @@ class StoreAuthenticatedSessionController extends Controller
     {
         $request->authenticate();
 
-        $request->session()->regenerate();
-
+        /** @var User $user */
         $user = Auth::user();
 
-        if ($user) {
-            DB::table('sessions')
-                ->where('user_id', $user->id)
-                ->where('id', '!=', $request->session()->getId())
-                ->delete();
+        // Se o usuário tem 2FA ativo, não completamos o login: guardamos o
+        // contexto na sessão e exigimos o código de dois fatores.
+        if ($user->hasTwoFactorEnabled()) {
+            Auth::guard('web')->logout();
+
+            $request->session()->put('login.id', $user->id);
+            $request->session()->put('login.remember', $request->boolean('remember'));
+
+            return to_route('two-factor.login');
         }
+
+        $request->session()->regenerate();
+
+        DB::table('sessions')
+            ->where('user_id', $user->id)
+            ->where('id', '!=', $request->session()->getId())
+            ->delete();
 
         return to_route('dashboard');
     }

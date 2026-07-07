@@ -22,7 +22,7 @@ class UpdateInstitutionUserController extends Controller
     ): RedirectResponse {
         /** @var User $admin */
         $admin = auth()->user();
-        abort_if((int) $user->institution_id !== (int) $admin->institution_id || $user->isSuperAdmin(), 403);
+        abort_unless($admin->canManageInstitutionUser($user), 403);
 
         $updateUser($user, $request->validated());
 

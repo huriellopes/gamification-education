@@ -130,7 +130,7 @@ test('teacher can store, update, and delete subject', function () {
         ->post(route('teacher.subjects.store'), [
             'name' => 'Laravel 11 Advanced',
             'slug' => 'laravel-11-advanced',
-            'duration' => '40 hours',
+            'duration' => '40',
             'description' => 'Advanced topics in Laravel framework',
         ])
         ->assertRedirect(route('teacher.subjects.index'));
@@ -146,7 +146,7 @@ test('teacher can store, update, and delete subject', function () {
         ->put(route('teacher.subjects.update', $subject->id), [
             'name' => 'Laravel 11 Experts',
             'slug' => 'laravel-11-experts',
-            'duration' => '50 hours',
+            'duration' => '50',
             'description' => 'Experts topics in Laravel',
         ])
         ->assertRedirect();
@@ -332,7 +332,7 @@ test('teacher can link a subject to their own classroom but not to another teach
         ->post(route('teacher.subjects.store'), [
             'name' => 'Linked Subject',
             'slug' => 'linked-subject',
-            'duration' => '20 hours',
+            'duration' => '20',
             'classroom_id' => $ownClassroom->id,
         ])
         ->assertRedirect(route('teacher.subjects.index'));
@@ -347,7 +347,7 @@ test('teacher can link a subject to their own classroom but not to another teach
         ->post(route('teacher.subjects.store'), [
             'name' => 'Invalid Link Subject',
             'slug' => 'invalid-link-subject',
-            'duration' => '20 hours',
+            'duration' => '20',
             'classroom_id' => $foreignClassroom->id,
         ])
         ->assertInvalid('classroom_id');

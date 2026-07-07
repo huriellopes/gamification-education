@@ -20,6 +20,13 @@ return [
     'no_teacher' => 'No teacher',
     'no_subjects' => 'No subjects linked',
     'subjects_count' => ':count subject(s)',
+    'students_count' => ':count student(s)',
+    'add_students' => 'Add students',
+    'enroll_title' => 'Add students — :name',
+    'enroll_search' => 'Search student by name or email...',
+    'enroll_no_students' => 'No students found.',
+    'enroll_already' => 'Enrolled',
+    'enroll_submit' => 'Enroll selected',
 
     'form_name' => 'Class Name',
     'form_name_placeholder' => 'e.g. 3rd Grade A - Morning',

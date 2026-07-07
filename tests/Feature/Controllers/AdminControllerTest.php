@@ -79,7 +79,7 @@ test('admin can view and store subject for their institution', function () {
             'name' => 'Vue 3 Course',
             'slug' => 'vue-3-course',
             'description' => 'Learn composition API',
-            'duration' => '30 horas',
+            'duration' => '30',
         ])
         ->assertRedirect();
 
@@ -180,7 +180,7 @@ test('admin can update, toggle status, and delete subjects', function () {
         ->put(route('admin.subjects.update', $subject->id), [
             'name' => 'Laravel Basic Updated',
             'slug' => 'laravel-basic-updated',
-            'duration' => '20 hours',
+            'duration' => '20',
             'description' => 'Updated desc',
             'institution_id' => $this->institution->id,
         ])

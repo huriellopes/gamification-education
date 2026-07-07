@@ -20,6 +20,13 @@ return [
     'no_teacher' => 'Sem professor',
     'no_subjects' => 'Nenhuma matéria vinculada',
     'subjects_count' => ':count matéria(s)',
+    'students_count' => ':count aluno(s)',
+    'add_students' => 'Adicionar alunos',
+    'enroll_title' => 'Adicionar alunos — :name',
+    'enroll_search' => 'Buscar aluno por nome ou e-mail...',
+    'enroll_no_students' => 'Nenhum aluno encontrado.',
+    'enroll_already' => 'Na turma',
+    'enroll_submit' => 'Matricular selecionados',
 
     'form_name' => 'Nome da Turma',
     'form_name_placeholder' => 'Ex.: 3º Ano A - Manhã',

@@ -18,9 +18,11 @@ use App\Http\Controllers\Auth\StoreEmailVerificationNotificationController;
 use App\Http\Controllers\Auth\StoreNewPasswordController;
 use App\Http\Controllers\Auth\StorePasswordResetLinkController;
 use App\Http\Controllers\Auth\StoreRegisteredUserController;
+use App\Http\Controllers\Auth\TwoFactorChallengeController;
 use App\Http\Controllers\Auth\UpdateForceChangePasswordController;
 use App\Http\Controllers\Auth\UpdatePasswordController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\Auth\VerifyTwoFactorChallengeController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
@@ -39,6 +41,13 @@ Route::middleware('guest')->group(function () {
         ->name('login');
 
     Route::post('login', StoreAuthenticatedSessionController::class);
+
+    // Desafio de dois fatores (usuário já validou a senha, aguardando o código)
+    Route::get('two-factor-challenge', TwoFactorChallengeController::class)
+        ->name('two-factor.login');
+
+    Route::post('two-factor-challenge', VerifyTwoFactorChallengeController::class)
+        ->name('two-factor.login.store');
 
     Route::get('forgot-password', CreatePasswordResetLinkController::class)
         ->name('password.request');
