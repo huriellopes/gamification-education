@@ -28,6 +28,22 @@ export default {
                 violet: { 650: '#7531e3' },
                 zinc: { 850: '#1f1f23' },
             },
+            // Chevrons de navegação que oscilam suavemente para frente e para
+            // trás, indicando a direção da ação de forma contínua e leve.
+            keyframes: {
+                'chevron-nudge-right': {
+                    '0%, 100%': { transform: 'translateX(0)' },
+                    '50%': { transform: 'translateX(3px)' },
+                },
+                'chevron-nudge-left': {
+                    '0%, 100%': { transform: 'translateX(0)' },
+                    '50%': { transform: 'translateX(-3px)' },
+                },
+            },
+            animation: {
+                'chevron-right': 'chevron-nudge-right 1.3s ease-in-out infinite',
+                'chevron-left': 'chevron-nudge-left 1.3s ease-in-out infinite',
+            },
         },
     },
 

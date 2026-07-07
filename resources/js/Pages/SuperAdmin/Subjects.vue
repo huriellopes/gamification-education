@@ -324,6 +324,11 @@ const confirmDeleteSubject = (sub) => {
                             type="text"
                             required
                         />
+                        <span
+                            v-if="subjectForm.errors.name"
+                            class="mt-1 block text-xs text-rose-400"
+                            >{{ subjectForm.errors.name }}</span
+                        >
                     </div>
                     <div>
                         <label
@@ -335,6 +340,11 @@ const confirmDeleteSubject = (sub) => {
                             type="text"
                             required
                         />
+                        <span
+                            v-if="subjectForm.errors.slug"
+                            class="mt-1 block text-xs text-rose-400"
+                            >{{ subjectForm.errors.slug }}</span
+                        >
                     </div>
                 </div>
 
@@ -346,6 +356,11 @@ const confirmDeleteSubject = (sub) => {
                         }}</label
                     >
                     <TextareaInput v-model="subjectForm.description" rows="3" />
+                    <span
+                        v-if="subjectForm.errors.description"
+                        class="mt-1 block text-xs text-rose-400"
+                        >{{ subjectForm.errors.description }}</span
+                    >
                 </div>
 
                 <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -373,6 +388,11 @@ const confirmDeleteSubject = (sub) => {
                                 {{ inst.name }}
                             </option>
                         </SelectInput>
+                        <span
+                            v-if="subjectForm.errors.institution_id"
+                            class="mt-1 block text-xs text-rose-400"
+                            >{{ subjectForm.errors.institution_id }}</span
+                        >
                     </div>
                     <div>
                         <label
@@ -389,6 +409,11 @@ const confirmDeleteSubject = (sub) => {
                                 __('superadmin.subjects.duration_placeholder')
                             "
                         />
+                        <span
+                            v-if="subjectForm.errors.duration"
+                            class="mt-1 block text-xs text-rose-400"
+                            >{{ subjectForm.errors.duration }}</span
+                        >
                     </div>
                 </div>
 

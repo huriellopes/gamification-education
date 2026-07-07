@@ -160,6 +160,11 @@ const formatDateTime = (dateStr) => {
                                 {{ inst.name }}
                             </option>
                         </select>
+                        <span
+                            v-if="reportForm.errors.institution_id"
+                            class="mt-1 block text-xs text-rose-400"
+                            >{{ reportForm.errors.institution_id }}</span
+                        >
                     </div>
 
                     <div class="flex gap-3">

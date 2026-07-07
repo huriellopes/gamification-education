@@ -3,13 +3,15 @@ import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import HurvionSignature from '@/Components/HurvionSignature.vue';
 import { Head, Link, usePage } from '@inertiajs/vue3';
 import {
-    ArrowRight,
     BookOpen,
     CheckCircle2,
+    ChevronRight,
     Cookie,
     LogIn,
     Menu,
+    Quote,
     Sparkles,
+    Star,
     Trophy,
     UserPlus,
     X,
@@ -38,6 +40,59 @@ defineProps({
 
 const page = usePage();
 const user = page.props.auth?.user;
+
+// Depoimentos ilustrativos (dados fictícios) usados na landing page para
+// exibir prova social. As iniciais alimentam o avatar gerado por CSS.
+const testimonials = [
+    {
+        name: 'Maria Silva',
+        role: 'Aluna do 3º ano',
+        initials: 'MS',
+        color: 'bg-indigo-500/15 text-indigo-300 ring-indigo-500/30',
+        rating: 5,
+        quote: 'Nunca imaginei que estudar pudesse ser tão viciante. Subir no ranking da turma virou minha meta toda semana!',
+    },
+    {
+        name: 'Prof. Carlos Mendes',
+        role: 'Professor de Matemática',
+        initials: 'CM',
+        color: 'bg-emerald-500/15 text-emerald-300 ring-emerald-500/30',
+        rating: 5,
+        quote: 'Meus alunos entregam as atividades sem eu precisar cobrar. O sistema de XP fez a participação disparar em sala.',
+    },
+    {
+        name: 'João Souza',
+        role: 'Aluno do 2º ano',
+        initials: 'JS',
+        color: 'bg-yellow-500/15 text-yellow-300 ring-yellow-500/30',
+        rating: 5,
+        quote: 'O login por link mágico é sensacional, nunca mais esqueci senha. E adoro acompanhar meus pontos crescendo.',
+    },
+    {
+        name: 'Ana Beatriz',
+        role: 'Coordenadora Pedagógica',
+        initials: 'AB',
+        color: 'bg-violet-500/15 text-violet-300 ring-violet-500/30',
+        rating: 5,
+        quote: 'Conseguimos acompanhar o engajamento de cada turma em tempo real. Uma virada de chave na nossa gestão.',
+    },
+    {
+        name: 'Lucas Ferreira',
+        role: 'Aluno do 1º ano',
+        initials: 'LF',
+        color: 'bg-sky-500/15 text-sky-300 ring-sky-500/30',
+        rating: 4,
+        quote: 'As trilhas de aprendizado são bem organizadas e os desafios me mantêm focado até terminar cada matéria.',
+    },
+    {
+        name: 'Fernanda Rocha',
+        role: 'Professora de Ciências',
+        initials: 'FR',
+        color: 'bg-rose-500/15 text-rose-300 ring-rose-500/30',
+        rating: 5,
+        quote: 'A gamificação transformou a leitura dos materiais em algo que os alunos realmente querem fazer. Recomendo demais!',
+    },
+];
 
 const isMobileMenuOpen = ref(false);
 const showCookieConsent = ref(false);
@@ -136,10 +191,12 @@ const enableAds = () => {
                     <Link
                         v-if="user"
                         :href="route('dashboard')"
-                        class="inline-flex items-center gap-2 rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-2 text-sm font-semibold text-zinc-200 transition-all hover:bg-zinc-800 hover:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        class="group inline-flex items-center gap-2 rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-2 text-sm font-semibold text-zinc-200 transition-all hover:bg-zinc-800 hover:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     >
                         <span>{{ __('welcome.nav.go_dashboard') }}</span>
-                        <ArrowRight class="h-4 w-4" />
+                        <ChevronRight
+                            class="h-4 w-4 animate-chevron-right motion-reduce:animate-none"
+                        />
                     </Link>
 
                     <template v-else>
@@ -183,10 +240,12 @@ const enableAds = () => {
                     <Link
                         v-if="user"
                         :href="route('dashboard')"
-                        class="flex items-center justify-center gap-2 rounded-xl border border-zinc-800 bg-zinc-900 py-3 text-sm font-bold text-zinc-200 hover:bg-zinc-800"
+                        class="group flex items-center justify-center gap-2 rounded-xl border border-zinc-800 bg-zinc-900 py-3 text-sm font-bold text-zinc-200 hover:bg-zinc-800"
                     >
                         <span>{{ __('welcome.nav.go_dashboard') }}</span>
-                        <ArrowRight class="h-4 w-4" />
+                        <ChevronRight
+                            class="h-4 w-4 animate-chevron-right motion-reduce:animate-none"
+                        />
                     </Link>
 
                     <template v-else>
@@ -251,24 +310,28 @@ const enableAds = () => {
                     <Link
                         v-if="user"
                         :href="route('dashboard')"
-                        class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-8 py-3.5 text-base font-bold text-white shadow-lg shadow-indigo-600/30 transition-all hover:bg-indigo-500 hover:shadow-indigo-500/40 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:w-auto"
+                        class="group inline-flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-8 py-3.5 text-base font-bold text-white shadow-lg shadow-indigo-600/30 transition-all hover:bg-indigo-500 hover:shadow-indigo-500/40 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:w-auto"
                     >
                         <span>{{ __('welcome.hero.access_panel') }}</span>
-                        <ArrowRight class="h-5 w-5" />
+                        <ChevronRight
+                            class="h-5 w-5 animate-chevron-right motion-reduce:animate-none"
+                        />
                     </Link>
                     <template v-else>
                         <Link
                             :href="route('register')"
-                            class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-8 py-3.5 text-base font-bold text-white shadow-lg shadow-indigo-600/30 transition-all hover:bg-indigo-500 hover:shadow-indigo-500/40 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:w-auto"
+                            class="group inline-flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-8 py-3.5 text-base font-bold text-white shadow-lg shadow-indigo-600/30 transition-all hover:bg-indigo-500 hover:shadow-indigo-500/40 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:w-auto"
                         >
                             <span>{{ __('welcome.hero.start_now') }}</span>
-                            <ArrowRight class="h-5 w-5" />
+                            <ChevronRight
+                                class="h-5 w-5 animate-chevron-right motion-reduce:animate-none"
+                            />
                         </Link>
                         <Link
-                            :href="route('login')"
+                            :href="route('login', { tab: 'magic' })"
                             class="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-zinc-800 bg-zinc-900 px-8 py-3.5 text-base font-bold text-zinc-300 transition-all hover:bg-zinc-800 hover:text-white focus:outline-none sm:w-auto"
                         >
-                            <LogIn class="h-5 w-5" />
+                            <Sparkles class="h-5 w-5 text-amber-400" />
                             <span>{{ __('welcome.hero.magic_login') }}</span>
                         </Link>
                     </template>
@@ -552,9 +615,88 @@ const enableAds = () => {
             </div>
         </section>
 
+        <!-- Testimonials Section -->
+        <section class="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+            <div class="mx-auto max-w-2xl text-center">
+                <span
+                    class="inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-indigo-400"
+                >
+                    <Sparkles class="h-3.5 w-3.5" />
+                    {{ __('welcome.testimonials.badge') }}
+                </span>
+                <h2
+                    class="mt-5 text-3xl font-black tracking-tight text-white sm:text-4xl"
+                >
+                    {{ __('welcome.testimonials.title') }}
+                </h2>
+                <p class="mt-4 text-base font-medium text-zinc-400">
+                    {{ __('welcome.testimonials.subtitle') }}
+                </p>
+            </div>
+
+            <div
+                class="mt-14 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
+            >
+                <figure
+                    v-for="(testimonial, index) in testimonials"
+                    :key="index"
+                    class="relative flex flex-col rounded-2xl border border-zinc-800/80 bg-zinc-900/30 p-6 transition-all hover:-translate-y-1 hover:border-zinc-700 hover:bg-zinc-900/60"
+                >
+                    <Quote
+                        class="absolute right-5 top-5 h-8 w-8 text-zinc-800"
+                        aria-hidden="true"
+                    />
+
+                    <!-- Rating -->
+                    <div
+                        class="flex items-center gap-0.5"
+                        :aria-label="`${testimonial.rating} de 5 estrelas`"
+                    >
+                        <Star
+                            v-for="star in 5"
+                            :key="star"
+                            class="h-4 w-4"
+                            :class="
+                                star <= testimonial.rating
+                                    ? 'fill-yellow-400 text-yellow-400'
+                                    : 'text-zinc-700'
+                            "
+                            aria-hidden="true"
+                        />
+                    </div>
+
+                    <!-- Quote -->
+                    <blockquote
+                        class="mt-4 flex-1 text-sm font-medium leading-relaxed text-zinc-300"
+                    >
+                        “{{ testimonial.quote }}”
+                    </blockquote>
+
+                    <!-- Author -->
+                    <figcaption class="mt-6 flex items-center gap-3">
+                        <span
+                            class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-sm font-bold ring-1 ring-inset"
+                            :class="testimonial.color"
+                            aria-hidden="true"
+                        >
+                            {{ testimonial.initials }}
+                        </span>
+                        <span class="flex flex-col">
+                            <span class="text-sm font-bold text-white">{{
+                                testimonial.name
+                            }}</span>
+                            <span class="text-xs font-medium text-zinc-400">{{
+                                testimonial.role
+                            }}</span>
+                        </span>
+                    </figcaption>
+                </figure>
+            </div>
+        </section>
+
         <!-- Footer -->
         <footer
-            class="mx-auto flex max-w-7xl flex-col items-center gap-4 px-4 py-12 text-center font-mono text-xs text-zinc-400 sm:px-6 lg:px-8"
+            class="mx-auto flex max-w-7xl flex-col items-center gap-4 border-t border-zinc-900 px-4 py-12 text-center font-mono text-xs text-zinc-400 sm:px-6 lg:px-8"
         >
             <div class="flex items-center gap-4">
                 <Link

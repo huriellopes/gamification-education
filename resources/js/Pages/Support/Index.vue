@@ -122,6 +122,11 @@ const submitSupport = () => {
                             "
                             class="placeholder-zinc-650 w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-sm text-zinc-200 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                         />
+                        <span
+                            v-if="form.errors.subject"
+                            class="mt-1 block text-xs text-rose-400"
+                            >{{ form.errors.subject }}</span
+                        >
                     </div>
 
                     <div>
@@ -138,6 +143,11 @@ const submitSupport = () => {
                             "
                             class="placeholder-zinc-650 w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-sm text-zinc-200 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                         ></textarea>
+                        <span
+                            v-if="form.errors.message"
+                            class="mt-1 block text-xs text-rose-400"
+                            >{{ form.errors.message }}</span
+                        >
                     </div>
 
                     <div class="flex justify-end pt-2">
