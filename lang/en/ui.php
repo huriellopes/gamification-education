@@ -35,6 +35,8 @@ return [
         'email' => 'Email',
         'description' => 'Description',
         'back' => 'Back',
+        'show_password' => 'Show password',
+        'hide_password' => 'Hide password',
     ],
 
     'auth' => [
@@ -49,6 +51,10 @@ return [
         'tab_magic' => 'Magic Login',
         'forgot_password' => 'Forgot your password?',
         'login' => 'Sign in',
+        'logging_in' => 'Signing in...',
+        'email_required' => 'Please enter your email.',
+        'email_invalid' => 'Please enter a valid email.',
+        'password_required' => 'Please enter your password.',
         'magic_hint' => 'Enter the email registered on the platform to receive an instant access link. The link is single-use and expires in 15 minutes.',
         'magic_email' => 'Registered Email',
         'send_magic_link' => 'Send Access Link',
@@ -141,6 +147,11 @@ return [
             'subjects_offered' => 'Subjects Offered',
             'xp_earned' => 'XP Points Earned',
             'online_responsive' => 'Online & Responsive',
+        ],
+        'testimonials' => [
+            'badge' => 'Testimonials',
+            'title' => 'Loved by those who use it',
+            'subtitle' => 'See what students, teachers and coordinators say about the GamificaEdu experience.',
         ],
         'footer' => '© :year GamificaEdu. All rights reserved.',
         'legal' => [

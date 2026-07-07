@@ -975,6 +975,11 @@ const deleteQuestion = () => {
                         </div>
                     </div>
                     <span
+                        v-if="questionForm.errors.correct_option_index"
+                        class="mt-1 block text-xs text-red-500"
+                        >{{ questionForm.errors.correct_option_index }}</span
+                    >
+                    <span
                         v-if="questionForm.errors.options"
                         class="mt-1 block text-xs text-red-500"
                         >{{ questionForm.errors.options }}</span

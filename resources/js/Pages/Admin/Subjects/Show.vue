@@ -326,6 +326,11 @@ const saveTeachers = () => {
                             }}
                         </div>
                     </div>
+                    <span
+                        v-if="form.errors.teacher_ids"
+                        class="mt-1 block text-xs text-red-500"
+                        >{{ form.errors.teacher_ids }}</span
+                    >
                     <div class="flex justify-end gap-3 pt-2">
                         <button
                             type="button"

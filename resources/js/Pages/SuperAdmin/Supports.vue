@@ -298,6 +298,11 @@ const formatDateTime = (dateStr) => {
                                 __('superadmin.supports.reply_placeholder')
                             "
                         />
+                        <span
+                            v-if="replyForm.errors.reply"
+                            class="mt-1 block text-xs text-rose-400"
+                            >{{ replyForm.errors.reply }}</span
+                        >
                     </div>
 
                     <div

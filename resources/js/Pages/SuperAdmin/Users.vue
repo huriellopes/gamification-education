@@ -428,6 +428,11 @@ const formatDateTime = (dateStr) => {
                         >{{ __('superadmin.users.label_full_name') }}</label
                     >
                     <TextInput v-model="userForm.name" type="text" required />
+                    <span
+                        v-if="userForm.errors.name"
+                        class="mt-1 block text-xs text-rose-400"
+                        >{{ userForm.errors.name }}</span
+                    >
                 </div>
 
                 <div>
@@ -436,6 +441,11 @@ const formatDateTime = (dateStr) => {
                         >{{ __('superadmin.users.label_email') }}</label
                     >
                     <TextInput v-model="userForm.email" type="email" required />
+                    <span
+                        v-if="userForm.errors.email"
+                        class="mt-1 block text-xs text-rose-400"
+                        >{{ userForm.errors.email }}</span
+                    >
                 </div>
 
                 <div>
@@ -454,6 +464,11 @@ const formatDateTime = (dateStr) => {
                         type="password"
                         :required="!isEditingUser"
                     />
+                    <span
+                        v-if="userForm.errors.password"
+                        class="mt-1 block text-xs text-rose-400"
+                        >{{ userForm.errors.password }}</span
+                    >
                 </div>
 
                 <div>
@@ -472,6 +487,11 @@ const formatDateTime = (dateStr) => {
                             {{ __('superadmin.users.option_admin') }}
                         </option>
                     </SelectInput>
+                    <span
+                        v-if="userForm.errors.role"
+                        class="mt-1 block text-xs text-rose-400"
+                        >{{ userForm.errors.role }}</span
+                    >
                 </div>
 
                 <!-- Single Institution (Student/Teacher) -->
@@ -492,6 +512,11 @@ const formatDateTime = (dateStr) => {
                             {{ inst.name }}
                         </option>
                     </SelectInput>
+                    <span
+                        v-if="userForm.errors.institution_id"
+                        class="mt-1 block text-xs text-rose-400"
+                        >{{ userForm.errors.institution_id }}</span
+                    >
                 </div>
 
                 <!-- Turma do aluno (vínculo opcional) -->
@@ -515,6 +540,11 @@ const formatDateTime = (dateStr) => {
                             {{ c.name }}
                         </option>
                     </SelectInput>
+                    <span
+                        v-if="userForm.errors.classroom_id"
+                        class="mt-1 block text-xs text-rose-400"
+                        >{{ userForm.errors.classroom_id }}</span
+                    >
                 </div>
 
                 <!-- Multi-institution (Admin) -->
@@ -542,6 +572,11 @@ const formatDateTime = (dateStr) => {
                             <span>{{ inst.name }}</span>
                         </label>
                     </div>
+                    <span
+                        v-if="userForm.errors.institution_ids"
+                        class="mt-1 block text-xs text-rose-400"
+                        >{{ userForm.errors.institution_ids }}</span
+                    >
                 </div>
 
                 <div

@@ -4,7 +4,7 @@ import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
-import { ArrowLeft, Lock, Mail, User, UserPlus } from '@lucide/vue';
+import { ChevronLeft, Lock, Mail, User, UserPlus } from '@lucide/vue';
 
 const form = useForm({
     name: '',
@@ -26,9 +26,11 @@ const submit = () => {
 
         <Link
             href="/"
-            class="mb-6 inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-400 transition-colors hover:text-white"
+            class="group mb-6 inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-400 transition-colors hover:text-white"
         >
-            <ArrowLeft class="h-4 w-4" />
+            <ChevronLeft
+                class="h-4 w-4 animate-chevron-left motion-reduce:animate-none"
+            />
             {{ __('common.back_home') }}
         </Link>
 

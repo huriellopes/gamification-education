@@ -2,7 +2,7 @@
 import HurvionSignature from '@/Components/HurvionSignature.vue';
 import { __ } from '@/i18n';
 import { Head, Link, usePage } from '@inertiajs/vue3';
-import { ArrowLeft, ArrowRight, GraduationCap, LogIn } from '@lucide/vue';
+import { ChevronLeft, ChevronRight, GraduationCap, LogIn } from '@lucide/vue';
 
 const user = usePage().props.auth?.user;
 
@@ -55,18 +55,22 @@ defineProps({
                 <div class="flex items-center gap-2 sm:gap-3">
                     <Link
                         href="/"
-                        class="inline-flex items-center gap-1.5 rounded-xl border border-zinc-800 px-3 py-2 text-xs font-bold text-zinc-300 transition-all hover:bg-zinc-900 hover:text-white"
+                        class="group inline-flex items-center gap-1.5 rounded-xl border border-zinc-800 px-3 py-2 text-xs font-bold text-zinc-300 transition-all hover:bg-zinc-900 hover:text-white"
                     >
-                        <ArrowLeft class="h-3.5 w-3.5" />
+                        <ChevronLeft
+                            class="h-3.5 w-3.5 animate-chevron-left motion-reduce:animate-none"
+                        />
                         <span class="hidden sm:inline">{{ backToSite }}</span>
                     </Link>
                     <Link
                         v-if="user"
                         :href="route('dashboard')"
-                        class="inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 px-3.5 py-2 text-xs font-bold text-white shadow-lg shadow-indigo-600/25 transition-all hover:bg-indigo-500"
+                        class="group inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 px-3.5 py-2 text-xs font-bold text-white shadow-lg shadow-indigo-600/25 transition-all hover:bg-indigo-500"
                     >
                         {{ __('welcome.nav.go_dashboard') }}
-                        <ArrowRight class="h-3.5 w-3.5" />
+                        <ChevronRight
+                            class="h-3.5 w-3.5 animate-chevron-right motion-reduce:animate-none"
+                        />
                     </Link>
                     <Link
                         v-else

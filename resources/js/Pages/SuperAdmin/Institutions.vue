@@ -462,6 +462,11 @@ const confirmDeleteInstitution = (inst) => {
                             type="text"
                             required
                         />
+                        <span
+                            v-if="instForm.errors.name"
+                            class="mt-1 block text-xs text-rose-400"
+                            >{{ instForm.errors.name }}</span
+                        >
                     </div>
                     <div>
                         <label
@@ -476,6 +481,11 @@ const confirmDeleteInstitution = (inst) => {
                             required
                             @input="wasSlugManuallyEdited = true"
                         />
+                        <span
+                            v-if="instForm.errors.slug"
+                            class="mt-1 block text-xs text-rose-400"
+                            >{{ instForm.errors.slug }}</span
+                        >
                     </div>
                 </div>
 
@@ -491,6 +501,11 @@ const confirmDeleteInstitution = (inst) => {
                             v-model="instForm.razao_social"
                             type="text"
                         />
+                        <span
+                            v-if="instForm.errors.razao_social"
+                            class="mt-1 block text-xs text-rose-400"
+                            >{{ instForm.errors.razao_social }}</span
+                        >
                     </div>
                     <div>
                         <label
@@ -508,6 +523,11 @@ const confirmDeleteInstitution = (inst) => {
                             placeholder="00.000.000/0000-00"
                             maxlength="18"
                         />
+                        <span
+                            v-if="instForm.errors.cnpj"
+                            class="mt-1 block text-xs text-rose-400"
+                            >{{ instForm.errors.cnpj }}</span
+                        >
                     </div>
                 </div>
 
@@ -519,6 +539,11 @@ const confirmDeleteInstitution = (inst) => {
                         }}</label
                     >
                     <TextareaInput v-model="instForm.description" rows="2" />
+                    <span
+                        v-if="instForm.errors.description"
+                        class="mt-1 block text-xs text-rose-400"
+                        >{{ instForm.errors.description }}</span
+                    >
                 </div>
 
                 <!-- Address Section (ViaCEP auto lookup) -->
@@ -567,6 +592,11 @@ const confirmDeleteInstitution = (inst) => {
                                 class="mt-1 block text-xs font-medium text-rose-400"
                                 >{{ cepErrorMessage }}</span
                             >
+                            <span
+                                v-if="instForm.errors['address.cep']"
+                                class="mt-1 block text-xs text-rose-400"
+                                >{{ instForm.errors['address.cep'] }}</span
+                            >
                         </div>
                         <div class="md:col-span-2">
                             <label
@@ -579,6 +609,13 @@ const confirmDeleteInstitution = (inst) => {
                                 v-model="instForm.address.logradouro"
                                 type="text"
                             />
+                            <span
+                                v-if="instForm.errors['address.logradouro']"
+                                class="mt-1 block text-xs text-rose-400"
+                                >{{
+                                    instForm.errors['address.logradouro']
+                                }}</span
+                            >
                         </div>
                     </div>
 
@@ -594,6 +631,11 @@ const confirmDeleteInstitution = (inst) => {
                                 v-model="instForm.address.numero"
                                 type="text"
                             />
+                            <span
+                                v-if="instForm.errors['address.numero']"
+                                class="mt-1 block text-xs text-rose-400"
+                                >{{ instForm.errors['address.numero'] }}</span
+                            >
                         </div>
                         <div>
                             <label
@@ -608,6 +650,13 @@ const confirmDeleteInstitution = (inst) => {
                                 v-model="instForm.address.complemento"
                                 type="text"
                             />
+                            <span
+                                v-if="instForm.errors['address.complemento']"
+                                class="mt-1 block text-xs text-rose-400"
+                                >{{
+                                    instForm.errors['address.complemento']
+                                }}</span
+                            >
                         </div>
                         <div>
                             <label
@@ -622,6 +671,11 @@ const confirmDeleteInstitution = (inst) => {
                                 v-model="instForm.address.bairro"
                                 type="text"
                             />
+                            <span
+                                v-if="instForm.errors['address.bairro']"
+                                class="mt-1 block text-xs text-rose-400"
+                                >{{ instForm.errors['address.bairro'] }}</span
+                            >
                         </div>
                         <div>
                             <label
@@ -652,6 +706,16 @@ const confirmDeleteInstitution = (inst) => {
                                     class="w-12 text-center"
                                 />
                             </div>
+                            <span
+                                v-if="instForm.errors['address.cidade']"
+                                class="mt-1 block text-xs text-rose-400"
+                                >{{ instForm.errors['address.cidade'] }}</span
+                            >
+                            <span
+                                v-if="instForm.errors['address.uf']"
+                                class="mt-1 block text-xs text-rose-400"
+                                >{{ instForm.errors['address.uf'] }}</span
+                            >
                         </div>
                     </div>
                 </div>
@@ -703,6 +767,11 @@ const confirmDeleteInstitution = (inst) => {
                             </Button>
                         </div>
                     </div>
+                    <span
+                        v-if="instForm.errors.phones"
+                        class="mt-1 block text-xs text-rose-400"
+                        >{{ instForm.errors.phones }}</span
+                    >
                 </div>
 
                 <div

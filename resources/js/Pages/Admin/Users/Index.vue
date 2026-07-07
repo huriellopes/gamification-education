@@ -519,6 +519,11 @@ const toggleStatus = (user) => {
                             {{ __('admin.users.role_teacher') }}
                         </option>
                     </SelectInput>
+                    <span
+                        v-if="form.errors.role"
+                        class="mt-1 block text-xs text-red-500"
+                        >{{ form.errors.role }}</span
+                    >
                 </div>
 
                 <div>
