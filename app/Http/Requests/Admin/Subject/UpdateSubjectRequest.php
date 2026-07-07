@@ -30,7 +30,7 @@ class UpdateSubjectRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'slug' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
-            'duration' => ['required', 'string', 'max:255'],
+            'duration' => ['required', 'integer', 'min:1', 'max:9999'],
             'institution_id' => [
                 $user?->isSuperAdmin() ? 'required' : 'nullable',
                 'exists:institutions,id',

@@ -23,13 +23,27 @@ class UpdateInstitutionUserAction
         $classroomId = $attributes['classroom_id'] ?? null;
         unset($attributes['classroom_id']);
 
+        // Professores podem lecionar em várias instituições (pivot). A primeira
+        // selecionada passa a ser a instituição principal.
+        $institutionIds = $attributes['institution_ids'] ?? null;
+        unset($attributes['institution_ids']);
+
         if (empty($attributes['password'])) {
             unset($attributes['password']);
         } else {
             $attributes['password'] = bcrypt($attributes['password']);
         }
 
+        if ($user->role === UserRole::TEACHER && is_array($institutionIds) && $institutionIds !== []) {
+            $institutionIds = array_values(array_map('intval', $institutionIds));
+            $attributes['institution_id'] = $institutionIds[0];
+        }
+
         $user->update($attributes);
+
+        if ($user->role === UserRole::TEACHER && is_array($institutionIds) && $institutionIds !== []) {
+            $user->institutions()->sync($institutionIds);
+        }
 
         if ($hasClassroom && $user->role === UserRole::STUDENT) {
             $this->syncClassroom($user, $classroomId);

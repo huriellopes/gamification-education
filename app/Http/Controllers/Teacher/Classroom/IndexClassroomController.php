@@ -20,13 +20,21 @@ class IndexClassroomController extends Controller
 
         $classrooms = Classroom::query()
             ->where('teacher_id', $user->id)
-            ->with(['subjects:id,name,classroom_id,slug'])
-            ->withCount('subjects')
+            ->with(['subjects:id,name,classroom_id,slug', 'students:id'])
+            ->withCount(['subjects', 'students'])
             ->latest()
             ->get();
 
+        // Alunos da instituição do professor, disponíveis para matrícula.
+        $students = User::query()
+            ->students()
+            ->forInstitution((int) $user->institution_id)
+            ->orderBy('name')
+            ->get(['id', 'name', 'email']);
+
         return Inertia::render('Teacher/Classrooms/Index', [
             'classrooms' => ClassroomResource::collection($classrooms)->resolve(),
+            'students' => $students,
         ]);
     }
 }

@@ -8,7 +8,7 @@ import TextInput from '@/Components/TextInput.vue';
 import Tooltip from '@/Components/Tooltip.vue';
 import { __ } from '@/i18n';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { slugify } from '@/Utils/mask';
+import { onlyDigits, slugify } from '@/Utils/mask';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { FileText, ListChecks, Pencil, Plus, Trash2 } from '@lucide/vue';
 import { ref, watch } from 'vue';
@@ -36,6 +36,17 @@ watch(
     (newName) => {
         if (!isEditingSubject.value && !wasSlugManuallyEdited.value) {
             subForm.slug = slugify(newName);
+        }
+    },
+);
+
+// Duração deve ser numérica (em horas): remove qualquer caractere não-dígito.
+watch(
+    () => subForm.duration,
+    (value) => {
+        const digits = onlyDigits(value, 4);
+        if (digits !== value) {
+            subForm.duration = digits;
         }
     },
 );
@@ -301,6 +312,7 @@ const deleteSubject = () => {
                     <TextInput
                         v-model="subForm.duration"
                         type="text"
+                        inputmode="numeric"
                         required
                         :placeholder="
                             __('teacher.subject_form.duration_placeholder')
@@ -372,9 +384,11 @@ const deleteSubject = () => {
                         class="rounded-xl bg-indigo-600 px-5 py-2.5 text-xs font-bold text-white transition-colors hover:bg-indigo-500 disabled:opacity-50"
                     >
                         {{
-                            isEditingSubject
-                                ? __('teacher.subject_form.save_changes')
-                                : __('teacher.subject_form.create')
+                            subForm.processing
+                                ? __('common.saving')
+                                : isEditingSubject
+                                  ? __('teacher.subject_form.save_changes')
+                                  : __('teacher.subject_form.create')
                         }}
                     </button>
                 </div>

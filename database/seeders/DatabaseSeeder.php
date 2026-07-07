@@ -15,11 +15,45 @@ use Illuminate\Support\Facades\Hash;
 class DatabaseSeeder extends Seeder
 {
     /**
+     * Quantidade de registros em massa (para testar paginação/rankings).
+     */
+    private const BULK_STUDENTS = 120;
+
+    private const BULK_TEACHERS = 10;
+
+    private const BULK_SUBJECTS = 15;
+
+    /**
      * Seed the application's database.
      */
     public function run(): void
     {
-        // 1. Criar Instituições de Ensino
+        $this->info('🌱 Iniciando o seeding do banco de dados...');
+
+        [$ift, $uec] = $this->seedInstitutions();
+        [$admin, $teacher] = $this->seedStaff($ift, $uec);
+        $this->seedDemoStudents($ift, $uec);
+        $this->seedSubjectsWithContent($ift, $teacher);
+        $this->seedBulkData($ift, $uec);
+
+        $this->info('✅ Seeding concluído com sucesso!');
+        $this->info(sprintf(
+            '   Resumo: %d usuários, %d instituições, %d matérias.',
+            User::count(),
+            Institution::count(),
+            Subject::count(),
+        ));
+    }
+
+    /**
+     * Cria as instituições de ensino de demonstração.
+     *
+     * @return array{0: Institution, 1: Institution}
+     */
+    private function seedInstitutions(): array
+    {
+        $this->info('🏫 Criando instituições...');
+
         $ift = Institution::create([
             'name' => 'Instituto Federal de Tecnologia (IFT)',
             'razao_social' => 'Instituto Federal de Tecnologia Ltda',
@@ -56,140 +90,163 @@ class DatabaseSeeder extends Seeder
             'phones' => ['1132543000'],
         ]);
 
-        // 2. Criar Usuário Super Admin (Acesso Global)
-        User::create([
+        return [$ift, $uec];
+    }
+
+    /**
+     * Cria super admin, administrador de instituição e professor.
+     * O admin e o professor ficam vinculados a duas instituições (multi-instituição).
+     *
+     * @return array{0: User, 1: User}
+     */
+    private function seedStaff(Institution $ift, Institution $uec): array
+    {
+        $this->info('👑 Criando Super Administrador global...');
+        $this->createUser([
             'name' => 'Super Administrador Global',
             'email' => 'super_admin@example.com',
-            'password' => Hash::make('password'),
             'role' => 'super_admin',
-            'points' => 0,
             'institution_id' => null,
         ]);
 
-        // 3. Criar Usuário Administrador de Instituição (IFT)
-        $admin = User::create([
+        $this->info('🧑‍💼 Criando Administrador (IFT + UEC)...');
+        $admin = $this->createUser([
             'name' => 'Administrador IFT',
             'email' => 'admin@example.com',
-            'password' => Hash::make('password'),
             'role' => 'admin',
-            'points' => 0,
             'institution_id' => $ift->id,
         ]);
+        $admin->institutions()->sync([$ift->id, $uec->id]);
 
-        // 4. Criar Professor (IFT)
-        $teacher = User::create([
+        $this->info('👨‍🏫 Criando Professor (multi-instituição: IFT + UEC)...');
+        $teacher = $this->createUser([
             'name' => 'Professor de Tecnologia',
             'email' => 'teacher@example.com',
-            'password' => Hash::make('password'),
             'role' => 'teacher',
-            'points' => 0,
             'institution_id' => $ift->id,
         ]);
+        $teacher->institutions()->sync([$ift->id, $uec->id]);
 
-        // 3. Criar Alunos Comuns com pontuações variadas para testar o Ranking
-        // Maria (UEC) - 290 pts
-        User::create([
-            'name' => 'Maria Silva',
-            'email' => 'maria@example.com',
-            'password' => Hash::make('password'),
-            'role' => 'student',
-            'points' => 290,
-            'institution_id' => $uec->id,
-        ]);
+        return [$admin, $teacher];
+    }
 
-        // Student (IFT) - 225 pts (Aluno padrão para testes rápidos)
-        User::create([
-            'name' => 'Aluno Demonstrativo',
-            'email' => 'student@example.com',
-            'password' => Hash::make('password'),
-            'role' => 'student',
-            'points' => 225,
-            'institution_id' => $ift->id,
-        ]);
+    /**
+     * Cria alunos nomeados com pontuações variadas (para testar o ranking).
+     */
+    private function seedDemoStudents(Institution $ift, Institution $uec): void
+    {
+        $this->info('🎓 Criando alunos de demonstração...');
 
-        // João (IFT) - 180 pts
-        User::create([
-            'name' => 'João Souza',
-            'email' => 'joao@example.com',
-            'password' => Hash::make('password'),
-            'role' => 'student',
-            'points' => 180,
-            'institution_id' => $ift->id,
-        ]);
+        $students = [
+            ['name' => 'Maria Silva', 'email' => 'maria@example.com', 'points' => 290, 'institution_id' => $uec->id],
+            ['name' => 'Aluno Demonstrativo', 'email' => 'student@example.com', 'points' => 225, 'institution_id' => $ift->id],
+            ['name' => 'João Souza', 'email' => 'joao@example.com', 'points' => 180, 'institution_id' => $ift->id],
+            ['name' => 'Pedro Rocha', 'email' => 'pedro@example.com', 'points' => 95, 'institution_id' => $ift->id],
+        ];
 
-        // Pedro (IFT) - 95 pts
-        User::create([
-            'name' => 'Pedro Rocha',
-            'email' => 'pedro@example.com',
-            'password' => Hash::make('password'),
-            'role' => 'student',
-            'points' => 95,
-            'institution_id' => $ift->id,
-        ]);
+        foreach ($students as $student) {
+            $this->createUser([...$student, 'role' => 'student']);
+        }
+    }
 
-        // 4. Criar Matérias para o IFT
+    /**
+     * Cria matérias do IFT e gera materiais + desafios automaticamente.
+     */
+    private function seedSubjectsWithContent(Institution $ift, User $teacher): void
+    {
+        $this->info('📚 Criando matérias e gerando conteúdo (materiais + desafios)...');
+
         $subjectWeb = Subject::create([
             'institution_id' => $ift->id,
             'name' => 'Desenvolvimento Web com Laravel',
+            'slug' => 'desenvolvimento-web-com-laravel',
             'description' => 'Aprofundamento no Laravel Framework 13.x, InertiaJS, Vue 3 e arquiteturas limpas baseadas em padrões.',
         ]);
 
         $subjectDatabase = Subject::create([
             'institution_id' => $ift->id,
             'name' => 'Arquitetura de Banco de Dados',
+            'slug' => 'arquitetura-de-banco-de-dados',
             'description' => 'Otimização de queries, indexação de tabelas e persistência de dados em alta performance.',
         ]);
 
-        // 5. Instanciar as Actions para gerar materiais e testes automaticamente via Seeder
         $generateMaterial = resolve(GenerateStudyMaterialAction::class);
         $generateTest = resolve(GenerateTestForSubjectAction::class);
 
-        // Gerar materiais e testes para a matéria de Web/Laravel
-        $generateMaterial->execute($subjectWeb, 'laravel_eloquent');
-        $generateTest->execute($subjectWeb, 'laravel_eloquent');
+        $content = [
+            [$subjectWeb, 'laravel_eloquent'],
+            [$subjectWeb, 'vue_composition'],
+            [$subjectDatabase, 'tailwind_css'],
+        ];
 
-        $generateMaterial->execute($subjectWeb, 'vue_composition');
-        $generateTest->execute($subjectWeb, 'vue_composition');
+        foreach ($content as [$subject, $theme]) {
+            $generateMaterial->execute($subject, $theme);
+            $generateTest->execute($subject, $theme);
+        }
 
-        // Gerar material e teste para a matéria de Banco de Dados
-        $generateMaterial->execute($subjectDatabase, 'tailwind_css'); // Usando tema do preset para simular conteúdo rico
-        $generateTest->execute($subjectDatabase, 'tailwind_css');
-
-        // Associar matérias ao professor criado
         $teacher->subjects()->attach([$subjectWeb->id, $subjectDatabase->id]);
+    }
 
-        // Associar instituições ao administrador criado
-        $admin->institutions()->attach([$ift->id, $uec->id]);
+    /**
+     * Gera dados em massa para testar paginação e rankings.
+     */
+    private function seedBulkData(Institution $ift, Institution $uec): void
+    {
+        $this->info(sprintf(
+            '📈 Gerando dados em massa: %d alunos, %d professores, %d matérias...',
+            self::BULK_STUDENTS,
+            self::BULK_TEACHERS,
+            self::BULK_SUBJECTS,
+        ));
 
-        // 6. Gerar dados em lote para testar a paginação (120 estudantes, 10 professores e 15 matérias extras)
-        for ($i = 1; $i <= 120; $i++) {
-            User::create([
+        for ($i = 1; $i <= self::BULK_STUDENTS; $i++) {
+            $this->createUser([
                 'name' => "Estudante de Teste Paginação {$i}",
                 'email' => "student_page_{$i}@example.com",
-                'password' => Hash::make('password'),
                 'role' => 'student',
                 'points' => rand(10, 800),
                 'institution_id' => $i % 2 === 0 ? $ift->id : $uec->id,
             ]);
         }
 
-        for ($i = 1; $i <= 10; $i++) {
-            User::create([
+        for ($i = 1; $i <= self::BULK_TEACHERS; $i++) {
+            $this->createUser([
                 'name' => "Professor Auxiliar {$i}",
                 'email' => "teacher_page_{$i}@example.com",
-                'password' => Hash::make('password'),
                 'role' => 'teacher',
-                'points' => 0,
                 'institution_id' => $ift->id,
             ]);
         }
 
-        for ($i = 1; $i <= 15; $i++) {
+        for ($i = 1; $i <= self::BULK_SUBJECTS; $i++) {
             Subject::create([
                 'institution_id' => $ift->id,
                 'name' => "Matéria Optativa {$i}",
+                'slug' => "materia-optativa-{$i}",
                 'description' => "Descrição detalhada para a Matéria Optativa de número {$i} para fins de testes de paginação do admin.",
             ]);
         }
+    }
+
+    /**
+     * Cria um usuário aplicando os valores padrão (senha e pontuação).
+     *
+     * @param  array<string, mixed>  $attributes
+     */
+    private function createUser(array $attributes): User
+    {
+        return User::create([
+            'password' => Hash::make('password'),
+            'points' => 0,
+            ...$attributes,
+        ]);
+    }
+
+    /**
+     * Escreve uma mensagem de progresso no console (quando executado via artisan).
+     */
+    private function info(string $message): void
+    {
+        $this->command?->info($message);
     }
 }

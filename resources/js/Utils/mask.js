@@ -57,6 +57,15 @@ export function maskCep(value) {
     return clean.replace(/^(\d{5})(\d{0,3})$/, '$1-$2');
 }
 
+/**
+ * Mantém apenas dígitos (0-9), opcionalmente limitando o comprimento.
+ * Usado, por exemplo, no campo de duração da matéria (valor numérico).
+ */
+export function onlyDigits(value, maxLength = null) {
+    const digits = String(value ?? '').replace(/\D/g, '');
+    return maxLength ? digits.slice(0, maxLength) : digits;
+}
+
 export function slugify(text) {
     return text
         .toString()

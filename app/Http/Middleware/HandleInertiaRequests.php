@@ -37,7 +37,9 @@ class HandleInertiaRequests extends Middleware
         if ($user) {
             $user->load('institution');
 
-            if ($user->isInstitutionAdmin()) {
+            // Admins e professores podem estar vinculados a várias instituições
+            // (o professor pode lecionar em vários lugares) e alternar o contexto.
+            if ($user->isInstitutionAdmin() || $user->isTeacher()) {
                 $user->load('institutions');
             }
         }

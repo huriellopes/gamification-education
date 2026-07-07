@@ -7,7 +7,7 @@ import TextInput from '@/Components/TextInput.vue';
 import Tooltip from '@/Components/Tooltip.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
-import { Pencil, Plus, Sparkles, Trash2 } from '@lucide/vue';
+import { FileText, Pencil, Plus, Sparkles, Trash2, Upload } from '@lucide/vue';
 import { ref } from 'vue';
 
 const props = defineProps({
@@ -35,6 +35,32 @@ const generateContent = () => {
         },
         onSuccess: () => {
             aiForm.reset();
+        },
+    });
+};
+
+// Importação de PDF: gera resumo/conteúdo a partir do arquivo enviado.
+const pdfInput = ref(null);
+const pdfFileName = ref('');
+const pdfForm = useForm({
+    file: null,
+});
+
+const onPdfSelected = (event) => {
+    const file = event.target.files?.[0] ?? null;
+    pdfForm.file = file;
+    pdfFileName.value = file ? file.name : '';
+};
+
+const submitPdf = () => {
+    pdfForm.post(route('teacher.subjects.import-pdf', props.subject.id), {
+        forceFormData: true,
+        onSuccess: () => {
+            pdfForm.reset();
+            pdfFileName.value = '';
+            if (pdfInput.value) {
+                pdfInput.value.value = '';
+            }
         },
     });
 };
@@ -428,6 +454,71 @@ const deleteQuestion = () => {
                     </div>
                 </div>
 
+                <!-- Importar conteúdo de um PDF -->
+                <div
+                    class="mt-8 rounded-2xl border border-zinc-800 bg-zinc-900/40 p-6"
+                >
+                    <h3
+                        class="flex items-center gap-2 text-lg font-bold text-white"
+                    >
+                        <FileText class="h-5 w-5 text-emerald-400" />
+                        {{ __('teacher.subject_show.pdf_title') }}
+                    </h3>
+                    <p class="mt-1 text-sm text-zinc-400">
+                        {{ __('teacher.subject_show.pdf_subtitle') }}
+                    </p>
+
+                    <form
+                        @submit.prevent="submitPdf"
+                        class="mt-4 flex flex-col gap-3 md:flex-row md:items-start"
+                    >
+                        <div class="flex-grow">
+                            <label
+                                class="flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-zinc-700 bg-zinc-950/40 px-4 py-3 text-sm font-semibold text-zinc-300 transition-colors hover:border-emerald-500 hover:text-white"
+                            >
+                                <Upload class="h-4 w-4 shrink-0" />
+                                <span class="truncate">{{
+                                    pdfFileName ||
+                                    __('teacher.subject_show.pdf_select')
+                                }}</span>
+                                <input
+                                    ref="pdfInput"
+                                    type="file"
+                                    accept=".pdf,.pptx,application/pdf,application/vnd.openxmlformats-officedocument.presentationml.presentation"
+                                    class="hidden"
+                                    @change="onPdfSelected"
+                                />
+                            </label>
+                            <span
+                                v-if="pdfForm.errors.file"
+                                class="mt-1 block text-xs text-red-400"
+                                >{{ pdfForm.errors.file }}</span
+                            >
+                            <span
+                                v-else-if="pdfForm.progress"
+                                class="mt-1 block text-xs text-zinc-400"
+                                >{{
+                                    __('teacher.subject_show.pdf_uploading', {
+                                        percent: pdfForm.progress.percentage,
+                                    })
+                                }}</span
+                            >
+                        </div>
+                        <button
+                            type="submit"
+                            :disabled="pdfForm.processing || !pdfForm.file"
+                            class="flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-6 py-3 text-sm font-bold text-white transition-all hover:bg-emerald-500 disabled:opacity-50"
+                        >
+                            <Sparkles class="h-4 w-4" />
+                            {{
+                                pdfForm.processing
+                                    ? __('teacher.subject_show.pdf_processing')
+                                    : __('teacher.subject_show.pdf_import')
+                            }}
+                        </button>
+                    </form>
+                </div>
+
                 <!-- Study Materials and Quizzes lists -->
                 <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
                     <!-- Study Materials Column -->
@@ -793,9 +884,11 @@ const deleteQuestion = () => {
                         class="rounded-xl bg-indigo-600 px-5 py-2.5 text-xs font-bold text-white transition-colors hover:bg-indigo-500 disabled:opacity-50"
                     >
                         {{
-                            isEditingMaterial
-                                ? __('teacher.material_form.save_changes')
-                                : __('teacher.material_form.create')
+                            matForm.processing
+                                ? __('common.saving')
+                                : isEditingMaterial
+                                  ? __('teacher.material_form.save_changes')
+                                  : __('teacher.material_form.create')
                         }}
                     </button>
                 </div>
@@ -884,9 +977,11 @@ const deleteQuestion = () => {
                         class="rounded-xl bg-indigo-600 px-5 py-2.5 text-xs font-bold text-white transition-colors hover:bg-indigo-500 disabled:opacity-50"
                     >
                         {{
-                            isEditingTest
-                                ? __('teacher.test_form.save_changes')
-                                : __('teacher.test_form.create')
+                            testForm.processing
+                                ? __('common.saving')
+                                : isEditingTest
+                                  ? __('teacher.test_form.save_changes')
+                                  : __('teacher.test_form.create')
                         }}
                     </button>
                 </div>
@@ -1003,9 +1098,11 @@ const deleteQuestion = () => {
                         class="rounded-xl bg-indigo-600 px-5 py-2.5 text-xs font-bold text-white transition-colors hover:bg-indigo-500 disabled:opacity-50"
                     >
                         {{
-                            isEditingQuestion
-                                ? __('teacher.question_form.save_changes')
-                                : __('teacher.question_form.create')
+                            questionForm.processing
+                                ? __('common.saving')
+                                : isEditingQuestion
+                                  ? __('teacher.question_form.save_changes')
+                                  : __('teacher.question_form.create')
                         }}
                     </button>
                 </div>

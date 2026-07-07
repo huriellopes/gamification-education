@@ -74,6 +74,8 @@ return [
         'role_label' => 'Função / Perfil',
         'role_student' => 'Estudante (Aluno)',
         'role_teacher' => 'Professor',
+        'institutions_label' => 'Instituições (o professor pode lecionar em várias)',
+        'institutions_empty' => 'Nenhuma instituição disponível.',
         'full_name' => 'Nome Completo',
         'name_placeholder' => 'Ex: João Silva',
         'email_placeholder' => 'Ex: joao@instituicao.com',

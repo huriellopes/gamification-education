@@ -28,6 +28,18 @@ class CreateInstitutionUserAction
         $classroomId = $attributes['classroom_id'] ?? null;
         unset($attributes['classroom_id']);
 
+        // Professores podem lecionar em várias instituições (pivot). A primeira
+        // selecionada é a instituição principal; alunos usam a do admin.
+        $institutionIds = $attributes['institution_ids'] ?? null;
+        unset($attributes['institution_ids']);
+
+        if (is_array($institutionIds) && $institutionIds !== []) {
+            $institutionIds = array_values(array_map('intval', $institutionIds));
+            $institutionId = $institutionIds[0];
+        } else {
+            $institutionIds = [$institutionId];
+        }
+
         $attributes['institution_id'] = $institutionId;
         $attributes['is_active'] = GeneralStatus::ACTIVE;
 
@@ -43,8 +55,10 @@ class CreateInstitutionUserAction
             $attributes['must_change_password'] = true;
         }
 
-        $user = DB::transaction(function () use ($attributes, $classroomId, $institutionId) {
+        $user = DB::transaction(function () use ($attributes, $classroomId, $institutionId, $institutionIds) {
             $user = User::create($attributes);
+
+            $user->institutions()->sync($institutionIds);
 
             $this->enrollInClassroom($user, $classroomId, $institutionId);
 

@@ -31,6 +31,8 @@ class ClassroomResource extends JsonResource
             'description' => $this->description,
             'is_active' => $this->is_active,
             'subjects_count' => $this->subjects_count,
+            'students_count' => $this->whenCounted('students'),
+            'student_ids' => $this->whenLoaded('students', fn () => $this->students->pluck('id')->all()),
             'subjects' => $this->whenLoaded('subjects', function () {
                 /** @var Collection<int, Subject> $subjects */
                 $subjects = $this->subjects;

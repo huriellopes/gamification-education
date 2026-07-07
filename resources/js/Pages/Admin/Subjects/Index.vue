@@ -8,7 +8,7 @@ import TextInput from '@/Components/TextInput.vue';
 import Tooltip from '@/Components/Tooltip.vue';
 import { __ } from '@/i18n';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { slugify } from '@/Utils/mask';
+import { onlyDigits, slugify } from '@/Utils/mask';
 import { Head, Link, router, useForm } from '@inertiajs/vue3';
 import { Pencil, Plus, Power, Trash2 } from '@lucide/vue';
 import { computed, ref, watch } from 'vue';
@@ -66,6 +66,17 @@ watch(
     (newName) => {
         if (!isEditing.value && !wasSlugManuallyEdited.value) {
             form.slug = slugify(newName);
+        }
+    },
+);
+
+// Duração deve ser numérica (em horas): remove qualquer caractere não-dígito.
+watch(
+    () => form.duration,
+    (value) => {
+        const digits = onlyDigits(value, 4);
+        if (digits !== value) {
+            form.duration = digits;
         }
     },
 );
@@ -401,6 +412,7 @@ const toggleStatus = (sub) => {
                         <TextInput
                             v-model="form.duration"
                             type="text"
+                            inputmode="numeric"
                             required
                             :placeholder="
                                 __('admin.subjects.duration_placeholder')
@@ -489,9 +501,13 @@ const toggleStatus = (sub) => {
                         class="rounded-xl bg-indigo-600 px-5 py-2.5 text-xs font-bold text-white transition-colors hover:bg-indigo-500 disabled:opacity-50"
                     >
                         {{
-                            isEditing
-                                ? __('admin.subjects.confirm_save_title')
-                                : __('admin.subjects.confirm_create_title')
+                            form.processing
+                                ? isEditing
+                                    ? __('common.saving')
+                                    : __('common.registering')
+                                : isEditing
+                                  ? __('admin.subjects.confirm_save_title')
+                                  : __('admin.subjects.confirm_create_title')
                         }}
                     </button>
                 </div>
