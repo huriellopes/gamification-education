@@ -6,9 +6,12 @@ namespace App\Policies;
 
 use App\Models\Institution;
 use App\Models\User;
+use App\Policies\Concerns\ScopesToInstitution;
 
 class InstitutionPolicy
 {
+    use ScopesToInstitution;
+
     /**
      * Determine whether the user can view any models.
      */
@@ -22,7 +25,7 @@ class InstitutionPolicy
      */
     public function view(User $user, Institution $institution): bool
     {
-        return $user->isSuperAdmin() || ($user->isInstitutionAdmin() && $user->institution_id === $institution->id);
+        return $user->isSuperAdmin() || ($user->isInstitutionAdmin() && $this->sharesInstitution($user, $institution->id));
     }
 
     /**
@@ -38,7 +41,7 @@ class InstitutionPolicy
      */
     public function update(User $user, Institution $institution): bool
     {
-        return $user->isSuperAdmin() || ($user->isInstitutionAdmin() && $user->institution_id === $institution->id);
+        return $user->isSuperAdmin() || ($user->isInstitutionAdmin() && $this->sharesInstitution($user, $institution->id));
     }
 
     /**

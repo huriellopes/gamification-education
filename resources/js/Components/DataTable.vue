@@ -203,7 +203,7 @@ const totalPages = computed(() => {
                     v-model="searchQuery"
                     type="text"
                     :placeholder="searchPlaceholder"
-                    class="text-zinc-150 w-full rounded-xl border border-zinc-800 bg-zinc-950/50 py-2.5 pl-10 pr-4 text-sm placeholder-zinc-500 backdrop-blur-md focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    class="text-zinc-150 w-full rounded-xl border border-zinc-800 bg-zinc-950/50 py-2.5 pl-10 pr-4 text-sm placeholder-zinc-500 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                 />
             </div>
 
@@ -214,7 +214,7 @@ const totalPages = computed(() => {
                 >
                     <select
                         v-model="selectedFilter"
-                        class="rounded-xl border border-zinc-800 bg-zinc-950/50 px-4 py-2.5 text-sm text-zinc-200 backdrop-blur-md focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                        class="rounded-xl border border-zinc-800 bg-zinc-950/50 px-4 py-2.5 text-sm text-zinc-200 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                     >
                         <option value="">{{ filterPlaceholder }}</option>
                         <option
@@ -233,7 +233,7 @@ const totalPages = computed(() => {
                     }}</span>
                     <select
                         v-model.number="localPageSize"
-                        class="rounded-xl border border-zinc-800 bg-zinc-950/50 px-3 py-2 text-sm text-zinc-200 backdrop-blur-md focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                        class="rounded-xl border border-zinc-800 bg-zinc-950/50 px-3 py-2 text-sm text-zinc-200 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                     >
                         <option :value="10">10</option>
                         <option :value="20">20</option>
@@ -248,7 +248,7 @@ const totalPages = computed(() => {
 
         <!-- Table Container -->
         <div
-            class="overflow-x-auto rounded-xl border border-zinc-800 bg-zinc-900/10 backdrop-blur-xl"
+            class="overflow-x-auto rounded-xl border border-zinc-800 bg-zinc-900/40"
         >
             <table
                 class="w-full border-collapse text-left text-sm text-zinc-300"

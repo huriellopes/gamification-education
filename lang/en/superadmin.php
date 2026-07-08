@@ -24,6 +24,54 @@ return [
         'visits_suffix' => 'visits',
     ],
 
+    'health' => [
+        'title' => 'System Health',
+        'subtitle' => 'Data integrity and operational health monitored in real time',
+        'all_healthy' => 'All clear',
+        'all_healthy_detail' => 'No issues detected across the monitored indicators.',
+        'alerts_label' => 'active alerts',
+        'critical_label' => 'critical',
+        'warning_label' => 'warning',
+        'view' => 'View details',
+        'status' => [
+            'ok' => 'OK',
+            'warning' => 'Warning',
+            'critical' => 'Critical',
+        ],
+        'checks' => [
+            'failed_jobs' => [
+                'label' => 'Failed jobs',
+                'ok' => 'Queue processing normally.',
+                'problem' => 'job(s) failed in the queue.',
+            ],
+            'unanswered_supports' => [
+                'label' => 'Pending support',
+                'ok' => 'No tickets awaiting a reply.',
+                'problem' => 'ticket(s) awaiting a reply.',
+            ],
+            'institutions_without_admin' => [
+                'label' => 'Institutions without admin',
+                'ok' => 'Every active institution has an administrator.',
+                'problem' => 'active institution(s) without an administrator.',
+            ],
+            'classrooms_without_teacher' => [
+                'label' => 'Classrooms without teacher',
+                'ok' => 'Every classroom has a responsible teacher.',
+                'problem' => 'classroom(s) without a responsible teacher.',
+            ],
+            'subjects_without_classroom' => [
+                'label' => 'Orphan subjects',
+                'ok' => 'Every subject is linked to a classroom.',
+                'problem' => 'subject(s) not linked to any classroom.',
+            ],
+            'students_without_classroom' => [
+                'label' => 'Students without classroom',
+                'ok' => 'All active students are enrolled.',
+                'problem' => 'active student(s) without an enrollment.',
+            ],
+        ],
+    ],
+
     'users' => [
         'head_title' => 'Manage Users',
         'header' => 'User Management',

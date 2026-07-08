@@ -20,10 +20,19 @@ const recoveryCodes = computed(() => twoFactor.value.recovery_codes ?? []);
 
 const enableForm = useForm({});
 const confirmForm = useForm({ code: '' });
-const disableForm = useForm({});
-const recoveryForm = useForm({});
+const disableForm = useForm({ current_password: '' });
+const recoveryForm = useForm({ current_password: '' });
 
 const showRecovery = ref(false);
+
+// Senha de reconfirmação para as ações sensíveis (desativar / regenerar) sobre
+// um 2FA ativo. Um único campo alimenta ambas as ações.
+const managePassword = ref('');
+const manageError = computed(
+    () =>
+        disableForm.errors.current_password ||
+        recoveryForm.errors.current_password,
+);
 
 const enable = () =>
     enableForm.post(route('two-factor.enable'), { preserveScroll: true });
@@ -34,13 +43,25 @@ const confirm = () =>
         onSuccess: () => confirmForm.reset(),
     });
 
-const disable = () =>
-    disableForm.delete(route('two-factor.disable'), { preserveScroll: true });
+const disable = () => {
+    disableForm.current_password = managePassword.value;
+    disableForm.delete(route('two-factor.disable'), {
+        preserveScroll: true,
+        onSuccess: () => {
+            managePassword.value = '';
+        },
+    });
+};
 
-const regenerate = () =>
+const regenerate = () => {
+    recoveryForm.current_password = managePassword.value;
     recoveryForm.post(route('two-factor.recovery-codes'), {
         preserveScroll: true,
+        onSuccess: () => {
+            managePassword.value = '';
+        },
     });
+};
 
 // Downloads (client-side) dos códigos de recuperação.
 const triggerDownload = (href, filename) => {
@@ -205,11 +226,30 @@ const downloadPng = () => {
         </div>
 
         <!-- Estado: ativado (ações) -->
-        <div v-else class="flex flex-wrap gap-2">
-            <button
-                type="button"
-                :disabled="recoveryForm.processing"
-                @click="regenerate"
+        <div v-else class="space-y-3">
+            <div class="max-w-xs space-y-1">
+                <label
+                    class="block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400"
+                    >{{ __('profile.two_factor.current_password_label') }}</label
+                >
+                <TextInput
+                    v-model="managePassword"
+                    type="password"
+                    autocomplete="current-password"
+                    :placeholder="
+                        __('profile.two_factor.current_password_placeholder')
+                    "
+                />
+                <span v-if="manageError" class="block text-xs text-rose-500">{{
+                    manageError
+                }}</span>
+            </div>
+
+            <div class="flex flex-wrap gap-2">
+                <button
+                    type="button"
+                    :disabled="recoveryForm.processing"
+                    @click="regenerate"
                 class="inline-flex items-center gap-2 rounded-xl border border-gray-300 px-4 py-2.5 text-sm font-bold text-gray-600 transition-colors hover:bg-gray-100 disabled:opacity-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
             >
                 <RefreshCw class="h-4 w-4" />
@@ -231,7 +271,8 @@ const downloadPng = () => {
                         ? __('common.processing')
                         : __('profile.two_factor.disable')
                 }}
-            </button>
+                </button>
+            </div>
         </div>
 
         <!-- Códigos de recuperação: collapse + downloads (quando há códigos) -->
