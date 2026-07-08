@@ -8,9 +8,12 @@ use App\Models\Subject;
 use App\Models\Test;
 use App\Models\TestAttempt;
 use App\Models\User;
+use App\Policies\Concerns\ScopesToInstitution;
 
 class TestAttemptPolicy
 {
+    use ScopesToInstitution;
+
     public function viewAny(User $user): bool
     {
         return true;
@@ -50,7 +53,7 @@ class TestAttemptPolicy
         /** @var Subject|null $subject */
         $subject = $test ? $test->subject : null;
 
-        return $user->isInstitutionAdmin() && $subject && $subject->institution_id === $user->institution_id;
+        return $user->isInstitutionAdmin() && $subject && $this->sharesInstitution($user, $subject->institution_id);
     }
 
     public function restore(User $user, TestAttempt $testAttempt): bool

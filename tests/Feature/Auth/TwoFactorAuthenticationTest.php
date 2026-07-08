@@ -121,12 +121,71 @@ test('magic login with 2FA enabled redirects to the challenge without authentica
     $this->assertGuest();
 });
 
-test('user can disable two factor authentication', function () {
+test('user can disable two factor authentication with the current password', function () {
     enableConfirmedTwoFactor($this->user);
 
-    $this->actingAs($this->user)->delete(route('two-factor.disable'))->assertRedirect();
+    $this->actingAs($this->user)
+        ->delete(route('two-factor.disable'), ['current_password' => 'password'])
+        ->assertRedirect();
 
     $fresh = $this->user->fresh();
     expect($fresh->hasTwoFactorEnabled())->toBeFalse();
     expect($fresh->two_factor_secret)->toBeNull();
+});
+
+test('disabling an active 2FA requires the current password (F2)', function () {
+    enableConfirmedTwoFactor($this->user);
+
+    $this->actingAs($this->user)
+        ->from(route('profile.edit'))
+        ->delete(route('two-factor.disable'), ['current_password' => 'wrong-password'])
+        ->assertSessionHasErrors('current_password');
+
+    expect($this->user->fresh()->hasTwoFactorEnabled())->toBeTrue();
+});
+
+test('cancelling an unconfirmed 2FA setup does not require a password (F2)', function () {
+    // Setup iniciado mas não confirmado — cancelar não é sensível.
+    app(TwoFactorAuthenticationService::class);
+    $this->user->forceFill([
+        'two_factor_secret' => app(TwoFactorAuthenticationService::class)->generateSecretKey(),
+        'two_factor_recovery_codes' => app(TwoFactorAuthenticationService::class)->generateRecoveryCodes(),
+        'two_factor_confirmed_at' => null,
+    ])->save();
+
+    $this->actingAs($this->user)->delete(route('two-factor.disable'))->assertRedirect();
+
+    expect($this->user->fresh()->two_factor_secret)->toBeNull();
+});
+
+test('regenerating recovery codes requires the current password (F2)', function () {
+    enableConfirmedTwoFactor($this->user);
+    $original = $this->user->recoveryCodes();
+
+    $this->actingAs($this->user)
+        ->from(route('profile.edit'))
+        ->post(route('two-factor.recovery-codes'), ['current_password' => 'wrong-password'])
+        ->assertSessionHasErrors('current_password');
+
+    expect($this->user->fresh()->recoveryCodes())->toBe($original);
+
+    $this->actingAs($this->user)
+        ->post(route('two-factor.recovery-codes'), ['current_password' => 'password'])
+        ->assertRedirect();
+
+    expect($this->user->fresh()->recoveryCodes())->not->toBe($original);
+});
+
+test('the 2FA challenge is rate limited (F1)', function () {
+    enableConfirmedTwoFactor($this->user);
+
+    $this->post(route('login'), ['email' => 'user@example.com', 'password' => 'password']);
+
+    // 5 tentativas são permitidas; a 6ª é bloqueada pelo throttle.
+    for ($i = 0; $i < 5; $i++) {
+        $this->post(route('two-factor.login.store'), ['code' => '000000']);
+    }
+
+    $this->post(route('two-factor.login.store'), ['code' => '000000'])
+        ->assertStatus(429);
 });

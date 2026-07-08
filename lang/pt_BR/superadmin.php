@@ -24,6 +24,54 @@ return [
         'visits_suffix' => 'visitas',
     ],
 
+    'health' => [
+        'title' => 'Saúde do Sistema',
+        'subtitle' => 'Integridade de dados e saúde operacional monitoradas em tempo real',
+        'all_healthy' => 'Tudo em ordem',
+        'all_healthy_detail' => 'Nenhum problema detectado nos indicadores monitorados.',
+        'alerts_label' => 'alertas ativos',
+        'critical_label' => 'críticos',
+        'warning_label' => 'em atenção',
+        'view' => 'Ver detalhes',
+        'status' => [
+            'ok' => 'OK',
+            'warning' => 'Atenção',
+            'critical' => 'Crítico',
+        ],
+        'checks' => [
+            'failed_jobs' => [
+                'label' => 'Jobs com falha',
+                'ok' => 'Fila processando normalmente.',
+                'problem' => 'job(s) falharam na fila.',
+            ],
+            'unanswered_supports' => [
+                'label' => 'Suportes pendentes',
+                'ok' => 'Nenhum chamado aguardando resposta.',
+                'problem' => 'chamado(s) aguardando resposta.',
+            ],
+            'institutions_without_admin' => [
+                'label' => 'Instituições sem admin',
+                'ok' => 'Todas as instituições ativas têm administrador.',
+                'problem' => 'instituição(ões) ativa(s) sem administrador.',
+            ],
+            'classrooms_without_teacher' => [
+                'label' => 'Turmas sem professor',
+                'ok' => 'Todas as turmas têm professor responsável.',
+                'problem' => 'turma(s) sem professor responsável.',
+            ],
+            'subjects_without_classroom' => [
+                'label' => 'Matérias órfãs',
+                'ok' => 'Todas as matérias estão vinculadas a turmas.',
+                'problem' => 'matéria(s) sem turma vinculada.',
+            ],
+            'students_without_classroom' => [
+                'label' => 'Alunos sem turma',
+                'ok' => 'Todos os alunos ativos estão matriculados.',
+                'problem' => 'aluno(s) ativo(s) sem matrícula.',
+            ],
+        ],
+    ],
+
     'users' => [
         'head_title' => 'Gerenciar Usuários',
         'header' => 'Gerenciamento de Usuários',

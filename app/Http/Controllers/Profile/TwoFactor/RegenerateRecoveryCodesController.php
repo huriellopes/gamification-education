@@ -22,6 +22,13 @@ class RegenerateRecoveryCodesController extends Controller
 
         abort_if($user->two_factor_secret === null, 404);
 
+        // Gerar novos códigos invalida os antigos — reconfirma a senha (F2).
+        $request->validate(
+            ['current_password' => ['required', 'current_password']],
+            [],
+            ['current_password' => __('profile.two_factor.current_password_label')],
+        );
+
         $user->forceFill([
             'two_factor_recovery_codes' => $service->generateRecoveryCodes(),
         ])->save();

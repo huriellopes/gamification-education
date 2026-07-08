@@ -57,7 +57,10 @@ test('super admin can access dashboard and view stats', function () {
             ->component('SuperAdmin/Dashboard')
             ->has('performanceChart')
             ->has('siteVisitsChart')
-            ->has('metrics'),
+            ->has('metrics')
+            ->has('health.checks')
+            ->has('health.summary.status')
+            ->has('health.summary.alerts'),
         );
 });
 

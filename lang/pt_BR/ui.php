@@ -195,6 +195,8 @@ return [
             'confirm' => 'Confirmar e ativar',
             'regenerate' => 'Gerar novos códigos',
             'disable' => 'Desativar 2FA',
+            'current_password_label' => 'Senha atual',
+            'current_password_placeholder' => 'Confirme sua senha para desativar ou regenerar',
             'recovery_title' => 'Códigos de recuperação',
             'recovery_hint' => 'Guarde estes códigos em local seguro. Cada código pode ser usado uma única vez para acessar caso você perca o aplicativo autenticador.',
             'download_txt' => 'Salvar .txt',

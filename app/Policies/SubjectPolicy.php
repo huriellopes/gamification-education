@@ -6,9 +6,12 @@ namespace App\Policies;
 
 use App\Models\Subject;
 use App\Models\User;
+use App\Policies\Concerns\ScopesToInstitution;
 
 class SubjectPolicy
 {
+    use ScopesToInstitution;
+
     public function viewAny(User $user): bool
     {
         return true;
@@ -23,7 +26,7 @@ class SubjectPolicy
             return true;
         }
 
-        if ($subject->institution_id !== $user->institution_id) {
+        if (!$this->sharesInstitution($user, $subject->institution_id)) {
             return false;
         }
 
@@ -51,7 +54,7 @@ class SubjectPolicy
             return true;
         }
 
-        if ($subject->institution_id !== $user->institution_id) {
+        if (!$this->sharesInstitution($user, $subject->institution_id)) {
             return false;
         }
 
@@ -83,7 +86,7 @@ class SubjectPolicy
             return true;
         }
 
-        if ($subject->institution_id !== $user->institution_id) {
+        if (!$this->sharesInstitution($user, $subject->institution_id)) {
             return false;
         }
 
@@ -109,7 +112,7 @@ class SubjectPolicy
             return true;
         }
 
-        return $user->isInstitutionAdmin() && $subject->institution_id === $user->institution_id;
+        return $user->isInstitutionAdmin() && $this->sharesInstitution($user, $subject->institution_id);
     }
 
     /**
