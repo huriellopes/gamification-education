@@ -28,7 +28,7 @@ class ScoreHistoryPolicy
             /** @var User|null $historyUser */
             $historyUser = $scoreHistory->user;
 
-            return $historyUser && $user->institution_id === $historyUser->institution_id;
+            return $historyUser instanceof User && $user->canManageInstitutionUser($historyUser);
         }
 
         return false;

@@ -6,9 +6,12 @@ namespace App\Policies;
 
 use App\Models\Classroom;
 use App\Models\User;
+use App\Policies\Concerns\ScopesToInstitution;
 
 class ClassroomPolicy
 {
+    use ScopesToInstitution;
+
     public function viewAny(User $user): bool
     {
         return $user->isSuperAdmin() || $user->isInstitutionAdmin() || $user->isTeacher();
@@ -24,7 +27,7 @@ class ClassroomPolicy
             return $classroom->teacher_id === $user->id;
         }
 
-        return $user->isInstitutionAdmin() && $classroom->institution_id === $user->institution_id;
+        return $user->isInstitutionAdmin() && $this->sharesInstitution($user, $classroom->institution_id);
     }
 
     public function create(User $user): bool
@@ -38,7 +41,7 @@ class ClassroomPolicy
             return true;
         }
 
-        return $user->isInstitutionAdmin() && $classroom->institution_id === $user->institution_id;
+        return $user->isInstitutionAdmin() && $this->sharesInstitution($user, $classroom->institution_id);
     }
 
     public function delete(User $user, Classroom $classroom): bool

@@ -19,11 +19,11 @@ class UserPolicy
             return true;
         }
 
-        if ($user->isInstitutionAdmin()) {
-            return $user->institution_id === $model->institution_id;
+        if ($user->id === $model->id) {
+            return true;
         }
 
-        return $user->id === $model->id;
+        return $user->isInstitutionAdmin() && $user->canManageInstitutionUser($model);
     }
 
     public function create(User $user): bool
@@ -37,11 +37,11 @@ class UserPolicy
             return true;
         }
 
-        if ($user->isInstitutionAdmin()) {
-            return $user->institution_id === $model->institution_id;
+        if ($user->id === $model->id) {
+            return true;
         }
 
-        return $user->id === $model->id;
+        return $user->isInstitutionAdmin() && $user->canManageInstitutionUser($model);
     }
 
     public function delete(User $user, User $model): bool
@@ -54,12 +54,12 @@ class UserPolicy
             return true;
         }
 
-        return $user->isInstitutionAdmin() && $user->institution_id === $model->institution_id && !$model->isSuperAdmin();
+        return $user->isInstitutionAdmin() && $user->canManageInstitutionUser($model);
     }
 
     public function restore(User $user, User $model): bool
     {
-        return $user->isSuperAdmin() || ($user->isInstitutionAdmin() && $user->institution_id === $model->institution_id && !$model->isSuperAdmin());
+        return $user->isSuperAdmin() || ($user->isInstitutionAdmin() && $user->canManageInstitutionUser($model));
     }
 
     public function forceDelete(User $user, User $model): bool

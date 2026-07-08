@@ -7,9 +7,12 @@ namespace App\Policies;
 use App\Models\Subject;
 use App\Models\Test;
 use App\Models\User;
+use App\Policies\Concerns\ScopesToInstitution;
 
 class TestPolicy
 {
+    use ScopesToInstitution;
+
     public function viewAny(User $user): bool
     {
         return true;
@@ -55,7 +58,7 @@ class TestPolicy
         /** @var Subject|null $subject */
         $subject = $test->subject;
 
-        return $user->isStudent() && $subject && $subject->institution_id === $user->institution_id;
+        return $user->isStudent() && $subject && $this->sharesInstitution($user, $subject->institution_id);
     }
 
     public function restore(User $user, Test $test): bool
@@ -68,6 +71,6 @@ class TestPolicy
         /** @var Subject|null $subject */
         $subject = $test->subject;
 
-        return $user->isSuperAdmin() || ($user->isInstitutionAdmin() && $subject && $subject->institution_id === $user->institution_id);
+        return $user->isSuperAdmin() || ($user->isInstitutionAdmin() && $subject && $this->sharesInstitution($user, $subject->institution_id));
     }
 }

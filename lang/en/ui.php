@@ -195,6 +195,8 @@ return [
             'confirm' => 'Confirm and enable',
             'regenerate' => 'Generate new codes',
             'disable' => 'Disable 2FA',
+            'current_password_label' => 'Current password',
+            'current_password_placeholder' => 'Confirm your password to disable or regenerate',
             'recovery_title' => 'Recovery codes',
             'recovery_hint' => 'Store these codes in a safe place. Each code can be used once to sign in if you lose your authenticator device.',
             'download_txt' => 'Save .txt',

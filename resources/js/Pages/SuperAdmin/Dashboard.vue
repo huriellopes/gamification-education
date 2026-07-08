@@ -1,14 +1,15 @@
 <script setup>
+import LineChart from '@/Components/LineChart.vue';
 import MetricCard from '@/Components/MetricCard.vue';
 import PageHeader from '@/Components/PageHeader.vue';
+import SystemHealthPanel from '@/Components/SystemHealthPanel.vue';
 import WelcomeWidget from '@/Components/WelcomeWidget.vue';
 import { __ } from '@/i18n';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
 import { BookOpen, School, TrendingUp, Users } from '@lucide/vue';
-import { computed, ref } from 'vue';
 
-const props = defineProps({
+defineProps({
     metrics: {
         type: Object,
         default: () => ({
@@ -17,6 +18,10 @@ const props = defineProps({
             total_xp: 0,
             active_subjects: 0,
         }),
+    },
+    health: {
+        type: Object,
+        default: () => ({ checks: [], summary: {} }),
     },
     performanceChart: {
         type: Array,
@@ -27,94 +32,6 @@ const props = defineProps({
         default: () => [],
     },
 });
-
-// Chart 1: Performance XP
-const maxPoints = computed(() => {
-    const vals = props.performanceChart.map((d) => d.points);
-    return Math.max(...vals, 100);
-});
-
-const perfCoords = computed(() => {
-    return props.performanceChart.map((d, idx) => {
-        const x = 50 + idx * (520 / 6);
-        const y = 210 - (d.points / maxPoints.value) * 180;
-        return { x, y, points: d.points };
-    });
-});
-
-const perfLinePath = computed(() => {
-    const coords = perfCoords.value;
-    if (coords.length === 0) return '';
-    return coords.reduce((acc, curr, idx) => {
-        return idx === 0
-            ? `M ${curr.x} ${curr.y}`
-            : `${acc} L ${curr.x} ${curr.y}`;
-    }, '');
-});
-
-const perfAreaPath = computed(() => {
-    const coords = perfCoords.value;
-    if (coords.length === 0) return '';
-    const firstX = coords[0].x;
-    const lastX = coords[coords.length - 1].x;
-    return `${perfLinePath.value} L ${lastX} 210 L ${firstX} 210 Z`;
-});
-
-// Chart 2: Site Visits
-const maxVisits = computed(() => {
-    const vals = props.siteVisitsChart.map((d) => d.visits);
-    return Math.max(...vals, 10);
-});
-
-const visitsCoords = computed(() => {
-    return props.siteVisitsChart.map((d, idx) => {
-        const x = 50 + idx * (520 / 6);
-        const y = 210 - (d.visits / maxVisits.value) * 180;
-        return { x, y, visits: d.visits };
-    });
-});
-
-const visitsLinePath = computed(() => {
-    const coords = visitsCoords.value;
-    if (coords.length === 0) return '';
-    return coords.reduce((acc, curr, idx) => {
-        return idx === 0
-            ? `M ${curr.x} ${curr.y}`
-            : `${acc} L ${curr.x} ${curr.y}`;
-    }, '');
-});
-
-const visitsAreaPath = computed(() => {
-    const coords = visitsCoords.value;
-    if (coords.length === 0) return '';
-    const firstX = coords[0].x;
-    const lastX = coords[coords.length - 1].x;
-    return `${visitsLinePath.value} L ${lastX} 210 L ${firstX} 210 Z`;
-});
-
-const activePerfTooltip = ref(null);
-const showPerfTooltip = (pt) => {
-    activePerfTooltip.value = {
-        left: `${(pt.x / 600) * 100}%`,
-        top: `${(pt.y / 240) * 100}%`,
-        value: `${pt.points} ${__('superadmin.dashboard.xp_suffix')}`,
-    };
-};
-const hidePerfTooltip = () => {
-    activePerfTooltip.value = null;
-};
-
-const activeVisitsTooltip = ref(null);
-const showVisitsTooltip = (pt) => {
-    activeVisitsTooltip.value = {
-        left: `${(pt.x / 600) * 100}%`,
-        top: `${(pt.y / 240) * 100}%`,
-        value: `${pt.visits} ${__('superadmin.dashboard.visits_suffix')}`,
-    };
-};
-const hideVisitsTooltip = () => {
-    activeVisitsTooltip.value = null;
-};
 </script>
 
 <template>
@@ -210,6 +127,9 @@ const hideVisitsTooltip = () => {
                     </MetricCard>
                 </div>
 
+                <!-- Saúde do Sistema (integridade + operacional) -->
+                <SystemHealthPanel :report="health" />
+
                 <!-- Gráficos de Desempenho e Visitas -->
                 <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
                     <!-- Gráfico 1: Desempenho (XP Acumulado) -->
@@ -231,152 +151,20 @@ const hideVisitsTooltip = () => {
                             </p>
                         </div>
 
-                        <div class="relative h-64 w-full">
-                            <svg
-                                class="h-full w-full"
-                                viewBox="0 0 600 240"
-                                preserveAspectRatio="none"
-                            >
-                                <defs>
-                                    <linearGradient
-                                        id="perfGrad"
-                                        x1="0"
-                                        y1="0"
-                                        x2="0"
-                                        y2="1"
-                                    >
-                                        <stop
-                                            offset="0%"
-                                            stop-color="#4f46e5"
-                                            stop-opacity="0.4"
-                                        />
-                                        <stop
-                                            offset="100%"
-                                            stop-color="#4f46e5"
-                                            stop-opacity="0"
-                                        />
-                                    </linearGradient>
-                                </defs>
-
-                                <line
-                                    x1="50"
-                                    y1="30"
-                                    x2="570"
-                                    y2="30"
-                                    stroke="#27272a"
-                                    stroke-dasharray="3"
-                                />
-                                <line
-                                    x1="50"
-                                    y1="90"
-                                    x2="570"
-                                    y2="90"
-                                    stroke="#27272a"
-                                    stroke-dasharray="3"
-                                />
-                                <line
-                                    x1="50"
-                                    y1="150"
-                                    x2="570"
-                                    y2="150"
-                                    stroke="#27272a"
-                                    stroke-dasharray="3"
-                                />
-                                <line
-                                    x1="50"
-                                    y1="210"
-                                    x2="570"
-                                    y2="210"
-                                    stroke="#27272a"
-                                />
-
-                                <text
-                                    x="15"
-                                    y="34"
-                                    fill="#71717a"
-                                    class="font-mono text-[10px] font-bold"
-                                >
-                                    {{ Math.round(maxPoints) }}
-                                </text>
-                                <text
-                                    x="15"
-                                    y="124"
-                                    fill="#71717a"
-                                    class="font-mono text-[10px] font-bold"
-                                >
-                                    {{ Math.round(maxPoints / 2) }}
-                                </text>
-                                <text
-                                    x="15"
-                                    y="214"
-                                    fill="#71717a"
-                                    class="font-mono text-[10px] font-bold"
-                                >
-                                    0
-                                </text>
-
-                                <path :d="perfAreaPath" fill="url(#perfGrad)" />
-                                <path
-                                    :d="perfLinePath"
-                                    fill="none"
-                                    stroke="#4f46e5"
-                                    stroke-width="3"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                />
-
-                                <g v-for="(pt, idx) in perfCoords" :key="idx">
-                                    <circle
-                                        :cx="pt.x"
-                                        :cy="pt.y"
-                                        r="4.5"
-                                        fill="#4f46e5"
-                                        stroke="#18181b"
-                                        stroke-width="2"
-                                        class="hover:r-6 cursor-pointer transition-all duration-150 hover:fill-white"
-                                        @mouseenter="showPerfTooltip(pt)"
-                                        @mouseleave="hidePerfTooltip"
-                                    />
-                                </g>
-
-                                <text
-                                    v-for="(d, idx) in performanceChart"
-                                    :key="idx"
-                                    :x="50 + idx * (520 / 6)"
-                                    y="235"
-                                    text-anchor="middle"
-                                    fill="#71717a"
-                                    class="font-mono text-[10px] font-bold"
-                                >
-                                    {{ d.day }}
-                                </text>
-                            </svg>
-
-                            <!-- Floating HTML Tooltip -->
-                            <div
-                                v-if="activePerfTooltip"
-                                class="pointer-events-none absolute z-30 -translate-x-1/2 -translate-y-[calc(100%+12px)] rounded-xl border border-indigo-500/30 bg-zinc-950/95 px-2.5 py-1.5 text-center shadow-xl backdrop-blur-md transition-all duration-150"
-                                :style="{
-                                    left: activePerfTooltip.left,
-                                    top: activePerfTooltip.top,
-                                }"
-                            >
-                                <div
-                                    class="text-zinc-450 text-[9px] font-bold uppercase tracking-wider"
-                                >
-                                    {{
-                                        __(
-                                            'superadmin.dashboard.performance_tooltip_label',
-                                        )
-                                    }}
-                                </div>
-                                <div
-                                    class="mt-0.5 font-mono text-xs font-extrabold text-indigo-300"
-                                >
-                                    {{ activePerfTooltip.value }}
-                                </div>
-                            </div>
-                        </div>
+                        <LineChart
+                            :data="performanceChart"
+                            value-key="points"
+                            color="#4f46e5"
+                            :floor="100"
+                            gradient-id="perfGrad"
+                            variant="indigo"
+                            :tooltip-label="
+                                __(
+                                    'superadmin.dashboard.performance_tooltip_label',
+                                )
+                            "
+                            :value-suffix="__('superadmin.dashboard.xp_suffix')"
+                        />
                     </div>
 
                     <!-- Gráfico 2: Visitas ao Site Público -->
@@ -392,155 +180,20 @@ const hideVisitsTooltip = () => {
                             </p>
                         </div>
 
-                        <div class="relative h-64 w-full">
-                            <svg
-                                class="h-full w-full"
-                                viewBox="0 0 600 240"
-                                preserveAspectRatio="none"
-                            >
-                                <defs>
-                                    <linearGradient
-                                        id="visitsGrad"
-                                        x1="0"
-                                        y1="0"
-                                        x2="0"
-                                        y2="1"
-                                    >
-                                        <stop
-                                            offset="0%"
-                                            stop-color="#10b981"
-                                            stop-opacity="0.4"
-                                        />
-                                        <stop
-                                            offset="100%"
-                                            stop-color="#10b981"
-                                            stop-opacity="0"
-                                        />
-                                    </linearGradient>
-                                </defs>
-
-                                <line
-                                    x1="50"
-                                    y1="30"
-                                    x2="570"
-                                    y2="30"
-                                    stroke="#27272a"
-                                    stroke-dasharray="3"
-                                />
-                                <line
-                                    x1="50"
-                                    y1="90"
-                                    x2="570"
-                                    y2="90"
-                                    stroke="#27272a"
-                                    stroke-dasharray="3"
-                                />
-                                <line
-                                    x1="50"
-                                    y1="150"
-                                    x2="570"
-                                    y2="150"
-                                    stroke="#27272a"
-                                    stroke-dasharray="3"
-                                />
-                                <line
-                                    x1="50"
-                                    y1="210"
-                                    x2="570"
-                                    y2="210"
-                                    stroke="#27272a"
-                                />
-
-                                <text
-                                    x="15"
-                                    y="34"
-                                    fill="#71717a"
-                                    class="font-mono text-[10px] font-bold"
-                                >
-                                    {{ Math.round(maxVisits) }}
-                                </text>
-                                <text
-                                    x="15"
-                                    y="124"
-                                    fill="#71717a"
-                                    class="font-mono text-[10px] font-bold"
-                                >
-                                    {{ Math.round(maxVisits / 2) }}
-                                </text>
-                                <text
-                                    x="15"
-                                    y="214"
-                                    fill="#71717a"
-                                    class="font-mono text-[10px] font-bold"
-                                >
-                                    0
-                                </text>
-
-                                <path
-                                    :d="visitsAreaPath"
-                                    fill="url(#visitsGrad)"
-                                />
-                                <path
-                                    :d="visitsLinePath"
-                                    fill="none"
-                                    stroke="#10b981"
-                                    stroke-width="3"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                />
-
-                                <g v-for="(pt, idx) in visitsCoords" :key="idx">
-                                    <circle
-                                        :cx="pt.x"
-                                        :cy="pt.y"
-                                        r="4.5"
-                                        fill="#10b981"
-                                        stroke="#18181b"
-                                        stroke-width="2"
-                                        class="hover:r-6 cursor-pointer transition-all duration-150 hover:fill-white"
-                                        @mouseenter="showVisitsTooltip(pt)"
-                                        @mouseleave="hideVisitsTooltip"
-                                    />
-                                </g>
-
-                                <text
-                                    v-for="(d, idx) in siteVisitsChart"
-                                    :key="idx"
-                                    :x="50 + idx * (520 / 6)"
-                                    y="235"
-                                    text-anchor="middle"
-                                    fill="#71717a"
-                                    class="font-mono text-[10px] font-bold"
-                                >
-                                    {{ d.day }}
-                                </text>
-                            </svg>
-
-                            <!-- Floating HTML Tooltip -->
-                            <div
-                                v-if="activeVisitsTooltip"
-                                class="pointer-events-none absolute z-30 -translate-x-1/2 -translate-y-[calc(100%+12px)] rounded-xl border border-emerald-500/30 bg-zinc-950/95 px-2.5 py-1.5 text-center shadow-xl backdrop-blur-md transition-all duration-150"
-                                :style="{
-                                    left: activeVisitsTooltip.left,
-                                    top: activeVisitsTooltip.top,
-                                }"
-                            >
-                                <div
-                                    class="text-zinc-450 text-[9px] font-bold uppercase tracking-wider"
-                                >
-                                    {{
-                                        __(
-                                            'superadmin.dashboard.visits_tooltip_label',
-                                        )
-                                    }}
-                                </div>
-                                <div
-                                    class="mt-0.5 font-mono text-xs font-extrabold text-emerald-400"
-                                >
-                                    {{ activeVisitsTooltip.value }}
-                                </div>
-                            </div>
-                        </div>
+                        <LineChart
+                            :data="siteVisitsChart"
+                            value-key="visits"
+                            color="#10b981"
+                            :floor="10"
+                            gradient-id="visitsGrad"
+                            variant="emerald"
+                            :tooltip-label="
+                                __('superadmin.dashboard.visits_tooltip_label')
+                            "
+                            :value-suffix="
+                                __('superadmin.dashboard.visits_suffix')
+                            "
+                        />
                     </div>
                 </div>
             </div>

@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Services\Auth\TwoFactorAuthenticationService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class VerifyTwoFactorChallengeController extends Controller
@@ -44,8 +45,12 @@ class VerifyTwoFactorChallengeController extends Controller
         } elseif (filled($recoveryCode)) {
             $recoveryCode = mb_trim((string) $recoveryCode);
 
-            if (in_array($recoveryCode, $user->recoveryCodes(), true)) {
-                $user->replaceRecoveryCode($recoveryCode);
+            // Comparação constant-time contra cada código para evitar timing attack.
+            $match = collect($user->recoveryCodes())
+                ->first(fn (string $stored): bool => hash_equals($stored, $recoveryCode));
+
+            if ($match !== null) {
+                $user->replaceRecoveryCode($match);
                 $authenticated = true;
             }
         }
@@ -61,6 +66,13 @@ class VerifyTwoFactorChallengeController extends Controller
 
         Auth::login($user, $remember);
         $request->session()->regenerate();
+
+        // Sessão única: derruba as demais sessões do usuário, espelhando o
+        // comportamento do login por senha (F3).
+        DB::table('sessions')
+            ->where('user_id', $user->id)
+            ->where('id', '!=', $request->session()->getId())
+            ->delete();
 
         return to_route('dashboard');
     }

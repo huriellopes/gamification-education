@@ -9,6 +9,7 @@ use App\Http\Resources\SuperAdmin\InstitutionResource;
 use App\Http\Resources\SuperAdmin\SubjectResource;
 use App\Models\Subject;
 use App\Models\User;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -19,6 +20,8 @@ class IndexSubjectController extends Controller
      */
     public function __invoke(): Response
     {
+        Gate::authorize('viewAny', Subject::class);
+
         /** @var User $user */
         $user = auth()->user();
         $institutionId = $user->institution_id;

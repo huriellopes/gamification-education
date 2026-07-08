@@ -1,6 +1,7 @@
 <script setup>
 import Button from '@/Components/Button.vue';
 import DataTable from '@/Components/DataTable.vue';
+import LineChart from '@/Components/LineChart.vue';
 import MetricCard from '@/Components/MetricCard.vue';
 import PageHeader from '@/Components/PageHeader.vue';
 import WelcomeWidget from '@/Components/WelcomeWidget.vue';
@@ -8,7 +9,7 @@ import { __ } from '@/i18n';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import { BookOpen, GraduationCap, Users } from '@lucide/vue';
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
+import { onMounted, onUnmounted, ref, watch } from 'vue';
 
 const props = defineProps({
     students: {
@@ -33,37 +34,6 @@ const props = defineProps({
         type: Array,
         default: () => [],
     },
-});
-
-const maxPoints = computed(() => {
-    const vals = props.performanceChart.map((d) => d.points);
-    return Math.max(...vals, 100);
-});
-
-const chartCoords = computed(() => {
-    return props.performanceChart.map((d, idx) => {
-        const x = 50 + idx * (520 / 6);
-        const y = 210 - (d.points / maxPoints.value) * 180;
-        return { x, y, points: d.points };
-    });
-});
-
-const linePath = computed(() => {
-    const coords = chartCoords.value;
-    if (coords.length === 0) return '';
-    return coords.reduce((acc, curr, idx) => {
-        return idx === 0
-            ? `M ${curr.x} ${curr.y}`
-            : `${acc} L ${curr.x} ${curr.y}`;
-    }, '');
-});
-
-const areaPath = computed(() => {
-    const coords = chartCoords.value;
-    if (coords.length === 0) return '';
-    const firstX = coords[0].x;
-    const lastX = coords[coords.length - 1].x;
-    return `${linePath.value} L ${lastX} 210 L ${firstX} 210 Z`;
 });
 
 const reportColumns = [
@@ -162,18 +132,6 @@ onUnmounted(() => {
     }
 });
 
-const activeTooltip = ref(null);
-const showTooltip = (pt, label) => {
-    activeTooltip.value = {
-        left: `${(pt.x / 600) * 100}%`,
-        top: `${(pt.y / 240) * 100}%`,
-        label,
-        value: `${pt.points} XP`,
-    };
-};
-const hideTooltip = () => {
-    activeTooltip.value = null;
-};
 </script>
 
 <template>
@@ -282,160 +240,16 @@ const hideTooltip = () => {
                         </div>
                     </div>
 
-                    <div class="relative h-64 w-full">
-                        <svg
-                            class="h-full w-full"
-                            viewBox="0 0 600 240"
-                            preserveAspectRatio="none"
-                        >
-                            <defs>
-                                <linearGradient
-                                    id="chartGrad"
-                                    x1="0"
-                                    y1="0"
-                                    x2="0"
-                                    y2="1"
-                                >
-                                    <stop
-                                        offset="0%"
-                                        stop-color="#4f46e5"
-                                        stop-opacity="0.4"
-                                    />
-                                    <stop
-                                        offset="100%"
-                                        stop-color="#4f46e5"
-                                        stop-opacity="0"
-                                    />
-                                </linearGradient>
-                            </defs>
-
-                            <!-- Grid lines -->
-                            <line
-                                x1="50"
-                                y1="30"
-                                x2="570"
-                                y2="30"
-                                stroke="#27272a"
-                                stroke-dasharray="3"
-                            />
-                            <line
-                                x1="50"
-                                y1="90"
-                                x2="570"
-                                y2="90"
-                                stroke="#27272a"
-                                stroke-dasharray="3"
-                            />
-                            <line
-                                x1="50"
-                                y1="150"
-                                x2="570"
-                                y2="150"
-                                stroke="#27272a"
-                                stroke-dasharray="3"
-                            />
-                            <line
-                                x1="50"
-                                y1="210"
-                                x2="570"
-                                y2="210"
-                                stroke="#27272a"
-                            />
-
-                            <!-- Y-Axis Labels -->
-                            <text
-                                x="15"
-                                y="34"
-                                fill="#71717a"
-                                class="font-mono text-[10px] font-bold"
-                            >
-                                {{ Math.round(maxPoints) }}
-                            </text>
-                            <text
-                                x="15"
-                                y="124"
-                                fill="#71717a"
-                                class="font-mono text-[10px] font-bold"
-                            >
-                                {{ Math.round(maxPoints / 2) }}
-                            </text>
-                            <text
-                                x="15"
-                                y="214"
-                                fill="#71717a"
-                                class="font-mono text-[10px] font-bold"
-                            >
-                                0
-                            </text>
-
-                            <!-- Area Path -->
-                            <path :d="areaPath" fill="url(#chartGrad)" />
-
-                            <!-- Line Path -->
-                            <path
-                                :d="linePath"
-                                fill="none"
-                                stroke="#4f46e5"
-                                stroke-width="3"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            />
-
-                            <!-- Dots with hover tooltip handlers -->
-                            <g v-for="(pt, idx) in chartCoords" :key="idx">
-                                <circle
-                                    :cx="pt.x"
-                                    :cy="pt.y"
-                                    r="4.5"
-                                    fill="#4f46e5"
-                                    stroke="#18181b"
-                                    stroke-width="2"
-                                    class="hover:r-6 cursor-pointer transition-all duration-150 hover:fill-white"
-                                    @mouseenter="
-                                        showTooltip(
-                                            pt,
-                                            __('admin.dashboard.performance'),
-                                        )
-                                    "
-                                    @mouseleave="hideTooltip"
-                                />
-                            </g>
-
-                            <!-- X-Axis Labels -->
-                            <text
-                                v-for="(d, idx) in performanceChart"
-                                :key="idx"
-                                :x="50 + idx * (520 / 6)"
-                                y="235"
-                                text-anchor="middle"
-                                fill="#71717a"
-                                class="font-mono text-[10px] font-bold"
-                            >
-                                {{ d.day }}
-                            </text>
-                        </svg>
-
-                        <!-- Floating HTML Tooltip (No distortion) -->
-                        <div
-                            v-if="activeTooltip"
-                            class="pointer-events-none absolute z-30 -translate-x-1/2 -translate-y-[calc(100%+12px)] rounded-xl border border-indigo-500/30 bg-zinc-950/95 px-2.5 py-1.5 text-center shadow-xl backdrop-blur-md transition-all duration-150"
-                            :style="{
-                                left: activeTooltip.left,
-                                top: activeTooltip.top,
-                            }"
-                        >
-                            <div
-                                class="text-zinc-450 text-[9px] font-bold uppercase tracking-wider"
-                            >
-                                {{ activeTooltip.label }}
-                            </div>
-                            <div
-                                class="mt-0.5 font-mono text-xs font-extrabold text-indigo-300"
-                            >
-                                {{ activeTooltip.value }}
-                            </div>
-                        </div>
-                    </div>
+                    <LineChart
+                        :data="performanceChart"
+                        value-key="points"
+                        color="#4f46e5"
+                        :floor="100"
+                        gradient-id="chartGrad"
+                        variant="indigo"
+                        :tooltip-label="__('admin.dashboard.performance')"
+                        value-suffix="XP"
+                    />
                 </div>
 
                 <!-- Fila de Relatórios Solicitados -->

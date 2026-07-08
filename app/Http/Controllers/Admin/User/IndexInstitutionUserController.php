@@ -9,6 +9,7 @@ use App\Http\Resources\UserResource;
 use App\Models\Classroom;
 use App\Models\Institution;
 use App\Models\User;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -19,6 +20,8 @@ class IndexInstitutionUserController extends Controller
      */
     public function __invoke(): Response
     {
+        Gate::authorize('viewAny', User::class);
+
         /** @var User $user */
         $user = auth()->user();
         $institutionId = (int) $user->institution_id;
