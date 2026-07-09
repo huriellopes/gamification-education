@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Teacher\Subject;
 
-use App\Models\User;
+use App\Http\Requests\Concerns\SubjectRules;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class StoreSubjectRequest extends FormRequest
 {
+    use SubjectRules;
+
     public function authorize(): bool
     {
         return true;
@@ -20,25 +21,9 @@ class StoreSubjectRequest extends FormRequest
      */
     public function rules(): array
     {
-        /** @var User|null $user */
-        $user = $this->user();
-
         return [
-            'name' => ['required', 'string', 'max:255'],
-            'slug' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
-            'duration' => ['required', 'integer', 'min:1', 'max:9999'],
-            'institution_id' => [
-                $user?->isSuperAdmin() ? 'required' : 'nullable',
-                'exists:institutions,id',
-            ],
-            // O professor só pode vincular a matéria a uma turma sob sua responsabilidade.
-            'classroom_id' => [
-                'nullable',
-                Rule::exists('classrooms', 'id')->where(
-                    fn ($query) => $query->where('teacher_id', $user?->id),
-                ),
-            ],
+            ...$this->subjectRules(),
+            ...$this->teacherClassroomRule(),
         ];
     }
 }

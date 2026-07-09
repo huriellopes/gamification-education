@@ -230,7 +230,9 @@ const downloadPng = () => {
             <div class="max-w-xs space-y-1">
                 <label
                     class="block text-xs font-bold uppercase tracking-wider text-zinc-400"
-                    >{{ __('profile.two_factor.current_password_label') }}</label
+                    >{{
+                        __('profile.two_factor.current_password_label')
+                    }}</label
                 >
                 <TextInput
                     v-model="managePassword"
@@ -250,27 +252,27 @@ const downloadPng = () => {
                     type="button"
                     :disabled="recoveryForm.processing"
                     @click="regenerate"
-                class="inline-flex items-center gap-2 rounded-xl border border-zinc-700 px-4 py-2.5 text-sm font-bold text-zinc-300 transition-colors hover:bg-zinc-800 disabled:opacity-50"
-            >
-                <RefreshCw class="h-4 w-4" />
-                {{
-                    recoveryForm.processing
-                        ? __('common.processing')
-                        : __('profile.two_factor.regenerate')
-                }}
-            </button>
-            <button
-                type="button"
-                :disabled="disableForm.processing"
-                @click="disable"
-                class="inline-flex items-center gap-2 rounded-xl bg-rose-600 px-4 py-2.5 text-sm font-bold text-white transition-all hover:bg-rose-500 disabled:opacity-50"
-            >
-                <ShieldOff class="h-4 w-4" />
-                {{
-                    disableForm.processing
-                        ? __('common.processing')
-                        : __('profile.two_factor.disable')
-                }}
+                    class="inline-flex items-center gap-2 rounded-xl border border-zinc-700 px-4 py-2.5 text-sm font-bold text-zinc-300 transition-colors hover:bg-zinc-800 disabled:opacity-50"
+                >
+                    <RefreshCw class="h-4 w-4" />
+                    {{
+                        recoveryForm.processing
+                            ? __('common.processing')
+                            : __('profile.two_factor.regenerate')
+                    }}
+                </button>
+                <button
+                    type="button"
+                    :disabled="disableForm.processing"
+                    @click="disable"
+                    class="inline-flex items-center gap-2 rounded-xl bg-rose-600 px-4 py-2.5 text-sm font-bold text-white transition-all hover:bg-rose-500 disabled:opacity-50"
+                >
+                    <ShieldOff class="h-4 w-4" />
+                    {{
+                        disableForm.processing
+                            ? __('common.processing')
+                            : __('profile.two_factor.disable')
+                    }}
                 </button>
             </div>
         </div>

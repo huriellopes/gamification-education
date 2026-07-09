@@ -145,6 +145,9 @@ const confirmState = ref({
     onConfirm: null,
 });
 
+// Processamento das ações via router (delete/toggle) — o useForm já expõe o seu.
+const confirmProcessing = ref(false);
+
 const triggerConfirm = (title, message, onConfirm) => {
     confirmState.value.title = title;
     confirmState.value.message = message;
@@ -189,6 +192,8 @@ const confirmDeleteUser = (id) => {
         () => {
             router.delete(route('admin.users.destroy', id), {
                 preserveScroll: true,
+                onStart: () => (confirmProcessing.value = true),
+                onFinish: () => (confirmProcessing.value = false),
                 onSuccess: () => {
                     confirmState.value.show = false;
                 },
@@ -213,6 +218,8 @@ const toggleStatus = (user) => {
                 {},
                 {
                     preserveScroll: true,
+                    onStart: () => (confirmProcessing.value = true),
+                    onFinish: () => (confirmProcessing.value = false),
                     onSuccess: () => {
                         confirmState.value.show = false;
                     },
@@ -683,6 +690,7 @@ const toggleStatus = (user) => {
             :show="confirmState.show"
             :title="confirmState.title"
             :message="confirmState.message"
+            :processing="form.processing || confirmProcessing"
             @close="confirmState.show = false"
             @confirm="confirmState.onConfirm"
         />

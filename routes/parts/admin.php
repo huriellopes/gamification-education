@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\Classroom\ApproveClassroomController as AdminApproveClassroomController;
 use App\Http\Controllers\Admin\Classroom\DestroyClassroomController as AdminDestroyClassroomController;
 use App\Http\Controllers\Admin\Classroom\IndexClassroomController as AdminIndexClassroomController;
 use App\Http\Controllers\Admin\Classroom\StoreClassroomController as AdminStoreClassroomController;
@@ -43,6 +44,7 @@ Route::middleware(['auth', 'role.admin'])->prefix('admin')->name('admin.')->grou
     Route::put('/classrooms/{classroom}', AdminUpdateClassroomController::class)->name('classrooms.update');
     Route::delete('/classrooms/{classroom}', AdminDestroyClassroomController::class)->name('classrooms.destroy');
     Route::post('/classrooms/{classroom}/toggle', AdminToggleClassroomStatusController::class)->name('classrooms.toggle');
+    Route::post('/classrooms/{classroom}/approve', AdminApproveClassroomController::class)->name('classrooms.approve');
 
     // Gestão de Usuários (Estudantes e Professores) da Instituição
     Route::get('/users', IndexInstitutionUserController::class)->name('users.index');

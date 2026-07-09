@@ -31,6 +31,7 @@ return [
         'tech_support' => 'Technical Support',
         'logout' => 'Log Out',
         'profile_settings' => 'Go to Profile settings',
+        'audits' => 'View platform audit log',
     ],
     'section' => [
         'management' => 'Management',
@@ -57,6 +58,7 @@ return [
         'ranking' => 'Ranking',
         'tech_support' => 'Technical Support',
         'my_profile' => 'My Profile',
+        'audits' => 'Audit Log',
     ],
     'tooltip' => [
         'classrooms' => 'Classes',
@@ -68,6 +70,7 @@ return [
         'subjects' => 'Subjects',
         'reports' => 'Reports',
         'logs_queue' => 'Logs and Queue',
+        'audits' => 'Audit Log',
         'support_tickets' => 'Support Tickets',
         'site_visits' => 'Site Visits',
         'trash' => 'Trash',

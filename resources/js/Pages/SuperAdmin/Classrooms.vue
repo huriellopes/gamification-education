@@ -11,7 +11,7 @@ import Tooltip from '@/Components/Tooltip.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { __ } from '@/i18n';
 import { Head, router, useForm } from '@inertiajs/vue3';
-import { Pencil, Plus, Power, Trash2 } from '@lucide/vue';
+import { CheckCircle2, Pencil, Plus, Power, Trash2 } from '@lucide/vue';
 import { computed, ref } from 'vue';
 
 const props = defineProps({
@@ -180,6 +180,20 @@ const confirmToggle = (classroom) => {
             ),
     );
 };
+
+const confirmApprove = (classroom) => {
+    triggerConfirm(
+        __('classrooms.approve_confirm_title'),
+        __('classrooms.approve_confirm_message', { name: classroom.name }),
+        'info',
+        () =>
+            router.post(
+                route('super-admin.classrooms.approve', classroom.id),
+                {},
+                { preserveScroll: true },
+            ),
+    );
+};
 </script>
 
 <template>
@@ -254,6 +268,13 @@ const confirmToggle = (classroom) => {
 
                     <template #is_active="{ item }">
                         <span
+                            v-if="item.is_pending"
+                            class="inline-flex rounded-full bg-amber-500/10 px-2.5 py-0.5 text-xs font-bold text-amber-400"
+                        >
+                            {{ __('classrooms.status_pending') }}
+                        </span>
+                        <span
+                            v-else
                             class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-bold"
                             :class="
                                 isActive(item)
@@ -271,6 +292,18 @@ const confirmToggle = (classroom) => {
 
                     <template #actions="{ item }">
                         <div class="flex items-center justify-end gap-2">
+                            <Tooltip
+                                v-if="item.is_pending"
+                                :text="__('classrooms.approve')"
+                            >
+                                <button
+                                    @click="confirmApprove(item)"
+                                    class="rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-1.5 text-emerald-400 transition-colors hover:bg-emerald-500/20"
+                                    type="button"
+                                >
+                                    <CheckCircle2 class="h-4 w-4" />
+                                </button>
+                            </Tooltip>
                             <Tooltip :text="__('common.edit')">
                                 <button
                                     @click="openEdit(item)"

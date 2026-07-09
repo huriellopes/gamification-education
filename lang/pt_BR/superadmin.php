@@ -3,6 +3,25 @@
 declare(strict_types=1);
 
 return [
+    'audits' => [
+        'head_title' => 'Auditoria',
+        'header' => 'Auditoria da Plataforma',
+        'history_title' => 'Registros de auditoria',
+        'history_subtitle' => 'Alterações de dados (criação, edição e exclusão) rastreadas na plataforma.',
+        'search_placeholder' => 'Buscar por usuário, evento ou entidade...',
+        'col_when' => 'Quando',
+        'col_user' => 'Usuário',
+        'col_event' => 'Evento',
+        'col_entity' => 'Entidade',
+        'col_changes' => 'Campos alterados',
+        'col_ip' => 'IP',
+        'event_created' => 'Criado',
+        'event_updated' => 'Atualizado',
+        'event_deleted' => 'Excluído',
+        'event_restored' => 'Restaurado',
+        'no_changes' => 'sem alterações',
+    ],
+
     'dashboard' => [
         'head_title' => 'Painel Super Admin',
         'header' => 'Painel do Super Administrador',

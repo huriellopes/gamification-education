@@ -158,9 +158,7 @@ const toggle = () => {
                 >
                     <CheckCircle2 v-if="isHealthy" class="h-4 w-4" />
                     <AlertTriangle v-else class="h-4 w-4" />
-                    <span v-if="isHealthy">{{
-                        t('all_healthy')
-                    }}</span>
+                    <span v-if="isHealthy">{{ t('all_healthy') }}</span>
                     <span v-else>
                         {{ summary.alerts }}
                         {{ t('alerts_label') }}
@@ -227,7 +225,9 @@ const toggle = () => {
                                     >{{ checkLabel(check.key) }}</span
                                 >
                             </div>
-                            <p class="mt-1 text-xs leading-relaxed text-zinc-400">
+                            <p
+                                class="mt-1 text-xs leading-relaxed text-zinc-400"
+                            >
                                 {{ checkDescription(check) }}
                             </p>
                         </div>

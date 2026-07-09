@@ -31,7 +31,9 @@ class PersistClassroomAction
             ]);
 
             if (!$classroom->exists) {
+                // Turma criada pelo super admin já nasce ativa e aprovada.
                 $classroom->is_active = GeneralStatus::ACTIVE;
+                $classroom->approved_at = now();
             }
 
             $classroom->save();

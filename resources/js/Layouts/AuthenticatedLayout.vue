@@ -21,6 +21,7 @@ import {
     Menu,
     School,
     Settings,
+    ShieldCheck,
     Terminal,
     Trash2,
     Trophy,
@@ -443,6 +444,39 @@ const toggleSection = (key) => {
                                             class="truncate"
                                             >{{
                                                 __('nav.sidebar.logs_queue')
+                                            }}</span
+                                        >
+                                    </Link>
+                                </Tooltip>
+
+                                <!-- Auditoria -->
+                                <Tooltip
+                                    :text="__('nav.tooltip.audits')"
+                                    position="right"
+                                    :disabled="!isSidebarCollapsed"
+                                    block
+                                >
+                                    <Link
+                                        :href="route('super-admin.audits.index')"
+                                        :class="[
+                                            route().current(
+                                                'super-admin.audits.*',
+                                            )
+                                                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/10'
+                                                : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-white',
+                                            isSidebarCollapsed
+                                                ? 'justify-center px-0'
+                                                : 'justify-start gap-3 px-3',
+                                        ]"
+                                        class="flex w-full items-center rounded-xl py-2.5 text-xs font-bold transition-all"
+                                        :aria-label="__('nav.aria.audits')"
+                                    >
+                                        <ShieldCheck class="h-4 w-4 shrink-0" />
+                                        <span
+                                            v-if="!isSidebarCollapsed"
+                                            class="truncate"
+                                            >{{
+                                                __('nav.sidebar.audits')
                                             }}</span
                                         >
                                     </Link>
@@ -924,7 +958,9 @@ const toggleSection = (key) => {
                                     <span
                                         v-if="!isSidebarCollapsed"
                                         class="truncate"
-                                        >{{ __('nav.sidebar.my_profile') }}</span
+                                        >{{
+                                            __('nav.sidebar.my_profile')
+                                        }}</span
                                     >
                                 </Link>
                             </Tooltip>

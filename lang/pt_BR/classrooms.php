@@ -48,4 +48,16 @@ return [
     'confirm_toggle_message' => 'Deseja :action a turma ":name"?',
     'action_activate' => 'ativar',
     'action_deactivate' => 'desativar',
+
+    // Fluxo de aprovação (turma criada por professor fica pendente)
+    'created_pending' => 'Turma criada! Aguardando aprovação de um administrador.',
+    'approved' => 'Turma aprovada e ativada!',
+    'status_pending' => 'Pendente',
+    'pending_hint' => 'Turma aguardando aprovação do administrador — você já pode matricular alunos.',
+    'approve' => 'Aprovar',
+    'approve_confirm_title' => 'Aprovar turma',
+    'approve_confirm_message' => 'Aprovar e ativar a turma ":name"?',
+    'teacher_new' => 'Criar turma',
+    'teacher_create_title' => 'Nova turma',
+    'teacher_create_submit' => 'Criar turma',
 ];

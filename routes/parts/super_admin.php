@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Impersonate\ImpersonateUserController;
+use App\Http\Controllers\SuperAdmin\Classroom\ApproveClassroomController;
 use App\Http\Controllers\SuperAdmin\Classroom\DestroyClassroomController;
 use App\Http\Controllers\SuperAdmin\Classroom\IndexClassroomController;
 use App\Http\Controllers\SuperAdmin\Classroom\StoreClassroomController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\SuperAdmin\Classroom\ToggleClassroomStatusController;
 use App\Http\Controllers\SuperAdmin\Classroom\UpdateClassroomController;
 use App\Http\Controllers\SuperAdmin\DeleteFailedJobController;
 use App\Http\Controllers\SuperAdmin\ExportSiteVisitController;
+use App\Http\Controllers\SuperAdmin\IndexAuditController;
 use App\Http\Controllers\SuperAdmin\IndexLogController;
 use App\Http\Controllers\SuperAdmin\IndexReportController;
 use App\Http\Controllers\SuperAdmin\IndexSiteVisitController;
@@ -85,9 +87,11 @@ Route::middleware(['auth', 'role.super_admin'])->prefix('super-admin')->name('su
     Route::put('/classrooms/{classroom}', UpdateClassroomController::class)->name('classrooms.update');
     Route::delete('/classrooms/{classroom}', DestroyClassroomController::class)->name('classrooms.destroy');
     Route::post('/classrooms/{classroom}/toggle', ToggleClassroomStatusController::class)->name('classrooms.toggle');
+    Route::post('/classrooms/{classroom}/approve', ApproveClassroomController::class)->name('classrooms.approve');
 
     // Logs do Sistema
     Route::get('/logs', IndexLogController::class)->name('logs.index');
+    Route::get('/audits', IndexAuditController::class)->name('audits.index');
     Route::post('/logs/prune', PruneLogController::class)->name('logs.prune');
 
     // Fila e Jobs Falhos
