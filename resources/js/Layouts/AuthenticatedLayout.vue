@@ -482,6 +482,39 @@ const toggleSection = (key) => {
                                     </Link>
                                 </Tooltip>
 
+                                <!-- Configurações -->
+                                <Tooltip
+                                    :text="__('nav.tooltip.settings')"
+                                    position="right"
+                                    :disabled="!isSidebarCollapsed"
+                                    block
+                                >
+                                    <Link
+                                        :href="route('super-admin.settings.index')"
+                                        :class="[
+                                            route().current(
+                                                'super-admin.settings.*',
+                                            )
+                                                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/10'
+                                                : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-white',
+                                            isSidebarCollapsed
+                                                ? 'justify-center px-0'
+                                                : 'justify-start gap-3 px-3',
+                                        ]"
+                                        class="flex w-full items-center rounded-xl py-2.5 text-xs font-bold transition-all"
+                                        :aria-label="__('nav.tooltip.settings')"
+                                    >
+                                        <Settings class="h-4 w-4 shrink-0" />
+                                        <span
+                                            v-if="!isSidebarCollapsed"
+                                            class="truncate"
+                                            >{{
+                                                __('nav.sidebar.settings')
+                                            }}</span
+                                        >
+                                    </Link>
+                                </Tooltip>
+
                                 <!-- Chamados -->
                                 <Tooltip
                                     :text="__('nav.tooltip.support_tickets')"

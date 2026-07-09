@@ -22,6 +22,18 @@ return [
         'no_changes' => 'no changes',
     ],
 
+    'settings' => [
+        'head_title' => 'Settings',
+        'header' => 'Platform Settings',
+        'public_metrics_title' => 'Public site metrics',
+        'public_metrics_subtitle' => 'Control the numbers shown on the landing page.',
+        'fake_metrics_label' => 'Show showcase (fake) metrics',
+        'fake_metrics_hint' => 'Great early on. Once your user base grows, turn it off to display the real data.',
+        'state_fake' => 'Showing showcase (marketing) numbers.',
+        'state_real' => 'Showing the platform real data.',
+        'saved' => 'Settings updated.',
+    ],
+
     'dashboard' => [
         'head_title' => 'Super Admin Panel',
         'header' => 'Super Administrator Panel',
