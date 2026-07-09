@@ -15,6 +15,6 @@ class InstitutionUserMailService
      */
     public function sendWelcome(User $user, ?string $temporaryPassword): void
     {
-        SendWelcomeEmailJob::dispatch($user, $temporaryPassword);
+        dispatch(new SendWelcomeEmailJob($user, $temporaryPassword));
     }
 }
