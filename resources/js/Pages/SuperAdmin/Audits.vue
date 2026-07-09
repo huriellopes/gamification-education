@@ -8,18 +8,40 @@ import { ShieldCheck } from '@lucide/vue';
 
 defineProps({
     audits: {
-        type: Array,
-        default: () => [],
+        type: Object,
+        default: () => ({ data: [] }),
+    },
+    filters: {
+        type: Object,
+        default: () => ({}),
     },
 });
 
+// O nome do usuário é derivado (join) e não entra na ordenação do banco; no
+// server-side apenas created_at e event são ordenáveis.
 const columns = [
-    { key: 'created_at', label: __('superadmin.audits.col_when'), sortable: true },
-    { key: 'user', label: __('superadmin.audits.col_user'), sortable: true },
+    {
+        key: 'created_at',
+        label: __('superadmin.audits.col_when'),
+        sortable: true,
+    },
+    { key: 'user', label: __('superadmin.audits.col_user'), sortable: false },
     { key: 'event', label: __('superadmin.audits.col_event'), sortable: true },
-    { key: 'entity', label: __('superadmin.audits.col_entity'), sortable: false },
-    { key: 'changes', label: __('superadmin.audits.col_changes'), sortable: false },
-    { key: 'ip_address', label: __('superadmin.audits.col_ip'), sortable: false },
+    {
+        key: 'entity',
+        label: __('superadmin.audits.col_entity'),
+        sortable: false,
+    },
+    {
+        key: 'changes',
+        label: __('superadmin.audits.col_changes'),
+        sortable: false,
+    },
+    {
+        key: 'ip_address',
+        label: __('superadmin.audits.col_ip'),
+        sortable: false,
+    },
 ];
 
 const EVENT_CLASSES = {
@@ -33,7 +55,8 @@ const eventClass = (event) =>
     EVENT_CLASSES[event] ?? 'bg-zinc-700/40 text-zinc-300';
 
 const eventLabel = (event) =>
-    __(`superadmin.audits.event_${event}`) !== `superadmin.audits.event_${event}`
+    __(`superadmin.audits.event_${event}`) !==
+    `superadmin.audits.event_${event}`
         ? __(`superadmin.audits.event_${event}`)
         : event;
 
@@ -93,7 +116,10 @@ const formatDateTime = (dateStr) => {
                 </div>
 
                 <DataTable
-                    :items="audits"
+                    server-side
+                    :items="audits.data"
+                    :meta="audits"
+                    :filters="filters"
                     :columns="columns"
                     :search-placeholder="
                         __('superadmin.audits.search_placeholder')
@@ -107,7 +133,9 @@ const formatDateTime = (dateStr) => {
                     </template>
 
                     <template #user="{ item }">
-                        <span class="text-sm text-zinc-200">{{ item.user }}</span>
+                        <span class="text-sm text-zinc-200">{{
+                            item.user
+                        }}</span>
                     </template>
 
                     <template #event="{ item }">
