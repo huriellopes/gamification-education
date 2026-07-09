@@ -122,10 +122,10 @@ const downloadPng = () => {
                 <ShieldCheck class="h-6 w-6" />
             </span>
             <div>
-                <h2 class="text-lg font-bold text-gray-900 dark:text-white">
+                <h2 class="text-lg font-bold text-white">
                     {{ __('profile.two_factor.title') }}
                 </h2>
-                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                <p class="mt-1 text-sm text-zinc-400">
                     {{ __('profile.two_factor.subtitle') }}
                 </p>
             </div>
@@ -140,7 +140,7 @@ const downloadPng = () => {
 
         <!-- Estado: desativado -->
         <div v-if="!twoFactor.enabled && !twoFactor.confirming">
-            <p class="mb-4 text-sm text-gray-500 dark:text-gray-400">
+            <p class="mb-4 text-sm text-zinc-400">
                 {{ __('profile.two_factor.disabled_hint') }}
             </p>
             <button
@@ -161,7 +161,7 @@ const downloadPng = () => {
         <!-- Estado: configurando (escanear QR + confirmar) -->
         <div v-else-if="twoFactor.confirming" class="space-y-5">
             <div
-                class="flex flex-col gap-5 rounded-xl border border-gray-200 bg-gray-50 p-5 dark:border-gray-700 dark:bg-gray-900/40 sm:flex-row"
+                class="flex flex-col gap-5 rounded-xl border border-zinc-800 bg-zinc-900/40 p-5 sm:flex-row"
             >
                 <div
                     class="shrink-0 rounded-lg bg-white p-3"
@@ -169,16 +169,16 @@ const downloadPng = () => {
                 ></div>
                 <div class="space-y-3">
                     <p
-                        class="flex items-center gap-2 text-sm font-semibold text-gray-800 dark:text-gray-200"
+                        class="flex items-center gap-2 text-sm font-semibold text-zinc-200"
                     >
                         <Smartphone class="h-4 w-4 text-indigo-400" />
                         {{ __('profile.two_factor.scan_hint') }}
                     </p>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">
+                    <p class="text-xs text-zinc-400">
                         {{ __('profile.two_factor.manual_key') }}
                     </p>
                     <code
-                        class="block break-all rounded-lg bg-gray-100 px-3 py-2 font-mono text-xs text-gray-700 dark:bg-gray-950 dark:text-gray-300"
+                        class="block break-all rounded-lg bg-zinc-950 px-3 py-2 font-mono text-xs text-zinc-300"
                         >{{ twoFactor.secret }}</code
                     >
                 </div>
@@ -186,7 +186,7 @@ const downloadPng = () => {
 
             <form @submit.prevent="confirm" class="max-w-xs space-y-2">
                 <label
-                    class="block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400"
+                    class="block text-xs font-bold uppercase tracking-wider text-zinc-400"
                     >{{ __('profile.two_factor.confirm_label') }}</label
                 >
                 <TextInput
@@ -217,7 +217,7 @@ const downloadPng = () => {
                     <button
                         type="button"
                         @click="disable"
-                        class="rounded-xl border border-gray-300 px-4 py-2.5 text-sm font-bold text-gray-600 transition-colors hover:bg-gray-100 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+                        class="rounded-xl border border-zinc-700 px-4 py-2.5 text-sm font-bold text-zinc-300 transition-colors hover:bg-zinc-800"
                     >
                         {{ __('common.cancel') }}
                     </button>
@@ -229,7 +229,7 @@ const downloadPng = () => {
         <div v-else class="space-y-3">
             <div class="max-w-xs space-y-1">
                 <label
-                    class="block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400"
+                    class="block text-xs font-bold uppercase tracking-wider text-zinc-400"
                     >{{ __('profile.two_factor.current_password_label') }}</label
                 >
                 <TextInput
@@ -250,7 +250,7 @@ const downloadPng = () => {
                     type="button"
                     :disabled="recoveryForm.processing"
                     @click="regenerate"
-                class="inline-flex items-center gap-2 rounded-xl border border-gray-300 px-4 py-2.5 text-sm font-bold text-gray-600 transition-colors hover:bg-gray-100 disabled:opacity-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+                class="inline-flex items-center gap-2 rounded-xl border border-zinc-700 px-4 py-2.5 text-sm font-bold text-zinc-300 transition-colors hover:bg-zinc-800 disabled:opacity-50"
             >
                 <RefreshCw class="h-4 w-4" />
                 {{
@@ -278,12 +278,12 @@ const downloadPng = () => {
         <!-- Códigos de recuperação: collapse + downloads (quando há códigos) -->
         <div
             v-if="recoveryCodes.length"
-            class="rounded-xl border border-gray-200 dark:border-gray-700"
+            class="rounded-xl border border-zinc-800"
         >
             <button
                 type="button"
                 @click="showRecovery = !showRecovery"
-                class="flex w-full items-center justify-between gap-2 px-4 py-3 text-sm font-bold text-gray-800 dark:text-gray-200"
+                class="flex w-full items-center justify-between gap-2 px-4 py-3 text-sm font-bold text-zinc-200"
                 :aria-expanded="showRecovery"
             >
                 <span class="flex items-center gap-2">
@@ -298,13 +298,13 @@ const downloadPng = () => {
 
             <div
                 v-show="showRecovery"
-                class="space-y-4 border-t border-gray-200 px-4 py-4 dark:border-gray-700"
+                class="space-y-4 border-t border-zinc-800 px-4 py-4"
             >
-                <p class="text-xs text-gray-500 dark:text-gray-400">
+                <p class="text-xs text-zinc-400">
                     {{ __('profile.two_factor.recovery_hint') }}
                 </p>
                 <div
-                    class="grid grid-cols-1 gap-1.5 rounded-lg bg-gray-100 p-3 font-mono text-sm text-gray-800 dark:bg-gray-950 dark:text-gray-200 sm:grid-cols-2"
+                    class="grid grid-cols-1 gap-1.5 rounded-lg bg-zinc-950 p-3 font-mono text-sm text-zinc-200 sm:grid-cols-2"
                 >
                     <span v-for="code in recoveryCodes" :key="code">{{
                         code
@@ -314,7 +314,7 @@ const downloadPng = () => {
                     <button
                         type="button"
                         @click="downloadTxt"
-                        class="inline-flex items-center gap-2 rounded-xl border border-gray-300 px-4 py-2 text-xs font-bold text-gray-600 transition-colors hover:bg-gray-100 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+                        class="inline-flex items-center gap-2 rounded-xl border border-zinc-700 px-4 py-2 text-xs font-bold text-zinc-300 transition-colors hover:bg-zinc-800"
                     >
                         <FileText class="h-4 w-4" />
                         {{ __('profile.two_factor.download_txt') }}
@@ -322,7 +322,7 @@ const downloadPng = () => {
                     <button
                         type="button"
                         @click="downloadPng"
-                        class="inline-flex items-center gap-2 rounded-xl border border-gray-300 px-4 py-2 text-xs font-bold text-gray-600 transition-colors hover:bg-gray-100 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+                        class="inline-flex items-center gap-2 rounded-xl border border-zinc-700 px-4 py-2 text-xs font-bold text-zinc-300 transition-colors hover:bg-zinc-800"
                     >
                         <FileImage class="h-4 w-4" />
                         {{ __('profile.two_factor.download_png') }}

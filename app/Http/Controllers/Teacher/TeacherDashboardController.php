@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Teacher;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\Dashboard\Health\TeacherHealthService;
 use App\Services\Dashboard\TeacherDashboardService;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -15,13 +16,14 @@ class TeacherDashboardController extends Controller
     /**
      * Exibe o dashboard do professor com métricas e desempenho de turmas/alunos.
      */
-    public function __invoke(TeacherDashboardService $dashboard): Response
+    public function __invoke(TeacherDashboardService $dashboard, TeacherHealthService $health): Response
     {
         /** @var User $user */
         $user = auth()->user();
 
         return Inertia::render('Teacher/Dashboard', [
             'metrics' => $dashboard->getMetrics($user),
+            'health' => $health->report($user),
             'classroomPerformance' => $dashboard->getClassroomPerformance($user),
             'studentPerformance' => $dashboard->getStudentPerformance($user),
         ]);

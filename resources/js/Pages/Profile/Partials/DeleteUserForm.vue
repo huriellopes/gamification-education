@@ -44,17 +44,15 @@ const closeModal = () => {
     <section class="space-y-6">
         <header class="flex items-start gap-3">
             <div
-                class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-rose-50 text-rose-600 dark:bg-rose-500/10 dark:text-rose-400"
+                class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-rose-500/10 text-rose-400"
             >
                 <TriangleAlert class="h-5 w-5" />
             </div>
             <div>
-                <h2
-                    class="text-lg font-semibold text-gray-900 dark:text-gray-100"
-                >
+                <h2 class="text-lg font-bold text-white">
                     {{ __('profile.delete_title') }}
                 </h2>
-                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                <p class="mt-1 text-sm text-zinc-400">
                     {{ __('profile.delete_subtitle') }}
                 </p>
             </div>
@@ -66,13 +64,11 @@ const closeModal = () => {
 
         <Modal :show="confirmingUserDeletion" @close="closeModal">
             <div class="p-6">
-                <h2
-                    class="text-lg font-medium text-gray-900 dark:text-gray-100"
-                >
+                <h2 class="text-lg font-bold text-white">
                     {{ __('profile.delete_confirm_title') }}
                 </h2>
 
-                <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                <p class="mt-1 text-sm text-zinc-400">
                     {{ __('profile.delete_confirm_subtitle') }}
                 </p>
 

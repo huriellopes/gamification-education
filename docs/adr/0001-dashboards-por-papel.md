@@ -42,6 +42,33 @@ registro são a segunda). Unificar a rota moveria a filtragem de acesso de uma
 borda **declarativa** (middleware) para condicionais **imperativas** no
 controller e no template — mais fácil de errar e mais difícil de auditar.
 
+Hoje a fronteira é declarada uma vez e barra o papel errado antes de qualquer
+código do controller rodar:
+
+```php
+// bootstrap/app.php — aliases de papel
+$middleware->alias([
+    'role.super_admin' => EnsureUserIsSuperAdmin::class,
+    'role.admin'       => EnsureUserIsAdmin::class,
+    'role.teacher'     => EnsureUserIsTeacher::class,
+    'role.student'     => EnsureUserIsStudent::class,
+]);
+```
+
+```php
+// routes/parts/super_admin.php — o grupo inteiro fica atrás do middleware
+Route::middleware(['auth', 'role.super_admin'])
+    ->prefix('super-admin')
+    ->name('super-admin.')
+    ->group(function () {
+        Route::get('/dashboard', SuperAdminDashboardController::class)->name('dashboard');
+        // ... demais rotas do super admin
+    });
+```
+
+Numa rota única, essa checagem viraria `if ($user->role === ...)` no controller
+e `v-if` no template — repetida e sujeita a esquecimento.
+
 Trade-off resumido:
 
 | Dimensão | Rota por papel (escolhido) | Rota única (rejeitado) |

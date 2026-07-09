@@ -3,6 +3,44 @@
 declare(strict_types=1);
 
 return [
+    'health' => [
+        'title' => 'Saúde das Turmas',
+        'subtitle' => 'Integridade das turmas e matérias que você leciona',
+        'all_healthy' => 'Tudo em ordem',
+        'all_healthy_detail' => 'Nenhum problema detectado nos indicadores monitorados.',
+        'alerts_label' => 'alertas ativos',
+        'critical_label' => 'críticos',
+        'warning_label' => 'em atenção',
+        'view' => 'Ver detalhes',
+        'status' => [
+            'ok' => 'OK',
+            'warning' => 'Atenção',
+            'critical' => 'Crítico',
+        ],
+        'checks' => [
+            'institutions_without_classroom' => [
+                'label' => 'Instituições sem turma',
+                'ok' => 'Você tem turma em todas as suas instituições.',
+                'problem' => 'instituição(ões) onde você não leciona nenhuma turma.',
+            ],
+            'classrooms_without_students' => [
+                'label' => 'Turmas sem alunos',
+                'ok' => 'Todas as suas turmas têm alunos.',
+                'problem' => 'turma(s) sua(s) sem nenhum aluno matriculado.',
+            ],
+            'subjects_without_content' => [
+                'label' => 'Matérias sem conteúdo',
+                'ok' => 'Todas as suas matérias têm conteúdo.',
+                'problem' => 'matéria(s) sem material de estudo nem prova.',
+            ],
+            'unengaged_students' => [
+                'label' => 'Alunos sem engajamento',
+                'ok' => 'Todos os seus alunos já pontuaram.',
+                'problem' => 'aluno(s) ativo(s) que ainda não pontuaram.',
+            ],
+        ],
+    ],
+
     'dashboard' => [
         'title' => 'Painel do Professor',
         'header' => 'Painel do Professor',

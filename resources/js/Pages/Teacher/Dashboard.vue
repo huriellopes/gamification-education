@@ -2,6 +2,7 @@
 import InstitutionSwitcher from '@/Components/InstitutionSwitcher.vue';
 import MetricCard from '@/Components/MetricCard.vue';
 import PageHeader from '@/Components/PageHeader.vue';
+import SystemHealthPanel from '@/Components/SystemHealthPanel.vue';
 import WelcomeWidget from '@/Components/WelcomeWidget.vue';
 import { __ } from '@/i18n';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
@@ -26,6 +27,10 @@ const props = defineProps({
         type: Array,
         default: () => [],
     },
+    health: {
+        type: Object,
+        default: () => ({ checks: [], summary: {} }),
+    },
 });
 
 const maxClassroomAvg = computed(() =>
@@ -44,7 +49,12 @@ const refreshInterval = ref(null);
 onMounted(() => {
     refreshInterval.value = setInterval(() => {
         router.reload({
-            only: ['metrics', 'classroomPerformance', 'studentPerformance'],
+            only: [
+                'metrics',
+                'health',
+                'classroomPerformance',
+                'studentPerformance',
+            ],
             preserveScroll: true,
             preserveState: true,
         });
@@ -117,6 +127,9 @@ onUnmounted(() => {
                         /></template>
                     </MetricCard>
                 </div>
+
+                <!-- Saúde (integridade das turmas/matérias do professor) -->
+                <SystemHealthPanel :report="health" i18n-base="teacher.health" />
 
                 <!-- Gráficos de desempenho -->
                 <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">

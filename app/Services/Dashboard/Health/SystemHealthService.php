@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Services\Dashboard\Health;
 
 use App\Enums\GeneralStatus;
-use App\Enums\HealthStatus;
 use App\Enums\SupportStatus;
 use App\Enums\UserRole;
 use App\Models\Classroom;
@@ -13,6 +12,7 @@ use App\Models\Institution;
 use App\Models\Subject;
 use App\Models\Support;
 use App\Models\User;
+use App\Services\Dashboard\Health\Concerns\BuildsHealthReport;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -25,6 +25,8 @@ use Illuminate\Support\Facades\DB;
  */
 class SystemHealthService
 {
+    use BuildsHealthReport;
+
     /**
      * Relatório completo: lista de checks (mais severos primeiro) + resumo.
      *
@@ -35,17 +37,7 @@ class SystemHealthService
      */
     public function report(): array
     {
-        $checks = $this->checks();
-
-        usort(
-            $checks,
-            fn (HealthCheck $a, HealthCheck $b) => $b->status->weight() <=> $a->status->weight(),
-        );
-
-        return [
-            'checks' => array_map(fn (HealthCheck $check) => $check->toArray(), $checks),
-            'summary' => $this->summarize($checks),
-        ];
+        return $this->buildReport($this->checks());
     }
 
     /**
@@ -159,39 +151,5 @@ class SystemHealthService
             criticalAt: 25,
             routeName: 'super-admin.users.index',
         );
-    }
-
-    /**
-     * @param  list<HealthCheck>  $checks
-     * @return array{status: string, color: string, alerts: int, critical: int, warning: int, ok: int, total: int}
-     */
-    private function summarize(array $checks): array
-    {
-        $overall = HealthStatus::OK;
-        $critical = 0;
-        $warning = 0;
-        $ok = 0;
-
-        foreach ($checks as $check) {
-            if ($check->status->weight() > $overall->weight()) {
-                $overall = $check->status;
-            }
-
-            match ($check->status) {
-                HealthStatus::CRITICAL => $critical++,
-                HealthStatus::WARNING => $warning++,
-                HealthStatus::OK => $ok++,
-            };
-        }
-
-        return [
-            'status' => $overall->value,
-            'color' => $overall->color(),
-            'alerts' => $critical + $warning,
-            'critical' => $critical,
-            'warning' => $warning,
-            'ok' => $ok,
-            'total' => count($checks),
-        ];
     }
 }

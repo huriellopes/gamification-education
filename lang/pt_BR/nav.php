@@ -37,6 +37,7 @@ return [
         'system' => 'Sistema',
         'teaching' => 'Ensino',
         'community' => 'Comunidade',
+        'account' => 'Conta',
     ],
 
     'sidebar' => [
@@ -55,6 +56,7 @@ return [
         'students' => 'Meus Alunos',
         'ranking' => 'Ranking',
         'tech_support' => 'Suporte Técnico',
+        'my_profile' => 'Meu Perfil',
     ],
     'tooltip' => [
         'classrooms' => 'Turmas',
