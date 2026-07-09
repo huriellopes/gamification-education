@@ -59,6 +59,7 @@ return [
         'tech_support' => 'Technical Support',
         'my_profile' => 'My Profile',
         'audits' => 'Audit Log',
+        'settings' => 'Settings',
     ],
     'tooltip' => [
         'classrooms' => 'Classes',
@@ -71,6 +72,7 @@ return [
         'reports' => 'Reports',
         'logs_queue' => 'Logs and Queue',
         'audits' => 'Audit Log',
+        'settings' => 'Settings',
         'support_tickets' => 'Support Tickets',
         'site_visits' => 'Site Visits',
         'trash' => 'Trash',

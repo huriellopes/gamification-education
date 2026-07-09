@@ -14,6 +14,7 @@ use App\Http\Controllers\SuperAdmin\ExportSiteVisitController;
 use App\Http\Controllers\SuperAdmin\IndexAuditController;
 use App\Http\Controllers\SuperAdmin\IndexLogController;
 use App\Http\Controllers\SuperAdmin\IndexReportController;
+use App\Http\Controllers\SuperAdmin\IndexSettingController;
 use App\Http\Controllers\SuperAdmin\IndexSiteVisitController;
 use App\Http\Controllers\SuperAdmin\IndexSupportController;
 use App\Http\Controllers\SuperAdmin\IndexTrashController;
@@ -35,6 +36,7 @@ use App\Http\Controllers\SuperAdmin\Subject\ToggleSubjectStatusController;
 use App\Http\Controllers\SuperAdmin\Subject\UpdateSubjectController;
 use App\Http\Controllers\SuperAdmin\SuperAdminDashboardController;
 use App\Http\Controllers\SuperAdmin\Support\ReplySupportController;
+use App\Http\Controllers\SuperAdmin\UpdateSettingController;
 use App\Http\Controllers\SuperAdmin\User\DestroyUserController;
 use App\Http\Controllers\SuperAdmin\User\IndexUserController;
 use App\Http\Controllers\SuperAdmin\User\StoreUserController;
@@ -92,6 +94,10 @@ Route::middleware(['auth', 'role.super_admin'])->prefix('super-admin')->name('su
     // Logs do Sistema
     Route::get('/logs', IndexLogController::class)->name('logs.index');
     Route::get('/audits', IndexAuditController::class)->name('audits.index');
+
+    // Configurações globais
+    Route::get('/settings', IndexSettingController::class)->name('settings.index');
+    Route::put('/settings', UpdateSettingController::class)->name('settings.update');
     Route::post('/logs/prune', PruneLogController::class)->name('logs.prune');
 
     // Fila e Jobs Falhos

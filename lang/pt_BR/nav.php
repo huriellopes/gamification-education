@@ -59,6 +59,7 @@ return [
         'tech_support' => 'Suporte Técnico',
         'my_profile' => 'Meu Perfil',
         'audits' => 'Auditoria',
+        'settings' => 'Configurações',
     ],
     'tooltip' => [
         'classrooms' => 'Turmas',
@@ -78,6 +79,7 @@ return [
         'tech_support' => 'Suporte Técnico',
         'my_profile' => 'Meu Perfil',
         'audits' => 'Auditoria',
+        'settings' => 'Configurações',
         'logout' => 'Sair',
     ],
     'navbar' => [

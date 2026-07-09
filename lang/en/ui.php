@@ -160,6 +160,7 @@ return [
             'subjects_offered' => 'Subjects Offered',
             'xp_earned' => 'XP Points Earned',
             'online_responsive' => 'Online & Responsive',
+            'satisfaction' => 'Student satisfaction',
         ],
         'testimonials' => [
             'badge' => 'Testimonials',

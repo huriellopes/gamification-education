@@ -28,18 +28,24 @@ defineProps({
         type: Boolean,
         default: true,
     },
+    // Métricas da landing (o backend decide vitrine/marketing vs. dados reais,
+    // conforme a configuração controlada pelo super admin).
     stats: {
-        type: Object,
-        default: () => ({
-            students: 0,
-            subjects: 0,
-            xp: '0',
-        }),
+        type: Array,
+        default: () => [],
     },
 });
 
 const page = usePage();
 const user = page.props.auth?.user;
+
+// Cor de destaque de cada métrica, por posição.
+const statColors = [
+    'text-white',
+    'text-indigo-400',
+    'text-emerald-400',
+    'text-white',
+];
 
 // Depoimentos ilustrativos (dados fictícios) usados na landing page para
 // exibir prova social. As iniciais alimentam o avatar gerado por CSS.
@@ -567,48 +573,20 @@ const enableAds = () => {
         <section class="border-b border-t border-zinc-900 bg-zinc-900/20 py-16">
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div class="grid grid-cols-2 gap-8 text-center md:grid-cols-4">
-                    <div>
-                        <p class="text-4xl font-black text-white sm:text-5xl">
-                            {{ stats.students }}
+                    <div
+                        v-for="(stat, index) in stats"
+                        :key="stat.label"
+                    >
+                        <p
+                            class="text-4xl font-black tabular-nums sm:text-5xl"
+                            :class="statColors[index] ?? 'text-white'"
+                        >
+                            {{ stat.value }}
                         </p>
                         <p
                             class="mt-2 text-xs font-bold uppercase tracking-wider text-zinc-400 sm:text-sm"
                         >
-                            {{ __('welcome.stats.active_students') }}
-                        </p>
-                    </div>
-                    <div>
-                        <p
-                            class="text-4xl font-black text-indigo-400 sm:text-5xl"
-                        >
-                            {{ stats.subjects }}
-                        </p>
-                        <p
-                            class="mt-2 text-xs font-bold uppercase tracking-wider text-zinc-400 sm:text-sm"
-                        >
-                            {{ __('welcome.stats.subjects_offered') }}
-                        </p>
-                    </div>
-                    <div>
-                        <p
-                            class="text-4xl font-black text-emerald-400 sm:text-5xl"
-                        >
-                            {{ stats.xp }}
-                        </p>
-                        <p
-                            class="mt-2 text-xs font-bold uppercase tracking-wider text-zinc-400 sm:text-sm"
-                        >
-                            {{ __('welcome.stats.xp_earned') }}
-                        </p>
-                    </div>
-                    <div>
-                        <p class="text-4xl font-black text-white sm:text-5xl">
-                            100%
-                        </p>
-                        <p
-                            class="mt-2 text-xs font-bold uppercase tracking-wider text-zinc-400 sm:text-sm"
-                        >
-                            {{ __('welcome.stats.online_responsive') }}
+                            {{ __('welcome.stats.' + stat.label) }}
                         </p>
                     </div>
                 </div>
