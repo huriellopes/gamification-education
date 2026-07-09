@@ -22,6 +22,18 @@ return [
         'no_changes' => 'sem alterações',
     ],
 
+    'settings' => [
+        'head_title' => 'Configurações',
+        'header' => 'Configurações da Plataforma',
+        'public_metrics_title' => 'Métricas do site público',
+        'public_metrics_subtitle' => 'Controle os números exibidos na página inicial.',
+        'fake_metrics_label' => 'Exibir métricas de vitrine (fictícias)',
+        'fake_metrics_hint' => 'Ideal no início. Quando a base de usuários crescer, desligue para exibir os dados reais.',
+        'state_fake' => 'Exibindo números de vitrine (marketing).',
+        'state_real' => 'Exibindo os dados reais da plataforma.',
+        'saved' => 'Configurações atualizadas.',
+    ],
+
     'dashboard' => [
         'head_title' => 'Painel Super Admin',
         'header' => 'Painel do Super Administrador',
