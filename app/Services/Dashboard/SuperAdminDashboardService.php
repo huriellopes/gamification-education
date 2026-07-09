@@ -17,6 +17,7 @@ use App\Models\Support;
 use App\Models\User;
 use App\Services\Concerns\BuildsDailyChart;
 use Carbon\Carbon;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Spatie\DeletedModels\Models\DeletedModel;
 
@@ -154,20 +155,34 @@ class SuperAdminDashboardService
     }
 
     /**
-     * Get site visits with decrypted IP addresses.
+     * Site visits paginados (com IP descriptografado no mapeamento).
+     *
+     * Busca e ordenação ocorrem no banco: o IP é encriptado em repouso, logo a
+     * busca cobre apenas o user_agent e a ordenação é restrita a colunas simples.
+     *
+     * @param  int  $perPage  Registros por página; -1 = todos.
      */
-    public function getSiteVisits(): array
+    public function getSiteVisits(int $perPage = 20, ?string $search = null, string $sort = 'visited_at', string $direction = 'desc'): LengthAwarePaginator
     {
-        return SiteVisit::orderByDesc('visited_at')
-            ->take(100)
-            ->get()
-            ->map(fn ($visit) => [
+        $sort = in_array($sort, ['id', 'visited_at'], true) ? $sort : 'visited_at';
+        $direction = $direction === 'asc' ? 'asc' : 'desc';
+
+        $query = SiteVisit::query()
+            ->when(
+                $search !== null && $search !== '',
+                fn ($q) => $q->where('user_agent', 'like', '%' . $search . '%'),
+            )
+            ->orderBy($sort, $direction);
+
+        $perPage = $perPage < 1 ? max((clone $query)->count(), 1) : $perPage;
+
+        return $query->paginate($perPage)
+            ->through(fn (SiteVisit $visit) => [
                 'id' => $visit->id,
                 'ip_address' => $visit->ip_address,
                 'user_agent' => $visit->user_agent,
                 'visited_at' => $visit->visited_at->toIso8601String(),
-            ])
-            ->all();
+            ]);
     }
 
     /**

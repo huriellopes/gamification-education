@@ -8,11 +8,17 @@ import { Eye, FileSpreadsheet } from '@lucide/vue';
 
 defineProps({
     siteVisits: {
-        type: Array,
-        default: () => [],
+        type: Object,
+        default: () => ({ data: [] }),
+    },
+    filters: {
+        type: Object,
+        default: () => ({}),
     },
 });
 
+// IP é encriptado em repouso e user_agent não entra na ordenação do banco;
+// por isso só id e visited_at são ordenáveis no modo server-side.
 const visitColumns = [
     { key: 'id', label: 'ID', sortable: true },
     {
@@ -23,12 +29,12 @@ const visitColumns = [
     {
         key: 'ip_address',
         label: __('superadmin.site_visits.col_ip'),
-        sortable: true,
+        sortable: false,
     },
     {
         key: 'user_agent',
         label: __('superadmin.site_visits.col_user_agent'),
-        sortable: true,
+        sortable: false,
     },
 ];
 
@@ -83,7 +89,10 @@ const formatDateTime = (dateStr) => {
                 </div>
 
                 <DataTable
-                    :items="siteVisits"
+                    server-side
+                    :items="siteVisits.data"
+                    :meta="siteVisits"
+                    :filters="filters"
                     :columns="visitColumns"
                     :searchPlaceholder="
                         __('superadmin.site_visits.search_placeholder')

@@ -39,6 +39,7 @@ use App\Http\Controllers\SuperAdmin\Support\ReplySupportController;
 use App\Http\Controllers\SuperAdmin\UpdateSettingController;
 use App\Http\Controllers\SuperAdmin\User\DestroyUserController;
 use App\Http\Controllers\SuperAdmin\User\IndexUserController;
+use App\Http\Controllers\SuperAdmin\User\ResetUserPasswordController;
 use App\Http\Controllers\SuperAdmin\User\StoreUserController;
 use App\Http\Controllers\SuperAdmin\User\ToggleUserStatusController;
 use App\Http\Controllers\SuperAdmin\User\UpdateUserController;
@@ -62,6 +63,7 @@ Route::middleware(['auth', 'role.super_admin'])->prefix('super-admin')->name('su
     Route::post('/users', StoreUserController::class)->name('users.store');
     Route::put('/users/{user}', UpdateUserController::class)->name('users.update');
     Route::post('/users/{user}/toggle', ToggleUserStatusController::class)->name('users.toggle');
+    Route::post('/users/{user}/reset-password', ResetUserPasswordController::class)->name('users.reset-password');
     Route::delete('/users/{user}', DestroyUserController::class)->name('users.destroy');
 
     // Lixeira

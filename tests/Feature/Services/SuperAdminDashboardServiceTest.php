@@ -81,6 +81,38 @@ test('getSiteVisits maps recent visits', function () {
         ->and($visits[0]['ip_address'])->toBe('127.0.0.1');
 });
 
+test('getSiteVisits paginates and reports the real total (no artificial cap)', function () {
+    // create() (não insert) para respeitar o cast que criptografa o IP.
+    for ($i = 0; $i < 105; $i++) {
+        SiteVisit::create([
+            'ip_address' => '127.0.0.1',
+            'user_agent' => 'phpunit',
+            'visited_at' => now(),
+        ]);
+    }
+
+    // Página de 10 traz 10 itens, mas o total reflete o banco real.
+    $page = $this->service->getSiteVisits(perPage: 10);
+    expect($page->count())->toBe(10)
+        ->and($page->total())->toBe(105)
+        ->and($page->lastPage())->toBe(11);
+
+    // "Todos" (-1) traz todos os registros numa página só.
+    $all = $this->service->getSiteVisits(perPage: -1);
+    expect($all->count())->toBe(105)
+        ->and($all->total())->toBe(105);
+});
+
+test('getSiteVisits searches by user agent on the server', function () {
+    SiteVisit::create(['ip_address' => '10.0.0.1', 'user_agent' => 'Chrome/most', 'visited_at' => now()]);
+    SiteVisit::create(['ip_address' => '10.0.0.2', 'user_agent' => 'Firefox/xyz', 'visited_at' => now()]);
+
+    $result = $this->service->getSiteVisits(search: 'firefox');
+
+    expect($result->total())->toBe(1)
+        ->and($result->first()['user_agent'])->toBe('Firefox/xyz');
+});
+
 test('getFailedJobs formats queue failures', function () {
     DB::table('failed_jobs')->insert([
         'uuid' => (string) Str::uuid(),
