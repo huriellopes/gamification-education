@@ -77,7 +77,9 @@ const linePath = computed(() => {
     if (pts.length === 0) return '';
     return pts.reduce(
         (acc, curr, idx) =>
-            idx === 0 ? `M ${curr.x} ${curr.y}` : `${acc} L ${curr.x} ${curr.y}`,
+            idx === 0
+                ? `M ${curr.x} ${curr.y}`
+                : `${acc} L ${curr.x} ${curr.y}`,
         '',
     );
 });
@@ -105,7 +107,11 @@ const hideTooltip = () => {
 
 <template>
     <div class="relative h-64 w-full">
-        <svg class="h-full w-full" viewBox="0 0 600 240" preserveAspectRatio="none">
+        <svg
+            class="h-full w-full"
+            viewBox="0 0 600 240"
+            preserveAspectRatio="none"
+        >
             <defs>
                 <linearGradient :id="gradientId" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" :stop-color="color" stop-opacity="0.4" />
@@ -113,18 +119,54 @@ const hideTooltip = () => {
                 </linearGradient>
             </defs>
 
-            <line x1="50" y1="30" x2="570" y2="30" stroke="#27272a" stroke-dasharray="3" />
-            <line x1="50" y1="90" x2="570" y2="90" stroke="#27272a" stroke-dasharray="3" />
-            <line x1="50" y1="150" x2="570" y2="150" stroke="#27272a" stroke-dasharray="3" />
+            <line
+                x1="50"
+                y1="30"
+                x2="570"
+                y2="30"
+                stroke="#27272a"
+                stroke-dasharray="3"
+            />
+            <line
+                x1="50"
+                y1="90"
+                x2="570"
+                y2="90"
+                stroke="#27272a"
+                stroke-dasharray="3"
+            />
+            <line
+                x1="50"
+                y1="150"
+                x2="570"
+                y2="150"
+                stroke="#27272a"
+                stroke-dasharray="3"
+            />
             <line x1="50" y1="210" x2="570" y2="210" stroke="#27272a" />
 
-            <text x="15" y="34" fill="#71717a" class="font-mono text-[10px] font-bold">
+            <text
+                x="15"
+                y="34"
+                fill="#71717a"
+                class="font-mono text-[10px] font-bold"
+            >
                 {{ Math.round(maxValue) }}
             </text>
-            <text x="15" y="124" fill="#71717a" class="font-mono text-[10px] font-bold">
+            <text
+                x="15"
+                y="124"
+                fill="#71717a"
+                class="font-mono text-[10px] font-bold"
+            >
                 {{ Math.round(maxValue / 2) }}
             </text>
-            <text x="15" y="214" fill="#71717a" class="font-mono text-[10px] font-bold">
+            <text
+                x="15"
+                y="214"
+                fill="#71717a"
+                class="font-mono text-[10px] font-bold"
+            >
                 0
             </text>
 

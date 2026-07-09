@@ -10,16 +10,18 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\DeletedModels\Models\Concerns\KeepsDeletedModels;
 
 /**
  * @property GeneralStatus $is_active
  */
 #[Fillable(['name', 'description', 'is_active', 'razao_social', 'cnpj', 'slug', 'address', 'phones'])]
-class Institution extends Model
+class Institution extends Model implements AuditableContract
 {
     /** @use HasFactory<InstitutionFactory> */
-    use HasFactory, KeepsDeletedModels;
+    use Auditable, HasFactory, KeepsDeletedModels;
 
     public function users(): HasMany
     {

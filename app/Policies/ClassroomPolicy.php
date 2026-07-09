@@ -32,7 +32,20 @@ class ClassroomPolicy
 
     public function create(User $user): bool
     {
-        return $user->isSuperAdmin() || $user->isInstitutionAdmin();
+        // O professor pode criar turmas (ficam pendentes até aprovação do admin).
+        return $user->isSuperAdmin() || $user->isInstitutionAdmin() || $user->isTeacher();
+    }
+
+    /**
+     * Aprovar uma turma pendente criada por um professor.
+     */
+    public function approve(User $user, Classroom $classroom): bool
+    {
+        if ($user->isSuperAdmin()) {
+            return true;
+        }
+
+        return $user->isInstitutionAdmin() && $this->sharesInstitution($user, $classroom->institution_id);
     }
 
     public function update(User $user, Classroom $classroom): bool

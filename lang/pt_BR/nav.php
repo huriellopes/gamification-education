@@ -31,6 +31,7 @@ return [
         'tech_support' => 'Suporte Técnico',
         'logout' => 'Sair da Conta',
         'profile_settings' => 'Ir para configurações do Perfil',
+        'audits' => 'Ver auditoria da plataforma',
     ],
     'section' => [
         'management' => 'Gestão',
@@ -57,6 +58,7 @@ return [
         'ranking' => 'Ranking',
         'tech_support' => 'Suporte Técnico',
         'my_profile' => 'Meu Perfil',
+        'audits' => 'Auditoria',
     ],
     'tooltip' => [
         'classrooms' => 'Turmas',
@@ -75,6 +77,7 @@ return [
         'ranking' => 'Ranking',
         'tech_support' => 'Suporte Técnico',
         'my_profile' => 'Meu Perfil',
+        'audits' => 'Auditoria',
         'logout' => 'Sair',
     ],
     'navbar' => [

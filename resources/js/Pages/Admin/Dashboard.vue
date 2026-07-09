@@ -136,7 +136,6 @@ onUnmounted(() => {
         clearInterval(generalSyncInterval.value);
     }
 });
-
 </script>
 
 <template>

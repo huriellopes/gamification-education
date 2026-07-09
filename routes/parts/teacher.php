@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Http\Controllers\Admin\SwitchInstitutionController;
 use App\Http\Controllers\Teacher\Classroom\EnrollStudentsController;
 use App\Http\Controllers\Teacher\Classroom\IndexClassroomController;
+use App\Http\Controllers\Teacher\Classroom\StoreClassroomController;
 use App\Http\Controllers\Teacher\GenerateContentController;
 use App\Http\Controllers\Teacher\ImportSubjectPdfController;
 use App\Http\Controllers\Teacher\Question\DestroyQuestionController;
@@ -38,6 +39,7 @@ Route::middleware(['auth', 'role.teacher'])->prefix('teacher')->name('teacher.')
 
     // Minhas Classrooms
     Route::get('/classrooms', IndexClassroomController::class)->name('classrooms.index');
+    Route::post('/classrooms', StoreClassroomController::class)->name('classrooms.store');
     Route::post('/classrooms/{classroom}/students', EnrollStudentsController::class)->name('classrooms.students.store');
 
     // Matérias do professor

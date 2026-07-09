@@ -19,6 +19,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\DeletedModels\Models\Concerns\KeepsDeletedModels;
 
 /**
@@ -27,10 +29,10 @@ use Spatie\DeletedModels\Models\Concerns\KeepsDeletedModels;
  */
 #[Fillable(['name', 'email', 'password', 'institution_id', 'role', 'points', 'is_active', 'must_change_password', 'last_login_at'])]
 #[Hidden(['password', 'remember_token', 'two_factor_secret', 'two_factor_recovery_codes'])]
-class User extends Authenticatable
+class User extends Authenticatable implements AuditableContract
 {
     /** @use HasFactory<UserFactory> */
-    use Activatable, BelongsToInstitution, HasFactory, HasRoles, KeepsDeletedModels, Notifiable;
+    use Activatable, Auditable, BelongsToInstitution, HasFactory, HasRoles, KeepsDeletedModels, Notifiable;
 
     /**
      * @return BelongsTo<Institution, $this>

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Teacher\Classroom;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Teacher\ClassroomResource;
+use App\Http\Resources\ClassroomResource;
 use App\Models\Classroom;
 use App\Models\User;
 use Inertia\Inertia;
