@@ -12,6 +12,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, router, useForm } from '@inertiajs/vue3';
 import {
     CheckCircle,
+    KeyRound,
     Pencil,
     Plus,
     Power,
@@ -175,6 +176,19 @@ const confirmToggleUser = (user) => {
         'warning',
         () => {
             router.post(route('super-admin.users.toggle', user.id));
+        },
+    );
+};
+
+const confirmResetPassword = (user) => {
+    triggerConfirm(
+        __('superadmin.users.confirm_reset_password_title'),
+        __('superadmin.users.confirm_reset_password_message', {
+            name: user.name,
+        }),
+        'warning',
+        () => {
+            router.post(route('super-admin.users.reset-password', user.id));
         },
     );
 };
@@ -391,6 +405,22 @@ const formatDateTime = (dateStr) => {
                                         ><Pencil class="h-4 w-4"
                                     /></template>
                                 </Button>
+                            </Tooltip>
+
+                            <Tooltip
+                                :text="
+                                    __(
+                                        'superadmin.users.tooltip_reset_password',
+                                    )
+                                "
+                            >
+                                <button
+                                    @click="confirmResetPassword(item)"
+                                    class="rounded-lg border border-zinc-800 bg-zinc-900/50 p-1.5 text-amber-500 transition-colors hover:bg-amber-500/10 hover:text-amber-400"
+                                    type="button"
+                                >
+                                    <KeyRound class="h-4 w-4" />
+                                </button>
                             </Tooltip>
 
                             <Tooltip

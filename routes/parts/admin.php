@@ -20,6 +20,7 @@ use App\Http\Controllers\Admin\Subject\UpdateSubjectController as AdminUpdateSub
 use App\Http\Controllers\Admin\SwitchInstitutionController;
 use App\Http\Controllers\Admin\User\DestroyInstitutionUserController;
 use App\Http\Controllers\Admin\User\IndexInstitutionUserController;
+use App\Http\Controllers\Admin\User\ResetInstitutionUserPasswordController;
 use App\Http\Controllers\Admin\User\StoreInstitutionUserController;
 use App\Http\Controllers\Admin\User\ToggleInstitutionUserStatusController;
 use App\Http\Controllers\Admin\User\UpdateInstitutionUserController;
@@ -51,6 +52,7 @@ Route::middleware(['auth', 'role.admin'])->prefix('admin')->name('admin.')->grou
     Route::post('/users', StoreInstitutionUserController::class)->name('users.store');
     Route::put('/users/{user}', UpdateInstitutionUserController::class)->name('users.update');
     Route::post('/users/{user}/toggle', ToggleInstitutionUserStatusController::class)->name('users.toggle');
+    Route::post('/users/{user}/reset-password', ResetInstitutionUserPasswordController::class)->name('users.reset-password');
     Route::delete('/users/{user}', DestroyInstitutionUserController::class)->name('users.destroy');
 
     // Relatórios da Instituição

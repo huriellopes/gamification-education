@@ -71,4 +71,21 @@ class UserPolicy
     {
         return $user->isSuperAdmin() && $user->id !== $model->id;
     }
+
+    /**
+     * Redefinir a senha de outro usuário (gestor age sobre um membro). Nunca
+     * sobre a própria conta — para isso existe o fluxo de perfil.
+     */
+    public function resetPassword(User $user, User $model): bool
+    {
+        if ($user->id === $model->id) {
+            return false;
+        }
+
+        if ($user->isSuperAdmin()) {
+            return true;
+        }
+
+        return $user->isInstitutionAdmin() && $user->canManageInstitutionUser($model);
+    }
 }
