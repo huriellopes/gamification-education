@@ -25,29 +25,7 @@ class EditProfileController extends Controller
         return Inertia::render('Profile/Edit', [
             'mustVerifyEmail' => $user instanceof MustVerifyEmail,
             'status' => session('status'),
-            'twoFactor' => $this->twoFactorState($user, $twoFactor),
+            'twoFactor' => $twoFactor->stateFor($user),
         ]);
-    }
-
-    /**
-     * Estado do 2FA para a tela de perfil. O QR/segredo só são expostos durante
-     * a configuração (antes de confirmar); os códigos de recuperação ficam
-     * disponíveis enquanto o 2FA estiver configurado.
-     *
-     * @return array<string, mixed>
-     */
-    private function twoFactorState(User $user, TwoFactorAuthenticationService $service): array
-    {
-        $isConfiguring = $user->two_factor_secret !== null && !$user->hasTwoFactorEnabled();
-
-        return [
-            'enabled' => $user->hasTwoFactorEnabled(),
-            'confirming' => $isConfiguring,
-            'qr_svg' => $isConfiguring
-                ? $service->qrCodeSvg((string) config('app.name'), $user->email, (string) $user->two_factor_secret)
-                : null,
-            'secret' => $isConfiguring ? $user->two_factor_secret : null,
-            'recovery_codes' => $user->two_factor_secret !== null ? $user->recoveryCodes() : [],
-        ];
     }
 }

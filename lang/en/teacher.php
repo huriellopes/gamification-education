@@ -3,6 +3,44 @@
 declare(strict_types=1);
 
 return [
+    'health' => [
+        'title' => 'Classes Health',
+        'subtitle' => 'Integrity of the classes and subjects you teach',
+        'all_healthy' => 'All clear',
+        'all_healthy_detail' => 'No issues detected across the monitored indicators.',
+        'alerts_label' => 'active alerts',
+        'critical_label' => 'critical',
+        'warning_label' => 'warning',
+        'view' => 'View details',
+        'status' => [
+            'ok' => 'OK',
+            'warning' => 'Warning',
+            'critical' => 'Critical',
+        ],
+        'checks' => [
+            'institutions_without_classroom' => [
+                'label' => 'Institutions without a class',
+                'ok' => 'You teach a class in every institution.',
+                'problem' => 'institution(s) where you teach no class.',
+            ],
+            'classrooms_without_students' => [
+                'label' => 'Classes without students',
+                'ok' => 'All your classes have students.',
+                'problem' => 'class(es) of yours with no enrolled students.',
+            ],
+            'subjects_without_content' => [
+                'label' => 'Subjects without content',
+                'ok' => 'All your subjects have content.',
+                'problem' => 'subject(s) with no study material nor test.',
+            ],
+            'unengaged_students' => [
+                'label' => 'Unengaged students',
+                'ok' => 'All your students have scored points.',
+                'problem' => "active student(s) who haven't scored yet.",
+            ],
+        ],
+    ],
+
     'dashboard' => [
         'title' => 'Teacher Panel',
         'header' => 'Teacher Panel',

@@ -126,5 +126,60 @@ Duas ações em horizontes diferentes:
 Escopo do F2 é proporcional: o *enable* segue em um clique (é auto-protetivo); a
 senha só é pedida nas ações que enfraquecem/rotacionam um 2FA já ativo.
 
+### Detalhe das correções
+
+**F1 — Rate limiting no desafio** (`routes/auth.php`):
+
+```php
+Route::post('two-factor-challenge', VerifyTwoFactorChallengeController::class)
+    ->middleware('throttle:5,1')
+    ->name('two-factor.login.store');
+```
+
+**F2 — Confirmação de senha proporcional** (`DisableTwoFactorController`): só
+exigida ao desativar um 2FA já confirmado; cancelar um setup pendente dispensa.
+
+```php
+if ($user->two_factor_confirmed_at !== null) {
+    $request->validate(
+        ['current_password' => ['required', 'current_password']],
+        [],
+        ['current_password' => __('profile.two_factor.current_password_label')],
+    );
+}
+```
+
+**F3 — Sessão única após login via 2FA** (`VerifyTwoFactorChallengeController`),
+reutilizando a mesma action do login por senha:
+
+```php
+Auth::login($user, $remember);
+$request->session()->regenerate();
+
+$evictOtherSessions->execute($user, $request->session()->getId());
+```
+
+```php
+// App\Actions\Auth\EvictOtherSessionsAction
+DB::table('sessions')
+    ->where('user_id', $user->id)
+    ->where('id', '!=', $currentSessionId)
+    ->delete();
+```
+
+**F4 — Match de recovery code constant-time**
+(`TwoFactorAuthenticationService::challenge()`):
+
+```php
+$match = collect($user->recoveryCodes())
+    ->first(fn (string $stored): bool => hash_equals($stored, $recoveryCode));
+
+if ($match !== null) {
+    $user->replaceRecoveryCode($match); // consumo (uso único)
+
+    return true;
+}
+```
+
 Cobertura: `tests/Feature/Auth/TwoFactorAuthenticationTest.php` (12 testes,
 incluindo throttle, exigência de senha e cancelamento sem senha).

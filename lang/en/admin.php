@@ -3,6 +3,44 @@
 declare(strict_types=1);
 
 return [
+    'health' => [
+        'title' => 'Institution Health',
+        'subtitle' => 'Data integrity for the institutions you manage',
+        'all_healthy' => 'All clear',
+        'all_healthy_detail' => 'No issues detected across the monitored indicators.',
+        'alerts_label' => 'active alerts',
+        'critical_label' => 'critical',
+        'warning_label' => 'warning',
+        'view' => 'View details',
+        'status' => [
+            'ok' => 'OK',
+            'warning' => 'Warning',
+            'critical' => 'Critical',
+        ],
+        'checks' => [
+            'institutions_without_subject' => [
+                'label' => 'Institutions without subjects',
+                'ok' => 'Every institution you manage has subjects.',
+                'problem' => 'institution(s) without any subject.',
+            ],
+            'teachers_without_subject' => [
+                'label' => 'Teachers without subjects',
+                'ok' => 'Every teacher has a subject assigned.',
+                'problem' => 'active teacher(s) with no subject assigned.',
+            ],
+            'students_without_classroom' => [
+                'label' => 'Students without classroom',
+                'ok' => 'All active students are enrolled.',
+                'problem' => 'active student(s) without a classroom enrollment.',
+            ],
+            'subjects_without_classroom' => [
+                'label' => 'Orphan subjects',
+                'ok' => 'Every subject is linked to a classroom.',
+                'problem' => 'subject(s) not linked to any classroom.',
+            ],
+        ],
+    ],
+
     'dashboard' => [
         'title' => 'Administrative Panel',
         'header' => 'Administrative Panel —',

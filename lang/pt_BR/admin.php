@@ -3,6 +3,44 @@
 declare(strict_types=1);
 
 return [
+    'health' => [
+        'title' => 'Saúde da Instituição',
+        'subtitle' => 'Integridade dos dados das instituições que você gerencia',
+        'all_healthy' => 'Tudo em ordem',
+        'all_healthy_detail' => 'Nenhum problema detectado nos indicadores monitorados.',
+        'alerts_label' => 'alertas ativos',
+        'critical_label' => 'críticos',
+        'warning_label' => 'em atenção',
+        'view' => 'Ver detalhes',
+        'status' => [
+            'ok' => 'OK',
+            'warning' => 'Atenção',
+            'critical' => 'Crítico',
+        ],
+        'checks' => [
+            'institutions_without_subject' => [
+                'label' => 'Instituições sem matéria',
+                'ok' => 'Todas as suas instituições têm matérias.',
+                'problem' => 'instituição(ões) sem nenhuma matéria cadastrada.',
+            ],
+            'teachers_without_subject' => [
+                'label' => 'Professores sem matéria',
+                'ok' => 'Todos os professores têm matéria vinculada.',
+                'problem' => 'professor(es) ativo(s) sem matéria vinculada.',
+            ],
+            'students_without_classroom' => [
+                'label' => 'Alunos sem turma',
+                'ok' => 'Todos os alunos ativos estão matriculados.',
+                'problem' => 'aluno(s) ativo(s) sem matrícula em turma.',
+            ],
+            'subjects_without_classroom' => [
+                'label' => 'Matérias órfãs',
+                'ok' => 'Todas as matérias estão vinculadas a turmas.',
+                'problem' => 'matéria(s) sem turma vinculada.',
+            ],
+        ],
+    ],
+
     'dashboard' => [
         'title' => 'Painel Administrativo',
         'header' => 'Painel Administrativo —',
