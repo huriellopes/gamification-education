@@ -12,6 +12,7 @@ use App\Models\Subject;
 use App\Models\User;
 use App\Services\Ranking\RankingService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -27,42 +28,17 @@ class IndexRankingController extends Controller
     {
         /** @var User|null $user */
         $user = Auth::user();
-        $subjectId = $request->query('subject_id');
 
-        // Listagem de matérias para filtro
-        if ($user && $user->institution_id) {
-            $subjects = Subject::where('institution_id', $user->institution_id)->get();
-        } else {
-            $subjects = Subject::all();
-        }
+        $subjects = $this->rankingService->subjectsFor($user);
+        $selectedSubject = $this->rankingService->viewableSubject($user, $request->query('subject_id'));
 
-        // Calcula os rankings dependendo do filtro selecionado
         $globalRanking = $this->rankingService->getGlobalRanking(200);
-
-        $institutionRanking = collect();
-
-        if ($user && $user->institution_id) {
-            $institutionRanking = $this->rankingService->getInstitutionRanking($user->institution_id, 200);
-        }
-
-        $subjectRanking = collect();
-        $selectedSubject = null;
-
-        if ($subjectId) {
-            $subject = Subject::find($subjectId);
-
-            // Um usuário vinculado a uma instituição só vê o ranking de matérias
-            // da própria instituição (super admin / contexto global veem todas).
-            $canViewSubject = $subject !== null
-                && (!$user?->institution_id || $subject->institution_id === $user->institution_id);
-
-            if ($canViewSubject) {
-                $selectedSubject = $subject;
-                $subjectRanking = $this->rankingService->getSubjectRanking((int) $subjectId, 200);
-            } else {
-                $subjectId = null;
-            }
-        }
+        $institutionRanking = $user && $user->institution_id
+            ? $this->rankingService->getInstitutionRanking($user->institution_id, 200)
+            : collect();
+        $subjectRanking = $selectedSubject instanceof Subject
+            ? $this->rankingService->getSubjectRanking($selectedSubject->id, 200)
+            : new Collection();
 
         return Inertia::render('Ranking/Index', [
             'globalRanking' => $globalRanking
@@ -75,8 +51,8 @@ class IndexRankingController extends Controller
                 ->map(fn (object $u, int $index): array => (new SubjectRankingEntryResource($u, $index + 1))->resolve())
                 ->values(),
             'subjects' => RankingSubjectResource::collection($subjects)->resolve(),
-            'selectedSubjectId' => $subjectId ? (int) $subjectId : null,
-            'selectedSubject' => $selectedSubject ? (new RankingSubjectResource($selectedSubject))->resolve() : null,
+            'selectedSubjectId' => $selectedSubject?->id,
+            'selectedSubject' => $selectedSubject instanceof Subject ? (new RankingSubjectResource($selectedSubject))->resolve() : null,
         ]);
     }
 }

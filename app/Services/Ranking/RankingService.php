@@ -4,12 +4,49 @@ declare(strict_types=1);
 
 namespace App\Services\Ranking;
 
+use App\Models\Subject;
 use App\Models\User;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class RankingService
 {
+    /**
+     * Matérias disponíveis no filtro de ranking para o usuário: escopadas à
+     * instituição dele (ou todas, no contexto global/super admin).
+     *
+     * @return \Illuminate\Database\Eloquent\Collection<int, Subject>
+     */
+    public function subjectsFor(?User $user): \Illuminate\Database\Eloquent\Collection
+    {
+        return $user && $user->institution_id
+            ? Subject::where('institution_id', $user->institution_id)->get()
+            : Subject::all();
+    }
+
+    /**
+     * Resolve a matéria cujo ranking o usuário pode visualizar. Um usuário
+     * vinculado a uma instituição só vê matérias da própria instituição;
+     * retorna null quando não há filtro ou o acesso não é permitido.
+     */
+    public function viewableSubject(?User $user, int|string|null $subjectId): ?Subject
+    {
+        if (!$subjectId) {
+            return null;
+        }
+
+        $subject = Subject::find($subjectId);
+
+        if ($subject === null) {
+            return null;
+        }
+
+        $canView = !$user?->institution_id
+            || $subject->institution_id === $user->institution_id;
+
+        return $canView ? $subject : null;
+    }
+
     /**
      * Retorna o ranking global dos alunos.
      *

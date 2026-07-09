@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Auth;
 
+use App\Models\User;
 use BaconQrCode\Renderer\Image\SvgImageBackEnd;
 use BaconQrCode\Renderer\ImageRenderer;
 use BaconQrCode\Renderer\RendererStyle\RendererStyle;
@@ -15,6 +16,64 @@ class TwoFactorAuthenticationService
     public function __construct(
         protected Google2FA $google2fa = new Google2FA(),
     ) {}
+
+    /**
+     * Estado do 2FA para a tela de perfil. O QR/segredo só são expostos durante
+     * a configuração (antes de confirmar); os códigos de recuperação ficam
+     * disponíveis enquanto o 2FA estiver configurado.
+     *
+     * @return array<string, mixed>
+     */
+    public function stateFor(User $user): array
+    {
+        $isConfiguring = $user->two_factor_secret !== null && !$user->hasTwoFactorEnabled();
+
+        return [
+            'enabled' => $user->hasTwoFactorEnabled(),
+            'confirming' => $isConfiguring,
+            'qr_svg' => $isConfiguring
+                ? $this->qrCodeSvg((string) config('app.name'), $user->email, (string) $user->two_factor_secret)
+                : null,
+            'secret' => $isConfiguring ? $user->two_factor_secret : null,
+            'recovery_codes' => $user->two_factor_secret !== null ? $user->recoveryCodes() : [],
+        ];
+    }
+
+    /**
+     * Resolve um desafio de dois fatores para o usuário: aceita um código TOTP
+     * ou um código de recuperação de uso único (consumido ao ser usado).
+     *
+     * Concentra a regra de verificação — o controller cuida apenas do fluxo de
+     * sessão/redirecionamento.
+     */
+    public function challenge(User $user, ?string $code, ?string $recoveryCode): bool
+    {
+        if ($user->two_factor_secret === null) {
+            return false;
+        }
+
+        if (filled($code)) {
+            $normalized = (string) preg_replace('/\s+/', '', $code);
+
+            return $this->verify($user->two_factor_secret, $normalized);
+        }
+
+        if (filled($recoveryCode)) {
+            $recoveryCode = mb_trim($recoveryCode);
+
+            // Comparação constant-time para evitar timing attack.
+            $match = collect($user->recoveryCodes())
+                ->first(fn (string $stored): bool => hash_equals($stored, $recoveryCode));
+
+            if ($match !== null) {
+                $user->replaceRecoveryCode($match);
+
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     /**
      * Gera uma nova chave secreta TOTP (base32).

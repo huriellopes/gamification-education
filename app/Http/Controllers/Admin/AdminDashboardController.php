@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Services\Dashboard\AdminDashboardService;
+use App\Services\Dashboard\Health\AdminHealthService;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -15,7 +16,7 @@ class AdminDashboardController extends Controller
     /**
      * Exibe o dashboard do administrador da instituição.
      */
-    public function __invoke(AdminDashboardService $dashboard): Response
+    public function __invoke(AdminDashboardService $dashboard, AdminHealthService $health): Response
     {
         /** @var User $user */
         $user = auth()->user();
@@ -23,6 +24,7 @@ class AdminDashboardController extends Controller
 
         return Inertia::render('Admin/Dashboard', [
             'stats' => $dashboard->getStats($institutionId),
+            'health' => $health->report($user->managedInstitutionIds()),
             'performanceChart' => $dashboard->getPerformanceChart($institutionId),
             'students' => $dashboard->getStudents($institutionId),
             'teachers' => $dashboard->getTeachers($institutionId),

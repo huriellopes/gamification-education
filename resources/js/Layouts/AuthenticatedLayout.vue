@@ -52,6 +52,7 @@ const loadOpenSections = () => {
         system: true,
         teaching: true,
         community: true,
+        account: true,
     };
     if (typeof window === 'undefined') {
         return defaults;
@@ -160,12 +161,7 @@ const toggleSection = (key) => {
                 </div>
 
                 <nav
-                    :class="
-                        isSidebarCollapsed
-                            ? 'overflow-visible'
-                            : 'overflow-y-auto'
-                    "
-                    class="no-scrollbar flex-1 space-y-1.5 px-3 py-4"
+                    class="no-scrollbar min-h-0 flex-1 space-y-1.5 overflow-y-auto px-3 py-4"
                     :aria-label="__('nav.aria.sidebar_nav')"
                 >
                     <!-- Link Dashboard -->
@@ -886,6 +882,54 @@ const toggleSection = (key) => {
                             </Tooltip>
                         </div>
                     </SidebarCollapse>
+
+                    <!-- Conta (todos os papéis; apenas na sidebar aberta) -->
+                    <SidebarSectionHeader
+                        v-if="!isSidebarCollapsed"
+                        :label="__('nav.section.account')"
+                        :icon="Settings"
+                        :collapsed="isSidebarCollapsed"
+                        :open="sectionOpen.account"
+                        @toggle="toggleSection('account')"
+                    />
+
+                    <SidebarCollapse
+                        v-if="!isSidebarCollapsed"
+                        :open="sectionOpen.account"
+                        :clip="true"
+                    >
+                        <div class="space-y-1.5">
+                            <Tooltip
+                                :text="__('nav.tooltip.my_profile')"
+                                position="right"
+                                :disabled="!isSidebarCollapsed"
+                                block
+                            >
+                                <Link
+                                    :href="route('profile.edit')"
+                                    :class="[
+                                        route().current('profile.edit')
+                                            ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/10'
+                                            : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-white',
+                                        isSidebarCollapsed
+                                            ? 'justify-center px-0'
+                                            : 'justify-start gap-3 px-3',
+                                    ]"
+                                    class="flex w-full items-center rounded-xl py-2.5 text-xs font-bold transition-all"
+                                    :aria-label="
+                                        __('nav.aria.profile_settings')
+                                    "
+                                >
+                                    <Settings class="h-4 w-4 shrink-0" />
+                                    <span
+                                        v-if="!isSidebarCollapsed"
+                                        class="truncate"
+                                        >{{ __('nav.sidebar.my_profile') }}</span
+                                    >
+                                </Link>
+                            </Tooltip>
+                        </div>
+                    </SidebarCollapse>
                 </nav>
 
                 <!-- Sidebar Footer (Profile / Logout) -->
@@ -922,24 +966,6 @@ const toggleSection = (key) => {
                         </Link>
                     </div>
                     <div v-else class="flex flex-col gap-2">
-                        <Tooltip
-                            :text="__('nav.tooltip.my_profile')"
-                            position="right"
-                            block
-                        >
-                            <Link
-                                :href="route('profile.edit')"
-                                :class="[
-                                    route().current('profile.edit')
-                                        ? 'bg-indigo-650 text-white shadow-lg'
-                                        : 'text-zinc-450 hover:bg-zinc-800 hover:text-white',
-                                    'flex w-full justify-center rounded-xl p-2 transition-colors',
-                                ]"
-                                :aria-label="__('nav.aria.profile_settings')"
-                            >
-                                <Settings class="h-4.5 w-4.5" />
-                            </Link>
-                        </Tooltip>
                         <Tooltip
                             :text="__('nav.tooltip.logout')"
                             position="right"

@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Auth;
 
+use App\Actions\Auth\EvictOtherSessionsAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class StoreAuthenticatedSessionController extends Controller
 {
     /**
      * Handle an incoming authentication request.
      */
-    public function __invoke(LoginRequest $request): RedirectResponse
+    public function __invoke(LoginRequest $request, EvictOtherSessionsAction $evictOtherSessions): RedirectResponse
     {
         $request->authenticate();
 
@@ -36,10 +36,7 @@ class StoreAuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        DB::table('sessions')
-            ->where('user_id', $user->id)
-            ->where('id', '!=', $request->session()->getId())
-            ->delete();
+        $evictOtherSessions->execute($user, $request->session()->getId());
 
         return to_route('dashboard');
     }

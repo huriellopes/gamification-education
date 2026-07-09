@@ -48,30 +48,29 @@ const roleLabel = computed(() => {
             <PageHeader :title="__('profile.title')" />
         </template>
 
-        <div class="py-8">
+        <div class="min-h-[calc(100vh-80px)] bg-zinc-950 py-8 text-zinc-100">
             <div class="mx-auto max-w-5xl space-y-6 px-4 sm:px-6 lg:px-8">
                 <!-- Cabeçalho: identidade do usuário -->
                 <div
-                    class="flex flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:flex-row sm:items-center"
+                    class="relative flex flex-col gap-4 overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/30 p-6 backdrop-blur-md sm:flex-row sm:items-center"
                 >
                     <div
-                        class="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 text-xl font-black text-white shadow-md"
+                        class="pointer-events-none absolute -right-8 -top-8 h-32 w-32 rounded-full bg-indigo-600/10 blur-2xl"
+                    />
+                    <div
+                        class="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 text-xl font-black text-white shadow-lg shadow-indigo-600/20"
                     >
                         {{ initials }}
                     </div>
                     <div class="min-w-0">
-                        <h1
-                            class="truncate text-xl font-bold text-gray-900 dark:text-white"
-                        >
+                        <h1 class="truncate text-xl font-bold text-white">
                             {{ user?.name }}
                         </h1>
-                        <p
-                            class="truncate text-sm text-gray-500 dark:text-gray-400"
-                        >
+                        <p class="truncate text-sm text-zinc-400">
                             {{ user?.email }}
                         </p>
                         <span
-                            class="mt-2 inline-flex items-center rounded-full bg-indigo-500/10 px-3 py-0.5 text-xs font-bold text-indigo-500 dark:text-indigo-400"
+                            class="mt-2 inline-flex items-center rounded-full border border-indigo-500/30 bg-indigo-500/10 px-3 py-0.5 text-xs font-bold text-indigo-300"
                         >
                             {{ roleLabel }}
                         </span>
@@ -80,7 +79,7 @@ const roleLabel = computed(() => {
 
                 <!-- Informações do perfil -->
                 <div
-                    class="rounded-2xl border border-l-4 border-gray-200 border-l-indigo-500 bg-white p-6 shadow-sm transition-all hover:shadow-md dark:border-gray-700 dark:border-l-indigo-500 dark:bg-gray-800 sm:p-8"
+                    class="rounded-2xl border border-l-4 border-zinc-800 border-l-indigo-500 bg-zinc-900/30 p-6 backdrop-blur-md transition-colors hover:border-zinc-700 sm:p-8"
                 >
                     <UpdateProfileInformationForm
                         :must-verify-email="mustVerifyEmail"
@@ -91,21 +90,21 @@ const roleLabel = computed(() => {
 
                 <!-- Atualização de senha -->
                 <div
-                    class="rounded-2xl border border-l-4 border-gray-200 border-l-amber-500 bg-white p-6 shadow-sm transition-all hover:shadow-md dark:border-gray-700 dark:border-l-amber-500 dark:bg-gray-800 sm:p-8"
+                    class="rounded-2xl border border-l-4 border-zinc-800 border-l-amber-500 bg-zinc-900/30 p-6 backdrop-blur-md transition-colors hover:border-zinc-700 sm:p-8"
                 >
                     <UpdatePasswordForm class="max-w-xl" />
                 </div>
 
                 <!-- Autenticação de dois fatores -->
                 <div
-                    class="rounded-2xl border border-l-4 border-gray-200 border-l-emerald-500 bg-white p-6 shadow-sm transition-all hover:shadow-md dark:border-gray-700 dark:border-l-emerald-500 dark:bg-gray-800 sm:p-8"
+                    class="rounded-2xl border border-l-4 border-zinc-800 border-l-emerald-500 bg-zinc-900/30 p-6 backdrop-blur-md transition-colors hover:border-zinc-700 sm:p-8"
                 >
                     <TwoFactorAuthenticationForm />
                 </div>
 
                 <!-- Exclusão de conta -->
                 <div
-                    class="rounded-2xl border border-l-4 border-rose-200 border-l-rose-500 bg-white p-6 shadow-sm transition-all hover:shadow-md dark:border-rose-500/30 dark:border-l-rose-500 dark:bg-gray-800 sm:p-8"
+                    class="rounded-2xl border border-l-4 border-zinc-800 border-l-rose-500 bg-zinc-900/30 p-6 backdrop-blur-md transition-colors hover:border-rose-500/40 sm:p-8"
                 >
                     <DeleteUserForm class="max-w-xl" />
                 </div>

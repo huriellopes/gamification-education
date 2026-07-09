@@ -27,17 +27,15 @@ const form = useForm({
     <section>
         <header class="flex items-start gap-3">
             <div
-                class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-400"
+                class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-400"
             >
                 <User class="h-5 w-5" />
             </div>
             <div>
-                <h2
-                    class="text-lg font-semibold text-gray-900 dark:text-gray-100"
-                >
+                <h2 class="text-lg font-bold text-white">
                     {{ __('profile.info_title') }}
                 </h2>
-                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                <p class="mt-1 text-sm text-zinc-400">
                     {{ __('profile.info_subtitle') }}
                 </p>
             </div>
@@ -79,13 +77,13 @@ const form = useForm({
             </div>
 
             <div v-if="mustVerifyEmail && user.email_verified_at === null">
-                <p class="mt-2 text-sm text-gray-800 dark:text-gray-200">
+                <p class="mt-2 text-sm text-zinc-300">
                     {{ __('profile.email_unverified') }}
                     <Link
                         :href="route('verification.send')"
                         method="post"
                         as="button"
-                        class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:text-gray-400 dark:hover:text-gray-100 dark:focus:ring-offset-gray-800"
+                        class="rounded-md text-sm text-zinc-400 underline transition-colors hover:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-zinc-900"
                     >
                         {{ __('profile.resend_verification_link') }}
                     </Link>
@@ -93,7 +91,7 @@ const form = useForm({
 
                 <div
                     v-show="status === 'verification-link-sent'"
-                    class="mt-2 text-sm font-medium text-green-600 dark:text-green-400"
+                    class="mt-2 text-sm font-medium text-emerald-400"
                 >
                     {{ __('profile.verification_sent') }}
                 </div>
@@ -120,7 +118,7 @@ const form = useForm({
                 >
                     <p
                         v-if="form.recentlySuccessful"
-                        class="text-sm text-gray-500 dark:text-gray-400"
+                        class="text-sm text-zinc-400"
                     >
                         {{ __('common.saved') }}
                     </p>
