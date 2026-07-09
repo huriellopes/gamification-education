@@ -31,7 +31,7 @@ class StoreStudentRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
-            'password' => ['required', 'string', 'min:8'],
+            'password' => ['nullable', 'string', 'min:8'],
             'role' => ['required', 'string', 'in:' . $allowedRoles],
             'classroom_id' => ['nullable', 'exists:classrooms,id'],
             'institution_id' => [

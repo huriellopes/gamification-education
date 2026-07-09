@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\SuperAdmin\Classroom;
 
+use App\Http\Requests\Concerns\ClassroomRules;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateClassroomRequest extends FormRequest
 {
+    use ClassroomRules;
+
     public function authorize(): bool
     {
         return true;
@@ -18,13 +21,6 @@ class UpdateClassroomRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'name' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
-            'institution_id' => ['required', 'exists:institutions,id'],
-            'teacher_id' => ['nullable', 'exists:users,id'],
-            'subject_ids' => ['nullable', 'array'],
-            'subject_ids.*' => ['integer', 'exists:subjects,id'],
-        ];
+        return $this->classroomRules();
     }
 }

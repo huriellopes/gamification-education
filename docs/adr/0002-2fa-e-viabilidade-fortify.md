@@ -16,7 +16,9 @@ O 2FA hoje é uma implementação **artesanal** sobre `pragmarx/google2fa`
   `two_factor_secret`, `two_factor_recovery_codes`, `two_factor_confirmed_at`
   — cast como `encrypted` / `encrypted:array` / `datetime` no `User`.
 - **Serviço:** `App\Services\Auth\TwoFactorAuthenticationService`
-  (gera secret, verifica TOTP, monta otpauth/QR SVG, gera recovery codes).
+  (gera secret, verifica TOTP, monta otpauth/QR SVG, gera recovery codes e,
+  após a refatoração dos controllers, concentra também `challenge()` — a
+  verificação TOTP/recovery — e `stateFor()` — o estado exibido no perfil).
 - **Login:** `StoreAuthenticatedSessionController` desloga e desvia para o
   desafio quando `hasTwoFactorEnabled()` (ou seja, `two_factor_confirmed_at`).
 - **Desafio:** `TwoFactorChallengeController` (tela) +
@@ -87,11 +89,17 @@ re-encaixando as customizações como *actions*/pipeline do Fortify.
 ### Caminho B — Manter custom e endurecer
 - **Prós:** baixo risco; mantém controle total dos fluxos sob medida (magic link
   etc.); resolve F1–F3 pontualmente.
-- **Ações:**
-  1. `throttle:5,1` (ou `throttle` nomeado) em `two-factor.login.store` **(F1)**.
-  2. `password.confirm` nas rotas `two-factor.enable`/`disable` **(F2)**.
-  3. Replicar a eviction de sessão no `VerifyTwoFactorChallengeController` **(F3)**.
-  4. `hash_equals`/comparação normalizada no match de recovery code **(F4)**.
+- **Ações (conforme implementado):**
+  1. `throttle:5,1` em `two-factor.login.store` **(F1)**.
+  2. Confirmação **inline** de `current_password` no **disable** (apenas quando
+     o 2FA já está ativo) e no **regenerate** de recovery codes **(F2)**. O
+     `enable` permanece em um clique (é auto-protetivo) e cancelar um setup
+     ainda não confirmado dispensa senha. Optou-se por confirmação inline em vez
+     do middleware `password.confirm` — ver *rationale* abaixo.
+  3. Replicar a eviction de sessão no `VerifyTwoFactorChallengeController`,
+     extraída para `EvictOtherSessionsAction` (reusada pelo login por senha) **(F3)**.
+  4. Match de recovery code com `hash_equals` (constant-time) em
+     `TwoFactorAuthenticationService::challenge()` **(F4)**.
 - **Esforço:** baixo. **Risco:** baixo.
 
 ## Recomendação
@@ -148,6 +156,14 @@ if ($user->two_factor_confirmed_at !== null) {
     );
 }
 ```
+
+> **Por que confirmação inline e não o middleware `password.confirm`?** Numa app
+> Inertia, `password.confirm` em rotas `POST`/`DELETE` quebra o fluxo: ao exigir
+> a confirmação ele guarda a URL pretendida e, após confirmar, faz um
+> `redirect()->intended()` **GET** para uma rota que só aceita `POST`/`DELETE`
+> → **405 Method Not Allowed**. A confirmação inline de `current_password`
+> mantém o SPA sem redirecionamentos e sem 405. As rotas em
+> `routes/parts/shared.php`, portanto, **não** usam `password.confirm`.
 
 **F3 — Sessão única após login via 2FA** (`VerifyTwoFactorChallengeController`),
 reutilizando a mesma action do login por senha:

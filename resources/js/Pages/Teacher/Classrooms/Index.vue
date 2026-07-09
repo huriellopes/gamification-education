@@ -21,6 +21,26 @@ const form = useForm({
     student_ids: [],
 });
 
+// Criação de turma (nasce pendente de aprovação do admin).
+const isCreateOpen = ref(false);
+const createForm = useForm({ name: '', description: '' });
+
+const openCreateModal = () => {
+    createForm.reset();
+    createForm.clearErrors();
+    isCreateOpen.value = true;
+};
+
+const submitCreate = () => {
+    createForm.post(route('teacher.classrooms.store'), {
+        preserveScroll: true,
+        onSuccess: () => {
+            isCreateOpen.value = false;
+            createForm.reset();
+        },
+    });
+};
+
 const openEnrollModal = (classroom) => {
     selectedClassroom.value = classroom;
     search.value = '';
@@ -67,6 +87,17 @@ const submitEnroll = () => {
 
         <div class="min-h-[calc(100vh-80px)] bg-zinc-950 py-12 text-zinc-100">
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div class="mb-6 flex justify-end">
+                    <button
+                        type="button"
+                        @click="openCreateModal"
+                        class="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-bold text-white transition-all hover:bg-indigo-500"
+                    >
+                        <UsersIcon class="h-4 w-4" />
+                        {{ __('classrooms.teacher_new') }}
+                    </button>
+                </div>
+
                 <div
                     v-if="classrooms.length"
                     class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
@@ -93,9 +124,22 @@ const submitEnroll = () => {
                             </span>
                         </div>
 
-                        <h3 class="mt-4 text-lg font-bold text-white">
+                        <span
+                            v-if="classroom.is_pending"
+                            class="mt-4 inline-flex w-fit items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 px-2.5 py-0.5 text-xs font-bold text-amber-400"
+                        >
+                            {{ __('classrooms.status_pending') }}
+                        </span>
+
+                        <h3 class="mt-2 text-lg font-bold text-white">
                             {{ classroom.name }}
                         </h3>
+                        <p
+                            v-if="classroom.is_pending"
+                            class="mt-1 text-xs text-amber-400/80"
+                        >
+                            {{ __('classrooms.pending_hint') }}
+                        </p>
                         <p
                             v-if="classroom.description"
                             class="mt-1 text-sm text-zinc-400"
@@ -268,6 +312,70 @@ const submitEnroll = () => {
                             form.processing
                                 ? __('common.registering')
                                 : __('classrooms.enroll_submit')
+                        }}
+                    </button>
+                </div>
+            </form>
+        </BaseModal>
+
+        <!-- Modal: criar turma (fica pendente até aprovação) -->
+        <BaseModal
+            :show="isCreateOpen"
+            :title="__('classrooms.teacher_create_title')"
+            max-width="md"
+            @close="isCreateOpen = false"
+        >
+            <form @submit.prevent="submitCreate" class="space-y-4">
+                <div>
+                    <label
+                        class="mb-1 block text-xs font-bold uppercase tracking-wider text-zinc-400"
+                        >{{ __('classrooms.form_name') }}</label
+                    >
+                    <TextInput
+                        v-model="createForm.name"
+                        type="text"
+                        :placeholder="__('classrooms.form_name_placeholder')"
+                    />
+                    <span
+                        v-if="createForm.errors.name"
+                        class="mt-1 block text-xs text-rose-500"
+                        >{{ createForm.errors.name }}</span
+                    >
+                </div>
+
+                <div>
+                    <label
+                        class="mb-1 block text-xs font-bold uppercase tracking-wider text-zinc-400"
+                        >{{ __('classrooms.form_description') }}</label
+                    >
+                    <TextInput
+                        v-model="createForm.description"
+                        type="text"
+                    />
+                </div>
+
+                <p class="text-xs text-amber-400/80">
+                    {{ __('classrooms.pending_hint') }}
+                </p>
+
+                <div class="flex justify-end gap-3 pt-2">
+                    <button
+                        type="button"
+                        @click="isCreateOpen = false"
+                        class="rounded-xl bg-zinc-800 px-5 py-2.5 text-xs font-bold text-zinc-300 transition-colors hover:bg-zinc-700"
+                    >
+                        {{ __('common.cancel') }}
+                    </button>
+                    <button
+                        type="submit"
+                        :disabled="createForm.processing || !createForm.name"
+                        class="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-xs font-bold text-white transition-all hover:bg-indigo-500 disabled:opacity-50"
+                    >
+                        <UsersIcon class="h-4 w-4" />
+                        {{
+                            createForm.processing
+                                ? __('common.registering')
+                                : __('classrooms.teacher_create_submit')
                         }}
                     </button>
                 </div>

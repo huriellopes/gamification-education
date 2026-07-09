@@ -74,7 +74,12 @@ test('classroom policy', function () {
         ->and($this->adminA->can('update', $this->classroomA))->toBeTrue()
         ->and($this->teacherA->can('update', $this->classroomA))->toBeFalse()
         ->and($this->adminA->can('create', Classroom::class))->toBeTrue()
-        ->and($this->teacherA->can('create', Classroom::class))->toBeFalse();
+        // Professores podem criar turmas (ficam pendentes de aprovação).
+        ->and($this->teacherA->can('create', Classroom::class))->toBeTrue()
+        ->and($this->studentA->can('create', Classroom::class))->toBeFalse()
+        // Aprovação: admin da instituição sim; professor não.
+        ->and($this->adminA->can('approve', $this->classroomA))->toBeTrue()
+        ->and($this->teacherA->can('approve', $this->classroomA))->toBeFalse();
 });
 
 test('subject policy', function () {

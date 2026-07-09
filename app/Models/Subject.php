@@ -13,6 +13,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\DeletedModels\Models\Concerns\KeepsDeletedModels;
 
 /**
@@ -21,9 +23,9 @@ use Spatie\DeletedModels\Models\Concerns\KeepsDeletedModels;
  * @property GeneralStatus $is_active
  */
 #[Fillable(['institution_id', 'classroom_id', 'name', 'slug', 'description', 'duration', 'is_active'])]
-class Subject extends Model
+class Subject extends Model implements AuditableContract
 {
-    use Activatable, BelongsToInstitution, KeepsDeletedModels;
+    use Activatable, Auditable, BelongsToInstitution, KeepsDeletedModels;
 
     public function institution(): BelongsTo
     {

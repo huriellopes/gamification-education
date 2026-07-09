@@ -48,4 +48,16 @@ return [
     'confirm_toggle_message' => 'Do you want to :action the class ":name"?',
     'action_activate' => 'activate',
     'action_deactivate' => 'deactivate',
+
+    // Approval flow (teacher-created classes start pending)
+    'created_pending' => 'Class created! Awaiting an administrator approval.',
+    'approved' => 'Class approved and activated!',
+    'status_pending' => 'Pending',
+    'pending_hint' => 'Class awaiting administrator approval — you can already enroll students.',
+    'approve' => 'Approve',
+    'approve_confirm_title' => 'Approve class',
+    'approve_confirm_message' => 'Approve and activate the class ":name"?',
+    'teacher_new' => 'Create class',
+    'teacher_create_title' => 'New class',
+    'teacher_create_submit' => 'Create class',
 ];

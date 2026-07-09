@@ -101,6 +101,10 @@ const confirmState = ref({
     onConfirm: null,
 });
 
+// Processamento das ações do modal feitas via router (delete/toggle), que —
+// diferente do useForm — não expõem um flag reativo próprio.
+const confirmProcessing = ref(false);
+
 const triggerConfirm = (title, message, onConfirm) => {
     confirmState.value.title = title;
     confirmState.value.message = message;
@@ -148,6 +152,8 @@ const confirmDeleteStudent = (id) => {
         () => {
             router.delete(route('teacher.students.destroy', id), {
                 preserveScroll: true,
+                onStart: () => (confirmProcessing.value = true),
+                onFinish: () => (confirmProcessing.value = false),
                 onSuccess: () => {
                     confirmState.value.show = false;
                 },
@@ -171,6 +177,8 @@ const toggleStatus = (student) => {
                 {},
                 {
                     preserveScroll: true,
+                    onStart: () => (confirmProcessing.value = true),
+                    onFinish: () => (confirmProcessing.value = false),
                     onSuccess: () => {
                         confirmState.value.show = false;
                     },
@@ -474,6 +482,7 @@ const toggleStatus = (student) => {
             :show="confirmState.show"
             :title="confirmState.title"
             :message="confirmState.message"
+            :processing="form.processing || confirmProcessing"
             @close="confirmState.show = false"
             @confirm="confirmState.onConfirm"
         />

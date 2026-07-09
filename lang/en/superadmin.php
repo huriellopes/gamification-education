@@ -3,6 +3,25 @@
 declare(strict_types=1);
 
 return [
+    'audits' => [
+        'head_title' => 'Audit Log',
+        'header' => 'Platform Audit Log',
+        'history_title' => 'Audit records',
+        'history_subtitle' => 'Data changes (create, update and delete) tracked across the platform.',
+        'search_placeholder' => 'Search by user, event or entity...',
+        'col_when' => 'When',
+        'col_user' => 'User',
+        'col_event' => 'Event',
+        'col_entity' => 'Entity',
+        'col_changes' => 'Changed fields',
+        'col_ip' => 'IP',
+        'event_created' => 'Created',
+        'event_updated' => 'Updated',
+        'event_deleted' => 'Deleted',
+        'event_restored' => 'Restored',
+        'no_changes' => 'no changes',
+    ],
+
     'dashboard' => [
         'head_title' => 'Super Admin Panel',
         'header' => 'Super Administrator Panel',
