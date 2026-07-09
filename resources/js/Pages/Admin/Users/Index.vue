@@ -9,7 +9,7 @@ import Tooltip from '@/Components/Tooltip.vue';
 import { __ } from '@/i18n';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, router, useForm } from '@inertiajs/vue3';
-import { Pencil, Power, Trash2 } from '@lucide/vue';
+import { KeyRound, Pencil, Power, Trash2 } from '@lucide/vue';
 import { ref } from 'vue';
 
 const studentHeaders = [
@@ -228,6 +228,27 @@ const toggleStatus = (user) => {
         },
     );
 };
+
+const confirmResetPassword = (user) => {
+    triggerConfirm(
+        __('admin.users.confirm_reset_password_title'),
+        __('admin.users.confirm_reset_password_message', { name: user.name }),
+        () => {
+            router.post(
+                route('admin.users.reset-password', user.id),
+                {},
+                {
+                    preserveScroll: true,
+                    onStart: () => (confirmProcessing.value = true),
+                    onFinish: () => (confirmProcessing.value = false),
+                    onSuccess: () => {
+                        confirmState.value.show = false;
+                    },
+                },
+            );
+        },
+    );
+};
 </script>
 
 <template>
@@ -392,6 +413,16 @@ const toggleStatus = (user) => {
                                     </button>
                                 </Tooltip>
                                 <Tooltip
+                                    :text="__('admin.users.reset_password')"
+                                >
+                                    <button
+                                        @click="confirmResetPassword(item)"
+                                        class="rounded-lg p-1.5 text-amber-500 transition-colors hover:bg-amber-500/10 hover:text-amber-400"
+                                    >
+                                        <KeyRound class="h-4 w-4" />
+                                    </button>
+                                </Tooltip>
+                                <Tooltip
                                     :text="__('admin.users.delete_student')"
                                 >
                                     <button
@@ -487,6 +518,16 @@ const toggleStatus = (user) => {
                                         "
                                     >
                                         <Power class="h-4 w-4" />
+                                    </button>
+                                </Tooltip>
+                                <Tooltip
+                                    :text="__('admin.users.reset_password')"
+                                >
+                                    <button
+                                        @click="confirmResetPassword(item)"
+                                        class="rounded-lg p-1.5 text-amber-500 transition-colors hover:bg-amber-500/10 hover:text-amber-400"
+                                    >
+                                        <KeyRound class="h-4 w-4" />
                                     </button>
                                 </Tooltip>
                                 <Tooltip

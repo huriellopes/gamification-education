@@ -1,5 +1,6 @@
 <script setup>
 import { __ } from '@/i18n';
+import { router } from '@inertiajs/vue3';
 import {
     ChevronDown,
     ChevronLeft,
@@ -46,31 +47,98 @@ const props = defineProps({
         type: Array,
         default: () => [],
     },
+    // Paginação no servidor: quando true, `items` já é a página atual e a
+    // busca/ordenação/paginação disparam navegação Inertia. `meta` carrega os
+    // dados do paginator do Laravel e `filters` o estado ecoado pelo backend.
+    serverSide: {
+        type: Boolean,
+        default: false,
+    },
+    meta: {
+        type: Object,
+        default: null,
+    },
+    filters: {
+        type: Object,
+        default: null,
+    },
 });
 
-const searchQuery = ref('');
+const searchQuery = ref(props.serverSide ? (props.filters?.search ?? '') : '');
 const selectedFilter = ref('');
-const currentPage = ref(1);
-const sortKey = ref('');
-const sortOrder = ref('asc'); // 'asc' | 'desc'
-const localPageSize = ref(props.pageSize);
+const currentPage = ref(props.serverSide ? (props.meta?.current_page ?? 1) : 1);
+const sortKey = ref(props.serverSide ? (props.filters?.sort ?? '') : '');
+const sortOrder = ref(
+    props.serverSide ? (props.filters?.direction ?? 'asc') : 'asc',
+);
+const localPageSize = ref(
+    props.serverSide
+        ? (props.filters?.per_page ?? props.pageSize)
+        : props.pageSize,
+);
+
+let searchTimer = null;
+
+// Dispara a navegação server-side com o estado atual dos controles.
+const navigate = (overrides = {}) => {
+    const params = {
+        search: searchQuery.value || undefined,
+        sort: sortKey.value || undefined,
+        direction: sortKey.value ? sortOrder.value : undefined,
+        per_page: localPageSize.value,
+        page: currentPage.value,
+        ...overrides,
+    };
+
+    router.get(window.location.pathname, params, {
+        preserveState: true,
+        preserveScroll: true,
+        replace: true,
+    });
+};
 
 watch(
     () => props.pageSize,
     (newSize) => {
+        if (props.serverSide) return;
         localPageSize.value = newSize;
     },
 );
 
-// Reset page on search, filter, or page size change
+// Mantém a página corrente sincronizada com o paginator do servidor.
+watch(
+    () => props.meta,
+    (meta) => {
+        if (props.serverSide && meta) {
+            currentPage.value = meta.current_page ?? 1;
+        }
+    },
+);
+
+// Client-side: reset da página ao mudar busca/filtro/tamanho.
 watch([searchQuery, selectedFilter, localPageSize], () => {
+    if (props.serverSide) return;
     currentPage.value = 1;
 });
 
-// Reset page if items count drops below current page range
+// Server-side: busca com debounce.
+watch(searchQuery, () => {
+    if (!props.serverSide) return;
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => navigate({ page: 1 }), 350);
+});
+
+// Server-side: mudança de tamanho de página navega imediatamente.
+watch(localPageSize, () => {
+    if (!props.serverSide) return;
+    navigate({ page: 1 });
+});
+
+// Client-side: reajusta a página se a contagem cair abaixo do intervalo atual.
 watch(
     () => props.items,
     () => {
+        if (props.serverSide) return;
         const totalFiltered = filteredItems.value.length;
         const limit =
             localPageSize.value === -1 ? totalFiltered : localPageSize.value;
@@ -91,9 +159,12 @@ const handleSort = (key, sortable) => {
         sortKey.value = key;
         sortOrder.value = 'asc';
     }
+    if (props.serverSide) {
+        navigate({ page: 1 });
+    }
 };
 
-// Filtered and sorted items
+// Filtered and sorted items (apenas client-side)
 const filteredItems = computed(() => {
     let result = [...props.items];
 
@@ -170,7 +241,7 @@ const filteredItems = computed(() => {
     return result;
 });
 
-// Paginated items
+// Client-side pagination slice.
 const paginatedItems = computed(() => {
     if (localPageSize.value === -1) {
         return filteredItems.value;
@@ -180,11 +251,69 @@ const paginatedItems = computed(() => {
     return filteredItems.value.slice(start, end);
 });
 
-// Total pages
+// Linhas exibidas: no server-side, `items` já é a página atual.
+const displayItems = computed(() =>
+    props.serverSide ? props.items : paginatedItems.value,
+);
+
+const activePage = computed(() =>
+    props.serverSide ? (props.meta?.current_page ?? 1) : currentPage.value,
+);
+
 const totalPages = computed(() => {
+    if (props.serverSide) return props.meta?.last_page ?? 1;
     if (localPageSize.value === -1) return 1;
     return Math.ceil(filteredItems.value.length / localPageSize.value) || 1;
 });
+
+const totalCount = computed(() =>
+    props.serverSide ? (props.meta?.total ?? 0) : filteredItems.value.length,
+);
+
+const rangeFrom = computed(() => {
+    if (props.serverSide) return props.meta?.from ?? 0;
+    if (localPageSize.value === -1) return totalCount.value === 0 ? 0 : 1;
+    return (currentPage.value - 1) * localPageSize.value + 1;
+});
+
+const rangeTo = computed(() => {
+    if (props.serverSide) return props.meta?.to ?? 0;
+    if (localPageSize.value === -1) return totalCount.value;
+    return Math.min(currentPage.value * localPageSize.value, totalCount.value);
+});
+
+// Lista de páginas em janela: mostra todas se ≤ 7; senão 1 … atual±1 … última.
+const pageItems = computed(() => {
+    const total = totalPages.value;
+    const cur = activePage.value;
+    if (total <= 7) {
+        return Array.from({ length: total }, (_, i) => i + 1);
+    }
+
+    const pages = [1];
+    const start = Math.max(2, cur - 1);
+    const end = Math.min(total - 1, cur + 1);
+
+    if (start > 2) pages.push('…');
+    for (let i = start; i <= end; i++) pages.push(i);
+    if (end < total - 1) pages.push('…');
+    pages.push(total);
+
+    return pages;
+});
+
+const goToPage = (page) => {
+    if (
+        typeof page !== 'number' ||
+        page < 1 ||
+        page > totalPages.value ||
+        page === activePage.value
+    ) {
+        return;
+    }
+    currentPage.value = page;
+    if (props.serverSide) navigate({ page });
+};
 </script>
 
 <template>
@@ -227,7 +356,10 @@ const totalPages = computed(() => {
                     </select>
                 </div>
 
-                <div v-if="items.length > 0" class="flex items-center gap-2">
+                <div
+                    v-if="displayItems.length > 0 || serverSide"
+                    class="flex items-center gap-2"
+                >
                     <span class="text-xs font-medium text-zinc-400">{{
                         __('misc.datatable.show')
                     }}</span>
@@ -300,7 +432,7 @@ const totalPages = computed(() => {
                 </thead>
                 <tbody class="divide-y divide-zinc-800">
                     <tr
-                        v-for="(item, index) in paginatedItems"
+                        v-for="(item, index) in displayItems"
                         :key="item.id || index"
                         class="group transition-all duration-150 hover:bg-zinc-800/20"
                     >
@@ -331,7 +463,7 @@ const totalPages = computed(() => {
                         </td>
                     </tr>
 
-                    <tr v-if="filteredItems.length === 0">
+                    <tr v-if="displayItems.length === 0">
                         <td
                             :colspan="columns.length"
                             class="py-8 text-center font-medium text-zinc-400"
@@ -345,63 +477,64 @@ const totalPages = computed(() => {
 
         <!-- Pagination Controls -->
         <div
-            v-if="filteredItems.length > 0"
+            v-if="totalCount > 0"
             class="flex flex-col items-center justify-between gap-3 border-t border-zinc-800/50 pt-4 sm:flex-row"
         >
             <span class="text-xs font-medium text-zinc-400">
-                <template v-if="localPageSize === -1">
+                <template v-if="!serverSide && localPageSize === -1">
                     {{
                         __('misc.datatable.showing_all', {
-                            total: filteredItems.length,
+                            total: totalCount,
                         })
                     }}
                 </template>
                 <template v-else>
                     {{
                         __('misc.datatable.showing_range', {
-                            from: (currentPage - 1) * localPageSize + 1,
-                            to: Math.min(
-                                currentPage * localPageSize,
-                                filteredItems.length,
-                            ),
-                            total: filteredItems.length,
+                            from: rangeFrom,
+                            to: rangeTo,
+                            total: totalCount,
                         })
                     }}
                 </template>
             </span>
 
-            <div
-                v-if="totalPages > 1 && localPageSize !== -1"
-                class="flex items-center gap-1.5"
-            >
+            <div v-if="totalPages > 1" class="flex items-center gap-1.5">
                 <button
                     type="button"
-                    :disabled="currentPage === 1"
-                    @click="currentPage--"
+                    :disabled="activePage === 1"
+                    @click="goToPage(activePage - 1)"
                     class="inline-flex rounded-lg border border-zinc-800 bg-zinc-950/40 p-2 text-zinc-400 hover:text-zinc-200 focus:outline-none disabled:opacity-40"
                 >
                     <ChevronLeft class="h-4 w-4" />
                 </button>
 
-                <button
-                    v-for="page in totalPages"
-                    :key="page"
-                    type="button"
-                    @click="currentPage = page"
-                    :class="[
-                        'inline-flex h-8 w-8 items-center justify-center rounded-lg text-xs font-bold transition-all focus:outline-none',
-                        currentPage === page
-                            ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
-                            : 'hover:text-zinc-250 border border-zinc-800 bg-zinc-950/40 text-zinc-400 hover:border-zinc-700',
-                    ]"
-                >
-                    {{ page }}
-                </button>
+                <template v-for="(page, i) in pageItems" :key="i">
+                    <span
+                        v-if="page === '…'"
+                        class="inline-flex h-8 w-8 items-center justify-center text-xs text-zinc-500"
+                    >
+                        …
+                    </span>
+                    <button
+                        v-else
+                        type="button"
+                        @click="goToPage(page)"
+                        :class="[
+                            'inline-flex h-8 w-8 items-center justify-center rounded-lg text-xs font-bold transition-all focus:outline-none',
+                            activePage === page
+                                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
+                                : 'hover:text-zinc-250 border border-zinc-800 bg-zinc-950/40 text-zinc-400 hover:border-zinc-700',
+                        ]"
+                    >
+                        {{ page }}
+                    </button>
+                </template>
 
                 <button
                     type="button"
-                    :disabled="currentPage === totalPages"
-                    @click="currentPage++"
+                    :disabled="activePage === totalPages"
+                    @click="goToPage(activePage + 1)"
                     class="inline-flex rounded-lg border border-zinc-800 bg-zinc-950/40 p-2 text-zinc-400 hover:text-zinc-200 focus:outline-none disabled:opacity-40"
                 >
                     <ChevronRight class="h-4 w-4" />
