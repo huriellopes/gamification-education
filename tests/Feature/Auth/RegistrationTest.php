@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Auth;
 
+use App\Jobs\SendWelcomeEmailJob;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
 
 class RegistrationTest extends TestCase
@@ -20,6 +22,8 @@ class RegistrationTest extends TestCase
 
     public function test_new_users_can_register(): void
     {
+        Queue::fake();
+
         $response = $this->post('/register', [
             'name' => 'Test User',
             'email' => 'test@example.com',
@@ -29,5 +33,11 @@ class RegistrationTest extends TestCase
 
         $this->assertAuthenticated();
         $response->assertRedirect(route('dashboard', absolute: false));
+
+        // O e-mail de boas-vindas é enfileirado (não enviado síncrono no request).
+        Queue::assertPushed(
+            SendWelcomeEmailJob::class,
+            fn (SendWelcomeEmailJob $job): bool => $job->user->email === 'test@example.com',
+        );
     }
 }

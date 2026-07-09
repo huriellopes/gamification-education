@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace App\Actions\Auth;
 
-use App\Mail\WelcomeUserMail;
+use App\Jobs\SendWelcomeEmailJob;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
 
 class RegisterUserAction
 {
     /**
-     * Cria um novo usuário, dispara o evento de registro e envia o e-mail de boas-vindas.
+     * Cria um novo usuário, dispara o evento de registro e enfileira o e-mail
+     * de boas-vindas.
      *
      * @param  array{name: string, email: string, password: string}  $data
      */
@@ -27,7 +27,9 @@ class RegisterUserAction
 
         event(new Registered($user));
 
-        Mail::to($user->email)->send(new WelcomeUserMail($user));
+        // Enfileira (não envia síncrono): não bloqueia o cadastro e é blindado
+        // contra falha de transporte — mesmo padrão dos fluxos administrativos.
+        dispatch(new SendWelcomeEmailJob($user));
 
         return $user;
     }
