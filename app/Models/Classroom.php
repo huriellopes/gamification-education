@@ -15,12 +15,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\DeletedModels\Models\Concerns\KeepsDeletedModels;
 
 /**
  * @property GeneralStatus $is_active
+ * @property Carbon|null $approved_at
+ * @property int|null $approved_by
  */
 #[Fillable(['institution_id', 'teacher_id', 'name', 'slug', 'description', 'is_active', 'approved_at', 'approved_by'])]
 class Classroom extends Model implements AuditableContract
