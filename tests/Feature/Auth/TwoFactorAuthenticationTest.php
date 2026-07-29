@@ -50,7 +50,7 @@ test('user can confirm two factor authentication with a valid code', function ()
     $this->actingAs($this->user)->post(route('two-factor.enable'));
     $this->user->refresh();
 
-    $otp = (new Google2FA())->getCurrentOtp($this->user->two_factor_secret);
+    $otp = (new Google2FA)->getCurrentOtp($this->user->two_factor_secret);
 
     $this->actingAs($this->user)
         ->post(route('two-factor.confirm'), ['code' => $otp])
@@ -85,7 +85,7 @@ test('the challenge completes login with a valid code', function () {
 
     $this->post('/login', ['email' => $this->user->email, 'password' => 'password']);
 
-    $otp = (new Google2FA())->getCurrentOtp($this->user->fresh()->two_factor_secret);
+    $otp = (new Google2FA)->getCurrentOtp($this->user->fresh()->two_factor_secret);
 
     $this->post(route('two-factor.login.store'), ['code' => $otp])
         ->assertRedirect(route('dashboard'));

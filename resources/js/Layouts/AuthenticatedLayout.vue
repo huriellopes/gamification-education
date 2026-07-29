@@ -457,7 +457,9 @@ const toggleSection = (key) => {
                                     block
                                 >
                                     <Link
-                                        :href="route('super-admin.audits.index')"
+                                        :href="
+                                            route('super-admin.audits.index')
+                                        "
                                         :class="[
                                             route().current(
                                                 'super-admin.audits.*',
@@ -490,7 +492,9 @@ const toggleSection = (key) => {
                                     block
                                 >
                                     <Link
-                                        :href="route('super-admin.settings.index')"
+                                        :href="
+                                            route('super-admin.settings.index')
+                                        "
                                         :class="[
                                             route().current(
                                                 'super-admin.settings.*',

@@ -14,7 +14,7 @@ use PragmaRX\Google2FA\Google2FA;
 class TwoFactorAuthenticationService
 {
     public function __construct(
-        protected Google2FA $google2fa = new Google2FA(),
+        protected Google2FA $google2fa = new Google2FA,
     ) {}
 
     /**
@@ -106,7 +106,7 @@ class TwoFactorAuthenticationService
     {
         $renderer = new ImageRenderer(
             new RendererStyle(200, 1),
-            new SvgImageBackEnd(),
+            new SvgImageBackEnd,
         );
 
         return (new Writer($renderer))->writeString(

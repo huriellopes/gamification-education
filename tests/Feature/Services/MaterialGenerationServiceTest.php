@@ -5,7 +5,7 @@ declare(strict_types=1);
 use App\Services\Content\MaterialGenerationService;
 
 test('generates preset material details correctly', function () {
-    $service = new MaterialGenerationService();
+    $service = new MaterialGenerationService;
 
     // Eloquent
     $eloquent = $service->generateMaterialData('Laravel Eloquent');
@@ -22,7 +22,7 @@ test('generates preset material details correctly', function () {
 });
 
 test('generates fallback generic material details for unknown themes', function () {
-    $service = new MaterialGenerationService();
+    $service = new MaterialGenerationService;
 
     $generic = $service->generateMaterialData('Continuous Integration');
 
@@ -31,7 +31,7 @@ test('generates fallback generic material details for unknown themes', function 
 });
 
 test('generates preset test data correctly', function () {
-    $service = new MaterialGenerationService();
+    $service = new MaterialGenerationService;
 
     $eloquentTest = $service->generateTestData('Laravel Eloquent');
     expect($eloquentTest['title'])->toBe('Avaliação: Eloquent ORM e Relacionamentos');
@@ -40,7 +40,7 @@ test('generates preset test data correctly', function () {
 });
 
 test('generates fallback test data for unknown themes', function () {
-    $service = new MaterialGenerationService();
+    $service = new MaterialGenerationService;
 
     $genericTest = $service->generateTestData('Kubernetes Deployments');
 

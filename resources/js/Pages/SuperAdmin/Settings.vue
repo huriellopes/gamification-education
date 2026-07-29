@@ -44,10 +44,18 @@ const toggleFakeMetrics = () => {
                         </span>
                         <div>
                             <h3 class="text-lg font-bold text-white">
-                                {{ __('superadmin.settings.public_metrics_title') }}
+                                {{
+                                    __(
+                                        'superadmin.settings.public_metrics_title',
+                                    )
+                                }}
                             </h3>
                             <p class="mt-1 text-sm text-zinc-400">
-                                {{ __('superadmin.settings.public_metrics_subtitle') }}
+                                {{
+                                    __(
+                                        'superadmin.settings.public_metrics_subtitle',
+                                    )
+                                }}
                             </p>
                         </div>
                     </div>
@@ -57,10 +65,14 @@ const toggleFakeMetrics = () => {
                     >
                         <div class="min-w-0">
                             <p class="text-sm font-bold text-zinc-100">
-                                {{ __('superadmin.settings.fake_metrics_label') }}
+                                {{
+                                    __('superadmin.settings.fake_metrics_label')
+                                }}
                             </p>
                             <p class="mt-1 text-xs text-zinc-400">
-                                {{ __('superadmin.settings.fake_metrics_hint') }}
+                                {{
+                                    __('superadmin.settings.fake_metrics_hint')
+                                }}
                             </p>
                         </div>
 

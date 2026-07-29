@@ -38,7 +38,7 @@ class DocumentTextExtractor
     protected function fromPdf(string $path): string
     {
         try {
-            return (new Parser())->parseFile($path)->getText();
+            return (new Parser)->parseFile($path)->getText();
         } catch (Throwable $exception) {
             throw new RuntimeException('Não foi possível ler o PDF: ' . $exception->getMessage(), $exception->getCode(), previous: $exception);
         }
@@ -46,7 +46,7 @@ class DocumentTextExtractor
 
     protected function fromPptx(string $path): string
     {
-        $zip = new ZipArchive();
+        $zip = new ZipArchive;
 
         if ($zip->open($path) !== true) {
             throw new RuntimeException('Não foi possível abrir o arquivo PowerPoint (.pptx).');

@@ -27,7 +27,7 @@ class UpdateInstitutionRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'razao_social' => ['required', 'string', 'max:255'],
-            'cnpj' => ['nullable', 'string', new Cnpj()],
+            'cnpj' => ['nullable', 'string', new Cnpj],
             'slug' => ['required', 'string', 'max:255', 'unique:institutions,slug,' . ($institutionId ?? '')],
             'address' => ['nullable', 'array'],
             'address.cep' => ['required_with:address', 'string'],

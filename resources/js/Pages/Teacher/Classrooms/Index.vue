@@ -348,10 +348,7 @@ const submitEnroll = () => {
                         class="mb-1 block text-xs font-bold uppercase tracking-wider text-zinc-400"
                         >{{ __('classrooms.form_description') }}</label
                     >
-                    <TextInput
-                        v-model="createForm.description"
-                        type="text"
-                    />
+                    <TextInput v-model="createForm.description" type="text" />
                 </div>
 
                 <p class="text-xs text-amber-400/80">

@@ -573,10 +573,7 @@ const enableAds = () => {
         <section class="border-b border-t border-zinc-900 bg-zinc-900/20 py-16">
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div class="grid grid-cols-2 gap-8 text-center md:grid-cols-4">
-                    <div
-                        v-for="(stat, index) in stats"
-                        :key="stat.label"
-                    >
+                    <div v-for="(stat, index) in stats" :key="stat.label">
                         <p
                             class="text-4xl font-black tabular-nums sm:text-5xl"
                             :class="statColors[index] ?? 'text-white'"
