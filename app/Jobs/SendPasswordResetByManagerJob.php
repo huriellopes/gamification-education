@@ -7,6 +7,7 @@ namespace App\Jobs;
 use App\Mail\PasswordResetByManagerMail;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -19,8 +20,12 @@ use Throwable;
  * Envia o e-mail de "senha redefinida por gestor" de forma blindada: uma falha
  * de transporte (SMTP indisponível/mal configurado) é registrada em log e NÃO
  * derruba o job — a senha do usuário já foi redefinida de qualquer forma.
+ *
+ * Implementa ShouldBeEncrypted: o payload gravado nas tabelas `jobs`/
+ * `failed_jobs` (enquanto o job aguarda ou se falhar) fica cifrado com a
+ * APP_KEY em vez de expor a senha temporária em texto puro no banco.
  */
-class SendPasswordResetByManagerJob implements ShouldQueue
+class SendPasswordResetByManagerJob implements ShouldBeEncrypted, ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 

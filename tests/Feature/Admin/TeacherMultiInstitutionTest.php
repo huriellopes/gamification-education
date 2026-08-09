@@ -3,8 +3,10 @@
 declare(strict_types=1);
 
 use App\Models\Institution;
+use App\Models\Subject;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Inertia\Testing\AssertableInertia as Assert;
 
 uses(RefreshDatabase::class);
 
@@ -71,6 +73,24 @@ test('admin can update a teacher whose primary institution differs without a 403
         'user_id' => $teacher->id,
         'institution_id' => $this->instA->id,
     ]);
+});
+
+test('admin sees subjects from every institution they manage, not just the primary one', function () {
+    $subjectA = Subject::create(['institution_id' => $this->instA->id, 'name' => 'Matéria A']);
+    $subjectB = Subject::create(['institution_id' => $this->instB->id, 'name' => 'Matéria B']);
+
+    $unmanaged = Institution::create(['name' => 'Unmanaged']);
+    Subject::create(['institution_id' => $unmanaged->id, 'name' => 'Matéria Alheia']);
+
+    $this->actingAs($this->admin)
+        ->get(route('admin.subjects.index'))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('Admin/Subjects/Index')
+            ->has('subjects', 2)
+            ->where('subjects.0.name', fn ($name) => in_array($name, [$subjectA->name, $subjectB->name], true))
+            ->where('subjects.1.name', fn ($name) => in_array($name, [$subjectA->name, $subjectB->name], true)),
+        );
 });
 
 test('admin cannot assign a teacher to an institution they do not manage', function () {

@@ -21,4 +21,16 @@ class EvictOtherSessionsAction
             ->where('id', '!=', $currentSessionId)
             ->delete();
     }
+
+    /**
+     * Encerra TODAS as sessões do usuário — usado quando não há uma sessão
+     * atual a preservar (reset de senha esquecida, ainda deslogado; ou reset
+     * administrativo da senha de outra conta).
+     */
+    public function executeAll(User $user): void
+    {
+        DB::table('sessions')
+            ->where('user_id', $user->id)
+            ->delete();
+    }
 }

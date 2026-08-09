@@ -18,6 +18,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Validation\Rules\Password;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -42,5 +43,22 @@ class AppServiceProvider extends ServiceProvider
 
         Event::listen(Login::class, UpdateLastLoginAt::class);
         Event::listen(MilestoneReached::class, SendMilestoneReachedEmail::class);
+
+        // Política mínima de senha (registro, reset, troca de senha). Em
+        // produção também rejeita senhas presentes em vazamentos conhecidos
+        // (API do haveibeenpwned) — evitado fora de produção para não deixar
+        // testes/CI dependentes de rede.
+        Password::defaults(function () {
+            $rule = Password::min(8)->mixedCase()->numbers();
+
+            return $this->app->isProduction() ? $rule->uncompromised() : $rule;
+        });
+
+        // Reforço contra esquecimento de SESSION_SECURE_COOKIE no .env de
+        // produção: sem a flag Secure, o navegador aceitaria reenviar o
+        // cookie de sessão por HTTP puro (sequestro de sessão via rede).
+        if ($this->app->isProduction()) {
+            config(['session.secure' => true]);
+        }
     }
 }

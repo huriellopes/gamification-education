@@ -11,6 +11,10 @@ use Illuminate\Support\Str;
 
 class ResetUserPasswordByManagerAction
 {
+    public function __construct(
+        protected EvictOtherSessionsAction $evictOtherSessions,
+    ) {}
+
     /**
      * Redefine a senha do usuário-alvo para uma senha temporária aleatória,
      * exige a troca no próximo login e enfileira o e-mail de aviso. O papel do
@@ -29,6 +33,10 @@ class ResetUserPasswordByManagerAction
             'must_change_password' => true,
             'remember_token' => Str::random(60),
         ])->save();
+
+        // Reset administrativo costuma ser motivado por suspeita de conta
+        // comprometida: qualquer sessão já ativa do alvo precisa cair junto.
+        $this->evictOtherSessions->executeAll($target);
 
         dispatch(new SendPasswordResetByManagerJob(
             $target,

@@ -7,6 +7,7 @@ namespace App\Jobs;
 use App\Mail\WelcomeUserMail;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -20,8 +21,13 @@ use Throwable;
  * uma falha de transporte (SMTP indisponível/mal configurado) é registrada em
  * log e NÃO derruba o job — evitando acúmulo em failed_jobs e não afetando o
  * cadastro do usuário, que já ocorreu.
+ *
+ * Implementa ShouldBeEncrypted: a senha temporária trafega em texto puro só
+ * em memória durante o request/job — o payload gravado nas tabelas `jobs`/
+ * `failed_jobs` (enquanto o job aguarda ou se falhar) fica cifrado com a
+ * APP_KEY, não em texto puro.
  */
-class SendWelcomeEmailJob implements ShouldQueue
+class SendWelcomeEmailJob implements ShouldBeEncrypted, ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 

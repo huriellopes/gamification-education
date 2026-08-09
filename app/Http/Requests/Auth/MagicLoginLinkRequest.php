@@ -20,24 +20,17 @@ class MagicLoginLinkRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
+     * Propositalmente SEM `exists:users,email`: validar a existência aqui
+     * transformaria este endpoint num oráculo de enumeração de contas (ver
+     * SendMagicLoginLinkController, que responde igual para e-mail
+     * existente ou não).
+     *
      * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         return [
-            'email' => ['required', 'email', 'exists:users,email'],
-        ];
-    }
-
-    /**
-     * Get the custom messages for validator errors.
-     *
-     * @return array<string, string>
-     */
-    public function messages(): array
-    {
-        return [
-            'email.exists' => 'Não encontramos nenhum usuário com este endereço de e-mail.',
+            'email' => ['required', 'email'],
         ];
     }
 }

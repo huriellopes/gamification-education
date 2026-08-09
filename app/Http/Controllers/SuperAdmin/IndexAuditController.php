@@ -21,7 +21,10 @@ class IndexAuditController extends Controller
             'search' => $request->filled('search') ? (string) $request->input('search') : null,
             'sort' => (string) $request->input('sort', 'created_at'),
             'direction' => (string) $request->input('direction', 'desc'),
-            'per_page' => (int) $request->input('per_page', 20),
+            // Teto de 100: valores negativos continuam acionando o modo
+            // "carregar tudo" do serviço (comportamento documentado), mas um
+            // per_page muito grande não força mais buscar a tabela inteira.
+            'per_page' => min((int) $request->input('per_page', 20), 100),
         ];
 
         return Inertia::render('SuperAdmin/Audits', [

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Report;
 
 use App\Models\SiteVisit;
+use App\Support\SpreadsheetSanitizer;
 use Shuchkin\SimpleXLSXGen;
 
 class SiteVisitExportService
@@ -35,7 +36,10 @@ class SiteVisitExportService
             abort(500, 'Não foi possível gerar o arquivo temporário de exportação.');
         }
 
-        SimpleXLSXGen::fromArray($data)->saveAs($filePath);
+        // user_agent vem de um cabeçalho HTTP 100% controlável por qualquer
+        // visitante anônimo — sem isso, um User-Agent forjado como fórmula
+        // executaria ao abrir o arquivo no Excel/LibreOffice.
+        SimpleXLSXGen::fromArray(SpreadsheetSanitizer::sanitizeRows($data))->saveAs($filePath);
 
         return $filePath;
     }

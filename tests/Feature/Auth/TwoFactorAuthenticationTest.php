@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Services\Auth\TwoFactorAuthenticationService;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use PragmaRX\Google2FA\Google2FA;
 
 uses(RefreshDatabase::class);
@@ -109,13 +110,16 @@ test('the challenge accepts a single-use recovery code', function () {
 test('magic login with 2FA enabled redirects to the challenge without authenticating', function () {
     enableConfirmedTwoFactor($this->user);
 
+    $selector = Str::random(16);
+    $verifier = Str::random(48);
     MagicLoginToken::create([
         'user_id' => $this->user->id,
-        'token' => 'magic-2fa-token',
+        'selector' => $selector,
+        'token' => hash('sha256', $verifier),
         'expires_at' => Carbon::now()->addMinutes(15),
     ]);
 
-    $this->get(route('magic-login.authenticate', 'magic-2fa-token'))
+    $this->get(route('magic-login.authenticate', $selector . '.' . $verifier))
         ->assertRedirect(route('two-factor.login'));
 
     $this->assertGuest();

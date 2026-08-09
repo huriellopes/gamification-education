@@ -13,6 +13,10 @@ use Illuminate\Support\Str;
 
 class ResetPasswordAction
 {
+    public function __construct(
+        protected EvictOtherSessionsAction $evictOtherSessions,
+    ) {}
+
     /**
      * Tenta redefinir a senha do usuário e retorna o status do broker.
      *
@@ -28,6 +32,11 @@ class ResetPasswordAction
                     'password' => Hash::make($credentials['password']),
                     'remember_token' => Str::random(60),
                 ])->save();
+
+                // O usuário ainda está deslogado neste fluxo (não há sessão
+                // atual a preservar): se a senha vazou e alguém já estava
+                // logado com ela, o reset precisa encerrar essa sessão.
+                $this->evictOtherSessions->executeAll($user);
 
                 event(new PasswordReset($user));
             },

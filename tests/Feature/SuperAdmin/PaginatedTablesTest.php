@@ -74,6 +74,26 @@ test('site visits index with per_page all returns every record on one page', fun
         );
 });
 
+test('site visits index caps per_page at 100 even when a larger value is requested', function () {
+    $this->actingAs($this->superAdmin)
+        ->get(route('super-admin.visits.index', ['per_page' => 99999]))
+        ->assertOk()
+        ->assertInertia(
+            fn (AssertableInertia $page) => $page
+                ->where('filters.per_page', 100),
+        );
+});
+
+test('audits index caps per_page at 100 even when a larger value is requested', function () {
+    $this->actingAs($this->superAdmin)
+        ->get(route('super-admin.audits.index', ['per_page' => 99999]))
+        ->assertOk()
+        ->assertInertia(
+            fn (AssertableInertia $page) => $page
+                ->where('filters.per_page', 100),
+        );
+});
+
 test('audits index renders paginated structure', function () {
     $this->actingAs($this->superAdmin)
         ->get(route('super-admin.audits.index'))

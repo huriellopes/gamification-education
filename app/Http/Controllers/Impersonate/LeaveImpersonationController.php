@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Impersonate;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 
@@ -15,7 +16,7 @@ class LeaveImpersonationController extends Controller
     /**
      * Encerra a personificação e retorna ao usuário original.
      */
-    public function __invoke(): RedirectResponse
+    public function __invoke(Request $request): RedirectResponse
     {
         if (!Session::has('impersonator_id')) {
             abort(403, 'Você não está personificando nenhum usuário.');
@@ -27,12 +28,14 @@ class LeaveImpersonationController extends Controller
         if (!$originalUser) {
             Session::forget('impersonator_id');
             Auth::logout();
+            $request->session()->regenerate();
 
             return to_route('login');
         }
 
         Auth::login($originalUser);
         Session::forget('impersonator_id');
+        $request->session()->regenerate();
 
         return to_route('super-admin.dashboard');
     }

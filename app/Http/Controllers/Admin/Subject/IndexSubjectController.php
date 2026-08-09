@@ -16,7 +16,7 @@ use Inertia\Response;
 class IndexSubjectController extends Controller
 {
     /**
-     * Lista as matérias da instituição do administrador.
+     * Lista as matérias das instituições que o administrador gerencia.
      */
     public function __invoke(): Response
     {
@@ -26,7 +26,9 @@ class IndexSubjectController extends Controller
         $user = auth()->user();
         $institutionId = $user->institution_id;
 
-        $subjects = Subject::where('institution_id', $institutionId)
+        // Um admin pode gerenciar várias instituições via pivot — filtrar só
+        // por institution_id (a principal) escondia as matérias das demais.
+        $subjects = Subject::whereIn('institution_id', $user->managedInstitutionIds())
             ->withCount('studyMaterials', 'tests')
             ->get();
 

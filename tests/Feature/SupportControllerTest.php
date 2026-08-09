@@ -71,3 +71,24 @@ test('authenticated user can send support request which is sent to super admin v
                $mail->supportMessage === 'Não consigo completar o desafio de matrizes.';
     });
 });
+
+test('sending too many support requests is rate limited', function () {
+    Mail::fake();
+
+    $user = User::create([
+        'name' => 'Student User',
+        'email' => 'student-throttle@example.com',
+        'password' => bcrypt('password'),
+        'role' => 'student',
+    ]);
+
+    $payload = ['subject' => 'Test Subject', 'message' => 'Test message content'];
+
+    // 5 tentativas são permitidas; a 6ª é bloqueada pelo throttle.
+    for ($i = 0; $i < 5; $i++) {
+        $this->actingAs($user)->post(route('support.send'), $payload);
+    }
+
+    $this->actingAs($user)->post(route('support.send'), $payload)
+        ->assertStatus(429);
+});
