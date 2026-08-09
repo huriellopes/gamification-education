@@ -14,7 +14,7 @@ test('resolve unique slug appends an incremental suffix when the slug already ex
     $institution = Institution::create(['name' => 'School']);
     Subject::create(['institution_id' => $institution->id, 'name' => 'Teste', 'slug' => 'teste']);
 
-    $action = new ResolveUniqueSlugAction();
+    $action = new ResolveUniqueSlugAction;
 
     expect($action('teste'))->toBe('teste-1');
 
@@ -27,7 +27,7 @@ test('resolve unique slug ignores the subject being updated', function () {
     $institution = Institution::create(['name' => 'School']);
     $subject = Subject::create(['institution_id' => $institution->id, 'name' => 'Teste', 'slug' => 'teste']);
 
-    $action = new ResolveUniqueSlugAction();
+    $action = new ResolveUniqueSlugAction;
 
     expect($action('teste', $subject->id))->toBe('teste');
 });

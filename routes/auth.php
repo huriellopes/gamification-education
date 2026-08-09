@@ -27,6 +27,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
     Route::post('magic-login', SendMagicLoginLinkController::class)
+        ->middleware('throttle:6,1')
         ->name('magic-login.send');
 
     Route::get('magic-login/{token}', AuthenticateMagicLoginController::class)
@@ -35,7 +36,8 @@ Route::middleware('guest')->group(function () {
     Route::get('register', CreateRegisteredUserController::class)
         ->name('register');
 
-    Route::post('register', StoreRegisteredUserController::class);
+    Route::post('register', StoreRegisteredUserController::class)
+        ->middleware('throttle:5,1');
 
     Route::get('login', CreateAuthenticatedSessionController::class)
         ->name('login');
@@ -54,6 +56,7 @@ Route::middleware('guest')->group(function () {
         ->name('password.request');
 
     Route::post('forgot-password', StorePasswordResetLinkController::class)
+        ->middleware('throttle:6,1')
         ->name('password.email');
 
     Route::get('reset-password/{token}', CreateNewPasswordController::class)
@@ -84,7 +87,8 @@ Route::middleware('auth')->group(function () {
     Route::get('confirm-password', ShowConfirmablePasswordController::class)
         ->name('password.confirm');
 
-    Route::post('confirm-password', StoreConfirmablePasswordController::class);
+    Route::post('confirm-password', StoreConfirmablePasswordController::class)
+        ->middleware('throttle:5,1');
 
     Route::put('password', UpdatePasswordController::class)->name('password.update');
 

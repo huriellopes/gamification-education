@@ -79,7 +79,7 @@ const changeTitle = (audit) => {
             null,
             2,
         );
-    } catch (e) {
+    } catch {
         return '';
     }
 };

@@ -9,6 +9,7 @@ use App\Http\Middleware\EnsureUserIsStudent;
 use App\Http\Middleware\EnsureUserIsSuperAdmin;
 use App\Http\Middleware\EnsureUserIsTeacher;
 use App\Http\Middleware\HandleInertiaRequests;
+use App\Http\Middleware\SetSecurityHeaders;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -24,6 +25,14 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Sem isso, o Laravel confia em qualquer valor de Host recebido —
+        // gerando url()/route() e links assinados (reset de senha, verificação
+        // de e-mail) com um Host forjado, se o servidor de origem repassar
+        // qualquer coisa (Host Header Injection / password reset poisoning).
+        // Sem argumentos, usa o host de APP_URL + subdomínios; já se
+        // desativa sozinho em local/testes.
+        $middleware->trustHosts();
+
         // Deploy atrás da Cloudflare (TLS terminado no edge). Sem confiar no
         // proxy, o Laravel enxerga a requisição como HTTP e grava/gera cookies
         // e URLs sem HTTPS — o que impede o navegador de reenviar o cookie
@@ -50,6 +59,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             HandleInertiaRequests::class,
             AddLinkHeadersForPreloadedAssets::class,
+            SetSecurityHeaders::class,
             EnsureUserIsActive::class,
             EnsurePasswordIsChanged::class,
         ]);

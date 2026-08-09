@@ -109,7 +109,7 @@ const submitEnroll = () => {
                     >
                         <div class="flex items-start justify-between gap-2">
                             <div
-                                class="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 text-white"
+                                class="flex h-11 w-11 items-center justify-center rounded-xl bg-linear-to-br from-indigo-500 to-violet-600 text-white"
                             >
                                 <UsersIcon class="h-5 w-5" />
                             </div>
@@ -348,10 +348,7 @@ const submitEnroll = () => {
                         class="mb-1 block text-xs font-bold uppercase tracking-wider text-zinc-400"
                         >{{ __('classrooms.form_description') }}</label
                     >
-                    <TextInput
-                        v-model="createForm.description"
-                        type="text"
-                    />
+                    <TextInput v-model="createForm.description" type="text" />
                 </div>
 
                 <p class="text-xs text-amber-400/80">

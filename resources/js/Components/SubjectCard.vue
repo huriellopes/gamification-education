@@ -26,7 +26,7 @@ const progressColor = computed(() => {
     >
         <!-- Detalhe decorativo de gradiente superior -->
         <div
-            class="absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-indigo-500/50 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+            class="absolute inset-x-0 -top-px h-px bg-linear-to-r from-transparent via-indigo-500/50 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
         ></div>
 
         <div class="flex h-full flex-col justify-between">

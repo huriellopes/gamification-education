@@ -23,7 +23,7 @@ function makePptx(array $slides): string
 {
     $path = tempnam(sys_get_temp_dir(), 'pptx') . '.pptx';
 
-    $zip = new ZipArchive();
+    $zip = new ZipArchive;
     $zip->open($path, ZipArchive::CREATE | ZipArchive::OVERWRITE);
 
     foreach ($slides as $index => $text) {
@@ -43,7 +43,7 @@ function makePptx(array $slides): string
 test('the document extractor reads text from a pptx file', function () {
     $path = makePptx(['Primeiro slide sobre o tema', 'Segundo slide com detalhes']);
 
-    $text = (new DocumentTextExtractor())->extract($path, 'pptx');
+    $text = (new DocumentTextExtractor)->extract($path, 'pptx');
 
     expect($text)->toContain('Primeiro slide')->toContain('Segundo slide');
 
@@ -51,7 +51,7 @@ test('the document extractor reads text from a pptx file', function () {
 });
 
 test('the document extractor rejects an unsupported format', function () {
-    (new DocumentTextExtractor())->extract('/tmp/whatever.txt', 'txt');
+    (new DocumentTextExtractor)->extract('/tmp/whatever.txt', 'txt');
 })->throws(RuntimeException::class);
 
 test('the summary splits the content into multiple reading materials', function () {
@@ -60,7 +60,7 @@ test('the summary splits the content into multiple reading materials', function 
         . "\n\nCAPÍTULO 2\n\n"
         . str_repeat('Outro ponto importante e detalhado do conteudo estudado. ', 15);
 
-    $materials = (new PdfSummaryService())->buildMaterials($text, 'apostila.pdf');
+    $materials = (new PdfSummaryService)->buildMaterials($text, 'apostila.pdf');
 
     expect(count($materials))->toBeGreaterThan(1);
     expect($materials[0])->toHaveKeys(['title', 'content']);
@@ -72,7 +72,7 @@ test('the summary generates multiple-choice questions from the content', functio
         . 'O carregamento adiantado resolve consultas repetidas com bastante eficiencia. '
         . 'A paginacao melhora a performance limitando os resultados retornados ao cliente.';
 
-    $questions = (new PdfSummaryService())->generateQuestions($text, 3);
+    $questions = (new PdfSummaryService)->generateQuestions($text, 3);
 
     expect($questions)->not->toBeEmpty();
 

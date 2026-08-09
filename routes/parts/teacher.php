@@ -45,8 +45,12 @@ Route::middleware(['auth', 'role.teacher'])->prefix('teacher')->name('teacher.')
     // Matérias do professor
     Route::get('/subjects', TeacherIndexSubjectController::class)->name('subjects.index');
     Route::get('/subjects/{subject}', ShowSubjectContentController::class)->name('subjects.show');
-    Route::post('/subjects/{subject}/generate', GenerateContentController::class)->name('subjects.generate');
-    Route::post('/subjects/{subject}/import-pdf', ImportSubjectPdfController::class)->name('subjects.import-pdf');
+    Route::post('/subjects/{subject}/generate', GenerateContentController::class)
+        ->middleware('throttle:10,1')
+        ->name('subjects.generate');
+    Route::post('/subjects/{subject}/import-pdf', ImportSubjectPdfController::class)
+        ->middleware('throttle:10,1')
+        ->name('subjects.import-pdf');
 
     // CRUD de Matérias
     Route::post('/subjects', TeacherStoreSubjectController::class)->name('subjects.store');

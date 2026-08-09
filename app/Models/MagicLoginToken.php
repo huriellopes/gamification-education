@@ -7,10 +7,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property string $selector Parte pública/indexada do token, usada para localizar a linha.
+ * @property string $token Hash sha256 do verificador — nunca o valor em texto puro (ver MagicLoginService).
+ */
 class MagicLoginToken extends Model
 {
     protected $fillable = [
         'user_id',
+        'selector',
         'token',
         'expires_at',
         'used_at',

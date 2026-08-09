@@ -97,7 +97,7 @@ const submit = () => {
             <button
                 type="submit"
                 :disabled="form.processing"
-                class="w-full rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 py-3 text-sm font-bold text-white transition-all hover:brightness-110 disabled:opacity-50"
+                class="w-full rounded-xl bg-linear-to-r from-amber-500 to-orange-600 py-3 text-sm font-bold text-white transition-all hover:brightness-110 disabled:opacity-50"
             >
                 {{
                     form.processing

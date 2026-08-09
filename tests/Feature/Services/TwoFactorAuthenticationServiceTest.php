@@ -37,7 +37,7 @@ function configure2fa(User $user, TwoFactorAuthenticationService $service, bool 
 
 test('challenge accepts a valid TOTP code', function () {
     $secret = configure2fa($this->user, $this->service, confirmed: true);
-    $code = (new Google2FA())->getCurrentOtp($secret);
+    $code = (new Google2FA)->getCurrentOtp($secret);
 
     expect($this->service->challenge($this->user->fresh(), $code, null))->toBeTrue();
 });

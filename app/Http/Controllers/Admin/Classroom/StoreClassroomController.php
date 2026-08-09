@@ -24,7 +24,7 @@ class StoreClassroomController extends Controller
         /** @var array{name: string, description?: string|null, teacher_id?: int|null, subject_ids?: array<int, int>|null} $attributes */
         $attributes = $request->validated();
 
-        $persist(new Classroom(), $attributes, (int) $user->institution_id);
+        $persist(new Classroom, $attributes, (int) $user->institution_id);
 
         return back()->with('success', 'Turma criada com sucesso!');
     }

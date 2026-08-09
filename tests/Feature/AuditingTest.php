@@ -28,6 +28,37 @@ test('model changes are recorded in the audit log', function () {
         ->and($events)->toContain('updated');
 });
 
+test('user password and two factor secret are excluded from the audit log', function () {
+    config(['audit.console' => true]);
+
+    $institution = Institution::create(['name' => 'Auditada', 'is_active' => 1]);
+    $user = User::create([
+        'name' => 'Alvo',
+        'email' => 'alvo_' . uniqid() . '@example.com',
+        'password' => bcrypt('senha-antiga'),
+        'role' => 'student',
+        'institution_id' => $institution->id,
+        'is_active' => 1,
+    ]);
+
+    $user->forceFill([
+        'password' => bcrypt('senha-nova'),
+        'two_factor_secret' => 'segredo-2fa-de-teste',
+    ])->save();
+
+    $audit = Audit::query()
+        ->where('auditable_type', User::class)
+        ->where('auditable_id', $user->id)
+        ->where('event', 'updated')
+        ->latest('id')
+        ->firstOrFail();
+
+    expect($audit->old_values)->not->toHaveKey('password')
+        ->and($audit->new_values)->not->toHaveKey('password')
+        ->and($audit->old_values)->not->toHaveKey('two_factor_secret')
+        ->and($audit->new_values)->not->toHaveKey('two_factor_secret');
+});
+
 test('super admin can view the audit log page', function () {
     $institution = Institution::create(['name' => 'A', 'is_active' => 1]);
     $superAdmin = User::create([

@@ -221,7 +221,7 @@ const setTab = (tabName) => {
                             </div>
                             <!-- Pilar -->
                             <div
-                                class="flex h-28 w-full flex-col items-center justify-center rounded-t-2xl border-x border-t border-zinc-700/50 bg-gradient-to-t from-zinc-900 to-zinc-800 shadow-lg"
+                                class="flex h-28 w-full flex-col items-center justify-center rounded-t-2xl border-x border-t border-zinc-700/50 bg-linear-to-t from-zinc-900 to-zinc-800 shadow-lg"
                             >
                                 <span class="text-2xl font-black text-zinc-400"
                                     >2º</span
@@ -255,7 +255,7 @@ const setTab = (tabName) => {
                             </div>
                             <!-- Pilar -->
                             <div
-                                class="relative flex h-40 w-full flex-col items-center justify-center rounded-t-2xl border-x border-t border-indigo-500/20 border-indigo-500/30 bg-gradient-to-t from-indigo-950/80 to-indigo-900 shadow-2xl"
+                                class="relative flex h-40 w-full flex-col items-center justify-center rounded-t-2xl border-x border-t border-indigo-500/20 border-indigo-500/30 bg-linear-to-t from-indigo-950/80 to-indigo-900 shadow-2xl"
                             >
                                 <div
                                     class="absolute inset-0 animate-pulse rounded-t-2xl bg-yellow-500/5"
@@ -292,7 +292,7 @@ const setTab = (tabName) => {
                             </div>
                             <!-- Pilar -->
                             <div
-                                class="flex h-20 w-full flex-col items-center justify-center rounded-t-2xl border-x border-t border-zinc-800 bg-gradient-to-t from-zinc-900 to-amber-950/40 shadow-md"
+                                class="flex h-20 w-full flex-col items-center justify-center rounded-t-2xl border-x border-t border-zinc-800 bg-linear-to-t from-zinc-900 to-amber-950/40 shadow-md"
                             >
                                 <span class="text-2xl font-black text-amber-600"
                                     >3º</span

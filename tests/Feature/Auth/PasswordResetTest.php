@@ -7,6 +7,7 @@ namespace Tests\Feature\Auth;
 use App\Models\User;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 
@@ -61,8 +62,8 @@ class PasswordResetTest extends TestCase
             $response = $this->post('/reset-password', [
                 'token' => $notification->token,
                 'email' => $user->email,
-                'password' => 'password',
-                'password_confirmation' => 'password',
+                'password' => 'NewPassword123',
+                'password_confirmation' => 'NewPassword123',
             ]);
 
             $response
@@ -71,5 +72,36 @@ class PasswordResetTest extends TestCase
 
             return true;
         });
+    }
+
+    public function test_resetting_password_evicts_any_active_session_left_from_before_the_reset(): void
+    {
+        Notification::fake();
+
+        $user = User::factory()->create();
+
+        DB::table('sessions')->insert([
+            'id' => 'stale_active_session',
+            'user_id' => $user->id,
+            'ip_address' => '127.0.0.1',
+            'user_agent' => 'Browser',
+            'payload' => 'payload',
+            'last_activity' => time(),
+        ]);
+
+        $this->post('/forgot-password', ['email' => $user->email]);
+
+        Notification::assertSentTo($user, ResetPassword::class, function ($notification) use ($user) {
+            $this->post('/reset-password', [
+                'token' => $notification->token,
+                'email' => $user->email,
+                'password' => 'NewPassword123',
+                'password_confirmation' => 'NewPassword123',
+            ])->assertSessionHasNoErrors();
+
+            return true;
+        });
+
+        $this->assertDatabaseMissing('sessions', ['id' => 'stale_active_session']);
     }
 }

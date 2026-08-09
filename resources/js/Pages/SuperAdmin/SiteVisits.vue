@@ -45,7 +45,7 @@ const formatDateTime = (dateStr) => {
         if (isNaN(d.getTime()))
             return __('superadmin.site_visits.invalid_date');
         return d.toLocaleString('pt-BR');
-    } catch (e) {
+    } catch {
         return __('superadmin.site_visits.invalid_date');
     }
 };

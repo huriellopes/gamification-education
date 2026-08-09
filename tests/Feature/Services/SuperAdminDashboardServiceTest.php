@@ -135,3 +135,26 @@ test('getDeletedModels lists soft-removed records', function () {
 
     expect($this->service->getDeletedModels())->toHaveCount(1);
 });
+
+test('getDeletedModels redacts password and two-factor secret from deleted users', function () {
+    $target = User::create([
+        'name' => 'Vai Deletar',
+        'email' => 'deletado_' . uniqid() . '@x.com',
+        'password' => bcrypt('senha-super-secreta'),
+        'role' => 'student',
+        'institution_id' => $this->institution->id,
+        'is_active' => 1,
+    ]);
+    // two_factor_secret não é mass-assignable — forceFill como o resto do
+    // código faz (ex.: EnableTwoFactorController).
+    $target->forceFill(['two_factor_secret' => 'segredo-2fa-de-teste'])->save();
+    $target->delete();
+
+    $deleted = collect($this->service->getDeletedModels())
+        ->firstOrFail(fn (array $item): bool => $item['model'] === User::class && (int) $item['key'] === $target->id);
+
+    expect($deleted['values']['password'])->toBe('[redacted]')
+        ->and($deleted['values']['two_factor_secret'])->toBe('[redacted]')
+        // Campos não sensíveis continuam intactos — só redigimos o necessário.
+        ->and($deleted['values']['name'])->toBe('Vai Deletar');
+});

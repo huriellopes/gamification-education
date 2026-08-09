@@ -198,7 +198,7 @@ const toggleStatus = (student) => {
                 <template #actions>
                     <button
                         @click="openCreateModal"
-                        class="flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-indigo-900/30 transition-all duration-200 hover:from-violet-500 hover:to-indigo-500"
+                        class="flex items-center gap-2 rounded-xl bg-linear-to-r from-violet-600 to-indigo-600 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-indigo-900/30 transition-all duration-200 hover:from-violet-500 hover:to-indigo-500"
                         :title="__('teacher.students.register_student')"
                     >
                         <Plus class="h-4 w-4 shrink-0" />

@@ -17,6 +17,13 @@ class MagicLoginService
 {
     /**
      * Gera um token de login mágico e envia o link por e-mail ao usuário.
+     *
+     * O token exposto na URL é `{selector}.{verificador}`: o seletor fica em
+     * texto puro no banco (só serve para localizar a linha, não autentica
+     * nada sozinho); o verificador só existe em texto puro no e-mail — em
+     * repouso guardamos apenas seu hash sha256. Assim, um dump/vazamento da
+     * tabela `magic_login_tokens` não expõe tokens utilizáveis, ao contrário
+     * de armazenar o token bruto diretamente.
      */
     public function sendLink(User $user, bool $remember): void
     {
@@ -25,17 +32,19 @@ class MagicLoginService
             ->whereNull('used_at')
             ->delete();
 
-        // Cria um novo token seguro
-        $token = Str::random(64);
+        $selector = Str::random(16);
+        $verifier = Str::random(48);
+
         MagicLoginToken::create([
             'user_id' => $user->id,
-            'token' => $token,
+            'selector' => $selector,
+            'token' => hash('sha256', $verifier),
             'expires_at' => Carbon::now()->addMinutes(15),
         ]);
 
         // Envia o e-mail com o link de login mágico (incluindo o parâmetro remember)
         $url = route('magic-login.authenticate', [
-            'token' => $token,
+            'token' => $selector . '.' . $verifier,
             'remember' => $remember ? '1' : '0',
         ]);
 
@@ -66,10 +75,20 @@ class MagicLoginService
      */
     public function resolveUserFromToken(string $token): ?User
     {
+        [$selector, $verifier] = array_pad(explode('.', $token, 2), 2, null);
+
+        if ($selector === null || $verifier === null) {
+            return null;
+        }
+
         /** @var MagicLoginToken|null $magicToken */
-        $magicToken = MagicLoginToken::where('token', $token)->first();
+        $magicToken = MagicLoginToken::where('selector', $selector)->first();
 
         if (!$magicToken || !$magicToken->isValid()) {
+            return null;
+        }
+
+        if (!hash_equals($magicToken->token, hash('sha256', $verifier))) {
             return null;
         }
 

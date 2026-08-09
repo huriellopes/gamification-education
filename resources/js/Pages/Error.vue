@@ -75,7 +75,7 @@ const goBack = () => {
                     <!-- Status Code / Icon -->
                     <div class="relative mb-8 inline-block">
                         <div
-                            class="select-none bg-gradient-to-br bg-clip-text text-[8rem] font-black leading-none text-transparent opacity-20 dark:opacity-30 sm:text-[10rem]"
+                            class="select-none bg-linear-to-br bg-clip-text text-[8rem] font-black leading-none text-transparent opacity-20 dark:opacity-30 sm:text-[10rem]"
                             :class="getGradientClass"
                         >
                             {{ status }}
@@ -87,7 +87,7 @@ const goBack = () => {
                                 class="relative flex h-24 w-24 items-center justify-center rounded-full border border-gray-100 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800 sm:h-32 sm:w-32"
                             >
                                 <div
-                                    class="absolute inset-0 rounded-full bg-gradient-to-br opacity-10"
+                                    class="absolute inset-0 rounded-full bg-linear-to-br opacity-10"
                                     :class="getGradientClass"
                                 ></div>
 
@@ -179,7 +179,7 @@ const goBack = () => {
 
                         <Link
                             href="/"
-                            class="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r px-6 py-3 font-medium text-white shadow-lg transition-all hover:shadow-xl focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 sm:w-auto"
+                            class="flex w-full items-center justify-center gap-2 rounded-xl bg-linear-to-r px-6 py-3 font-medium text-white shadow-lg transition-all hover:shadow-xl focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 sm:w-auto"
                             :class="getGradientClass"
                         >
                             <svg

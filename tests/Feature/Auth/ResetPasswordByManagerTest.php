@@ -7,6 +7,7 @@ use App\Jobs\SendPasswordResetByManagerJob;
 use App\Models\Institution;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Queue;
 
@@ -73,6 +74,34 @@ test('super admin redefine a senha de um usuário e enfileira o e-mail', functio
             && $job->temporaryPassword !== ''
             && $job->managerRoleLabel !== '',
     );
+});
+
+test('reset administrativo de senha encerra as sessões ativas do alvo', function () {
+    DB::table('sessions')->insert([
+        [
+            'id' => 'target_active_session',
+            'user_id' => $this->studentA->id,
+            'ip_address' => '127.0.0.1',
+            'user_agent' => 'Browser 1',
+            'payload' => 'payload1',
+            'last_activity' => time(),
+        ],
+        [
+            'id' => 'other_user_session',
+            'user_id' => $this->studentB->id,
+            'ip_address' => '127.0.0.1',
+            'user_agent' => 'Browser 2',
+            'payload' => 'payload2',
+            'last_activity' => time(),
+        ],
+    ]);
+
+    $this->actingAs($this->superAdmin)
+        ->post(route('super-admin.users.reset-password', $this->studentA->id))
+        ->assertRedirect();
+
+    expect(DB::table('sessions')->where('id', 'target_active_session')->exists())->toBeFalse();
+    expect(DB::table('sessions')->where('id', 'other_user_session')->exists())->toBeTrue();
 });
 
 test('admin redefine a senha de um membro da própria instituição', function () {

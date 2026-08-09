@@ -8,6 +8,8 @@ use RectorLaravel\Rector\StaticCall\CarbonToDateFacadeRector;
 use RectorLaravel\Set\LaravelSetList;
 
 return RectorConfig::configure()
+    ->withMemoryLimit('1G')
+    ->withParallel(timeoutSeconds: 120, maxNumberOfProcess: 4, jobSize: 20)
     ->withPaths([
         __DIR__ . '/app',
         __DIR__ . '/database',

@@ -15,7 +15,7 @@ class PruneLogsCommand extends Command
 {
     public function handle(): int
     {
-        dispatch(new PruneLogsJob());
+        dispatch(new PruneLogsJob);
 
         $this->info('Limpeza de logs enfileirada.');
 

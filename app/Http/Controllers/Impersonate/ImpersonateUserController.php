@@ -28,6 +28,10 @@ class ImpersonateUserController extends Controller
 
         Auth::login($user);
 
+        // Regenera o ID de sessão nesta troca de identidade (defesa contra
+        // fixation), preservando o `impersonator_id` recém-gravado.
+        $request->session()->regenerate();
+
         return to_route('dashboard');
     }
 }
