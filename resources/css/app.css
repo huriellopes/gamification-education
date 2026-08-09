@@ -1,6 +1,54 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+@plugin '@tailwindcss/forms';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../views/**/*.blade.php';
+@source '../js/**/*.vue';
+
+/* App is exclusively dark-themed: make the dark variant deterministic (via
+   the `dark` class on <html>) instead of OS preference, so paired `dark:`
+   utilities — e.g. on the shared input components — always apply. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+    --font-sans:
+        Figtree, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans',
+        sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+
+    /* Shades intermediárias usadas na UI que não existem na paleta padrão do
+       Tailwind (600↔700 e 800↔900). Sem estas definições as classes
+       `*-650` / `zinc-850` não geram estilo algum. */
+    --color-indigo-650: #493fd8;
+    --color-violet-650: #7531e3;
+    --color-zinc-850: #1f1f23;
+
+    /* Chevrons de navegação que oscilam suavemente para frente e para trás,
+       indicando a direção da ação de forma contínua e leve. */
+    --animate-chevron-right: chevron-nudge-right 1.3s ease-in-out infinite;
+    --animate-chevron-left: chevron-nudge-left 1.3s ease-in-out infinite;
+}
+
+@keyframes chevron-nudge-right {
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+    50% {
+        transform: translateX(3px);
+    }
+}
+
+@keyframes chevron-nudge-left {
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+    50% {
+        transform: translateX(-3px);
+    }
+}
 
 @layer utilities {
     .no-scrollbar::-webkit-scrollbar {

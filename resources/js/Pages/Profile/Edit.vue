@@ -58,7 +58,7 @@ const roleLabel = computed(() => {
                         class="pointer-events-none absolute -right-8 -top-8 h-32 w-32 rounded-full bg-indigo-600/10 blur-2xl"
                     />
                     <div
-                        class="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 text-xl font-black text-white shadow-lg shadow-indigo-600/20"
+                        class="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-linear-to-br from-indigo-500 to-violet-600 text-xl font-black text-white shadow-lg shadow-indigo-600/20"
                     >
                         {{ initials }}
                     </div>

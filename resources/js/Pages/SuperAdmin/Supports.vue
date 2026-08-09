@@ -80,7 +80,7 @@ const formatDateTime = (dateStr) => {
         const d = new Date(dateStr);
         if (isNaN(d.getTime())) return __('superadmin.supports.invalid_date');
         return d.toLocaleString('pt-BR');
-    } catch (e) {
+    } catch {
         return __('superadmin.supports.invalid_date');
     }
 };

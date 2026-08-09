@@ -85,7 +85,7 @@ const toggleSection = (key) => {
     <div class="flex h-screen flex-col overflow-hidden">
         <a
             href="#main-content"
-            class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-indigo-600 focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:text-white"
+            class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-100 focus:rounded-lg focus:bg-indigo-600 focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:text-white"
         >
             {{ __('nav.skip_to_content') }}
         </a>
@@ -1123,7 +1123,7 @@ const toggleSection = (key) => {
 
                         <!-- Mobile Menu Items -->
                         <nav
-                            class="flex-grow space-y-2"
+                            class="grow space-y-2"
                             :aria-label="__('nav.aria.mobile_nav')"
                         >
                             <Link
@@ -1420,7 +1420,7 @@ const toggleSection = (key) => {
 
                 <!-- Main Content Area Scrollable -->
                 <main
-                    class="flex-grow overflow-y-auto p-4 sm:p-6 lg:p-8"
+                    class="grow overflow-y-auto p-4 sm:p-6 lg:p-8"
                     id="main-content"
                     role="main"
                 >

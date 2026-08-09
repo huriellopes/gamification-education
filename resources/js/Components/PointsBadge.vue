@@ -28,7 +28,7 @@ const sizeClasses = computed(() => {
 
 <template>
     <div
-        class="inline-flex items-center gap-2 rounded-full border border-yellow-500/30 bg-gradient-to-r from-yellow-500/10 to-amber-500/20 font-bold text-yellow-400 shadow-[0_0_15px_rgba(234,179,8,0.1)] transition-all duration-300 hover:scale-105 hover:border-yellow-400/50 hover:shadow-[0_0_20px_rgba(234,179,8,0.2)]"
+        class="inline-flex items-center gap-2 rounded-full border border-yellow-500/30 bg-linear-to-r from-yellow-500/10 to-amber-500/20 font-bold text-yellow-400 shadow-[0_0_15px_rgba(234,179,8,0.1)] transition-all duration-300 hover:scale-105 hover:border-yellow-400/50 hover:shadow-[0_0_20px_rgba(234,179,8,0.2)]"
         :class="sizeClasses"
     >
         <!-- Ícone Estrela com Animação sutil de pulso -->

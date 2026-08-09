@@ -82,10 +82,10 @@ const levelProgress = computed(() => {
 
                 <!-- Painel de Nível/XP do Aluno (Premium Glassmorphism) -->
                 <div
-                    class="relative overflow-hidden rounded-2xl border border-zinc-800 bg-gradient-to-r from-zinc-900 via-zinc-900/80 to-zinc-950 p-6 shadow-xl"
+                    class="relative overflow-hidden rounded-2xl border border-zinc-800 bg-linear-to-r from-zinc-900 via-zinc-900/80 to-zinc-950 p-6 shadow-xl"
                 >
                     <div
-                        class="absolute right-0 top-0 h-full w-1/3 bg-gradient-to-l from-indigo-500/5 to-transparent"
+                        class="absolute right-0 top-0 h-full w-1/3 bg-linear-to-l from-indigo-500/5 to-transparent"
                     ></div>
                     <div
                         class="relative z-10 flex flex-col items-center justify-between gap-6 md:flex-row"
@@ -93,7 +93,7 @@ const levelProgress = computed(() => {
                         <div class="flex items-center gap-4">
                             <!-- Círculo do Nível -->
                             <div
-                                class="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-2xl font-black text-white shadow-[0_0_20px_rgba(99,102,241,0.4)]"
+                                class="flex h-16 w-16 items-center justify-center rounded-full bg-linear-to-br from-indigo-500 to-purple-600 text-2xl font-black text-white shadow-[0_0_20px_rgba(99,102,241,0.4)]"
                             >
                                 {{ currentLevel }}
                             </div>
@@ -137,7 +137,7 @@ const levelProgress = computed(() => {
                                 class="h-3 w-full overflow-hidden rounded-full border border-zinc-800 bg-zinc-800"
                             >
                                 <div
-                                    class="h-full rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 shadow-[0_0_10px_rgba(99,102,241,0.2)] transition-all duration-500"
+                                    class="h-full rounded-full bg-linear-to-r from-indigo-500 to-purple-500 shadow-[0_0_10px_rgba(99,102,241,0.2)] transition-all duration-500"
                                     :style="{ width: `${levelProgress}%` }"
                                 ></div>
                             </div>

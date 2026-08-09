@@ -179,7 +179,7 @@ const confirmApprove = (classroom) => {
                 <template #actions>
                     <button
                         @click="openCreate"
-                        class="flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-5 py-2.5 text-sm font-bold text-white transition-all hover:brightness-110"
+                        class="flex items-center gap-2 rounded-xl bg-linear-to-r from-indigo-600 to-violet-600 px-5 py-2.5 text-sm font-bold text-white transition-all hover:brightness-110"
                     >
                         <Plus class="h-4 w-4" />
                         <span class="hidden md:inline">{{
@@ -436,7 +436,7 @@ const confirmApprove = (classroom) => {
                     <button
                         type="submit"
                         :disabled="form.processing"
-                        class="rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-5 py-2.5 text-sm font-bold text-white transition-all hover:brightness-110 disabled:opacity-50"
+                        class="rounded-xl bg-linear-to-r from-indigo-600 to-violet-600 px-5 py-2.5 text-sm font-bold text-white transition-all hover:brightness-110 disabled:opacity-50"
                     >
                         {{
                             form.processing

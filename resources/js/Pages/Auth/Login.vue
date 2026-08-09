@@ -230,7 +230,7 @@ const sendMagicLink = () => {
             <button
                 type="submit"
                 :disabled="form.processing"
-                class="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-650 py-3 text-sm font-bold text-white transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
+                class="flex w-full items-center justify-center gap-2 rounded-xl bg-linear-to-r from-indigo-600 to-violet-650 py-3 text-sm font-bold text-white transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
             >
                 <template v-if="form.processing">
                     <Loader2 class="h-4 w-4 animate-spin" />
@@ -291,7 +291,7 @@ const sendMagicLink = () => {
             <button
                 type="submit"
                 :disabled="magicForm.processing"
-                class="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-650 py-3 text-sm font-bold text-white transition-all hover:brightness-110 disabled:opacity-50"
+                class="flex w-full items-center justify-center gap-2 rounded-xl bg-linear-to-r from-indigo-600 to-violet-650 py-3 text-sm font-bold text-white transition-all hover:brightness-110 disabled:opacity-50"
             >
                 <Sparkles class="h-4 w-4 text-amber-400" />
                 {{ __('auth.send_magic_link') }}
