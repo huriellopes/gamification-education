@@ -99,7 +99,7 @@ defineProps({
                         >
                             <!-- Indicador na Linha da Timeline -->
                             <div
-                                class="absolute -left-[31px] top-1 flex h-4 w-4 items-center justify-center rounded-full border-2 transition-all duration-300"
+                                class="absolute left-[-31px] top-1 flex h-4 w-4 items-center justify-center rounded-full border-2 transition-all duration-300"
                                 :class="
                                     material.completed
                                         ? 'border-emerald-400 bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]'
@@ -185,7 +185,7 @@ defineProps({
                         >
                             <!-- Indicador na Linha da Timeline -->
                             <div
-                                class="absolute -left-[31px] top-1 flex h-4 w-4 items-center justify-center rounded-full border-2 transition-all duration-300"
+                                class="absolute left-[-31px] top-1 flex h-4 w-4 items-center justify-center rounded-full border-2 transition-all duration-300"
                                 :class="
                                     test.best_score !== null
                                         ? 'border-yellow-400 bg-yellow-500 shadow-[0_0_8px_rgba(234,179,8,0.5)]'

@@ -40,7 +40,7 @@ const roleMessage = computed(() => {
 
 <template>
     <div
-        class="relative overflow-hidden rounded-2xl border border-zinc-800 bg-gradient-to-r from-indigo-600/15 via-zinc-900/50 to-zinc-900/50 p-6"
+        class="relative overflow-hidden rounded-2xl border border-zinc-800 bg-linear-to-r from-indigo-600/15 via-zinc-900/50 to-zinc-900/50 p-6"
     >
         <div
             class="pointer-events-none absolute -right-8 -top-10 h-40 w-40 rounded-full bg-indigo-600/10 blur-3xl"
@@ -48,7 +48,7 @@ const roleMessage = computed(() => {
 
         <div class="relative flex items-center gap-4">
             <div
-                class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 text-white shadow-lg shadow-indigo-600/25"
+                class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-linear-to-br from-indigo-500 to-violet-600 text-white shadow-lg shadow-indigo-600/25"
             >
                 <component :is="periodIcon" class="h-6 w-6" />
             </div>

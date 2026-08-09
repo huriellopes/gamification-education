@@ -16,6 +16,7 @@ use App\Models\Subject;
 use App\Models\Support;
 use App\Models\User;
 use App\Services\Concerns\BuildsDailyChart;
+use App\Support\SensitiveDataRedactor;
 use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
@@ -109,13 +110,22 @@ class SuperAdminDashboardService
 
     /**
      * Get recently deleted models.
+     *
+     * O pacote spatie/laravel-deleted-models grava o snapshot com os
+     * atributos $hidden do model original desfeitos de propósito (para
+     * permitir restauração completa) — sem redigir aqui, hash de senha e
+     * segredo 2FA de usuários deletados iriam raw pro frontend do Super Admin.
      */
     public function getDeletedModels(): array
     {
         return DeletedModel::query()
             ->latest()
             ->get()
-            ->toArray();
+            ->map(fn (DeletedModel $model): array => [
+                ...$model->toArray(),
+                'values' => SensitiveDataRedactor::redact($model->values),
+            ])
+            ->all();
     }
 
     /**

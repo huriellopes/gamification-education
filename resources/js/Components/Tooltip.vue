@@ -96,7 +96,7 @@ const hide = () => {
         <Teleport to="body">
             <div
                 v-if="isHovered && !disabled"
-                class="text-zinc-150 pointer-events-none fixed z-[100] whitespace-nowrap rounded-lg border border-zinc-850 bg-zinc-950 px-2.5 py-1.5 text-xs font-semibold shadow-2xl backdrop-blur-md"
+                class="text-zinc-150 pointer-events-none fixed z-100 whitespace-nowrap rounded-lg border border-zinc-850 bg-zinc-950 px-2.5 py-1.5 text-xs font-semibold shadow-2xl backdrop-blur-md"
                 :style="floatingStyle"
             >
                 {{ text }}

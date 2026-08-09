@@ -30,7 +30,9 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/ranking', IndexRankingController::class)->name('ranking.index');
     Route::get('/support', IndexSupportController::class)->name('support.index');
-    Route::post('/support/send', SendSupportController::class)->name('support.send');
+    Route::post('/support/send', SendSupportController::class)
+        ->middleware('throttle:5,1')
+        ->name('support.send');
 
     // Download de Relatórios
     Route::get('/reports/{report}/download', DownloadReportController::class)->name('reports.download');

@@ -305,7 +305,7 @@ const confirmResetPassword = (user) => {
                     <!-- Botão Novo -->
                     <button
                         @click="openCreateModal"
-                        class="rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-indigo-900/30 transition-all duration-200 hover:from-violet-500 hover:to-indigo-500"
+                        class="rounded-xl bg-linear-to-r from-violet-600 to-indigo-600 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-indigo-900/30 transition-all duration-200 hover:from-violet-500 hover:to-indigo-500"
                     >
                         + {{ __('admin.users.register_member') }}
                     </button>

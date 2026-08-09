@@ -56,7 +56,9 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          # vite 8 e eslint 10 exigem Node ^20.19 ou >=22; 22 evita depender
+          # de qual patch de 20.x o runner resolve.
+          node-version: 22
           cache: 'npm'
 
       - name: Install NPM Dependencies
@@ -77,7 +79,8 @@ jobs:
       - name: Run ESLint (Vue/JS Linter)
         # No --fix in CI: lint should report, not rewrite files. Errors fail the build;
         # prettier-style warnings are reported but non-blocking (run `npm run lint` locally to fix).
-        run: npx eslint resources/js --ext .js,.vue --ignore-path .gitignore
+        # Flat config (eslint.config.js) owns file selection/ignores now, so no --ext/--ignore-path.
+        run: npx eslint resources/js
 
       - name: Run Pest Tests
         # DB connection comes from the committed .env.testing (sqlite :memory:).

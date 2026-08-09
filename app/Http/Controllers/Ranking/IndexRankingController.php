@@ -38,7 +38,7 @@ class IndexRankingController extends Controller
             : collect();
         $subjectRanking = $selectedSubject instanceof Subject
             ? $this->rankingService->getSubjectRanking($selectedSubject->id, 200)
-            : new Collection();
+            : new Collection;
 
         return Inertia::render('Ranking/Index', [
             'globalRanking' => $globalRanking

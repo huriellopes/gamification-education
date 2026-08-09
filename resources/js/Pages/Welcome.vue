@@ -161,7 +161,7 @@ const enableAds = () => {
     >
         <a
             href="#main-content"
-            class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-indigo-600 focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:text-white"
+            class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-100 focus:rounded-lg focus:bg-indigo-600 focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:text-white"
         >
             {{ __('nav.skip_to_content') }}
         </a>
@@ -186,7 +186,7 @@ const enableAds = () => {
                         aria-hidden="true"
                     />
                     <span
-                        class="bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-xl font-extrabold tracking-tight text-transparent"
+                        class="bg-linear-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-xl font-extrabold tracking-tight text-transparent"
                     >
                         GamificaEdu
                     </span>
@@ -296,7 +296,7 @@ const enableAds = () => {
                 >
                     {{ __('welcome.hero.title') }}
                     <span
-                        class="bg-gradient-to-r from-indigo-400 via-indigo-500 to-emerald-400 bg-clip-text text-transparent"
+                        class="bg-linear-to-r from-indigo-400 via-indigo-500 to-emerald-400 bg-clip-text text-transparent"
                     >
                         {{ __('welcome.hero.title_highlight') }}
                     </span>
@@ -349,7 +349,7 @@ const enableAds = () => {
                 class="relative mt-16 rounded-2xl border border-zinc-800 bg-zinc-900/20 p-4 shadow-2xl backdrop-blur-xl sm:p-6"
             >
                 <div
-                    class="absolute inset-0 z-10 bg-gradient-to-t from-zinc-950 via-transparent to-transparent"
+                    class="absolute inset-0 z-10 bg-linear-to-t from-zinc-950 via-transparent to-transparent"
                 ></div>
                 <!-- Mockup Header Controls -->
                 <div
@@ -573,10 +573,7 @@ const enableAds = () => {
         <section class="border-b border-t border-zinc-900 bg-zinc-900/20 py-16">
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div class="grid grid-cols-2 gap-8 text-center md:grid-cols-4">
-                    <div
-                        v-for="(stat, index) in stats"
-                        :key="stat.label"
-                    >
+                    <div v-for="(stat, index) in stats" :key="stat.label">
                         <p
                             class="text-4xl font-black tabular-nums sm:text-5xl"
                             :class="statColors[index] ?? 'text-white'"

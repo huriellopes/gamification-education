@@ -350,7 +350,7 @@ const deleteQuestion = () => {
 
                 <!-- AI Content Generator Panel -->
                 <div
-                    class="relative overflow-hidden rounded-2xl border border-indigo-500/20 bg-gradient-to-br from-indigo-950/20 via-zinc-900/50 to-zinc-900/30 p-8 shadow-xl"
+                    class="relative overflow-hidden rounded-2xl border border-indigo-500/20 bg-linear-to-br from-indigo-950/20 via-zinc-900/50 to-zinc-900/30 p-8 shadow-xl"
                 >
                     <div
                         class="absolute right-0 top-0 -mr-16 -mt-16 h-48 w-48 rounded-full bg-indigo-500/10 blur-3xl"
@@ -399,7 +399,7 @@ const deleteQuestion = () => {
                             @submit.prevent="generateContent"
                             class="flex flex-col gap-3 md:flex-row"
                         >
-                            <div class="flex-grow">
+                            <div class="grow">
                                 <TextInput
                                     v-model="aiForm.theme"
                                     type="text"
@@ -472,7 +472,7 @@ const deleteQuestion = () => {
                         @submit.prevent="submitPdf"
                         class="mt-4 flex flex-col gap-3 md:flex-row md:items-start"
                     >
-                        <div class="flex-grow">
+                        <div class="grow">
                             <label
                                 class="flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-zinc-700 bg-zinc-950/40 px-4 py-3 text-sm font-semibold text-zinc-300 transition-colors hover:border-emerald-500 hover:text-white"
                             >
@@ -1057,7 +1057,7 @@ const deleteQuestion = () => {
                                         'teacher.question_form.option_placeholder',
                                     ).replace(':number', idx + 1)
                                 "
-                                class="flex-grow"
+                                class="grow"
                             />
                             <button
                                 v-if="questionForm.options.length > 2"

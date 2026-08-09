@@ -59,7 +59,7 @@ watch(
                         : 'border-rose-500/30 bg-zinc-900/90 text-rose-400'
                 "
             >
-                <div class="flex-shrink-0">
+                <div class="shrink-0">
                     <CheckCircle
                         v-if="toast.type === 'success'"
                         class="h-5 w-5 text-emerald-400"

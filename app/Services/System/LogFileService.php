@@ -56,7 +56,15 @@ class LogFileService
             return null;
         }
 
+        // basename() já impede path traversal, mas sozinho ainda permitiria
+        // ler qualquer arquivo dentro de storage/logs — restringimos à
+        // allowlist real (mesmos arquivos .log retornados por list()).
         $name = basename($fileName);
+
+        if (!in_array($name, array_column($this->list(), 'name'), true)) {
+            return null;
+        }
+
         $path = storage_path('logs/' . $name);
 
         if (!File::exists($path)) {

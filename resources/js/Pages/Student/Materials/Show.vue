@@ -37,10 +37,21 @@ const completeLeitura = () => {
     );
 };
 
+// Escapa HTML usando o próprio navegador (via textContent), para que
+// qualquer tag literal no conteúdo (ex.: <script>) vire texto inerte antes
+// de aplicarmos as substituições de markdown abaixo — sem isso, conteúdo de
+// material de estudo (digitado pelo professor ou extraído de PDF/PPTX
+// enviado por ele) executaria como HTML/JS real no navegador do aluno.
+const escapeHtml = (text) => {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+};
+
 // Simples parser local de Markdown para formatar o texto didático de forma estilizada
 const parseMarkdown = (text) => {
     if (!text) return '';
-    let html = text;
+    let html = escapeHtml(text);
     // Substitui títulos
     html = html.replace(
         /^#\s+(.+)$/gm,

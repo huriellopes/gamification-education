@@ -8,6 +8,7 @@ use App\Actions\Report\GetMembersReportDataAction;
 use App\Actions\Report\GetPerformanceReportDataAction;
 use App\Enums\ReportStatus;
 use App\Models\Report;
+use App\Support\SpreadsheetSanitizer;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -66,7 +67,10 @@ class GenerateReportJob implements ShouldQueue
 
         $filePath = $directory . '/' . $filename;
 
-        SimpleXLSXGen::fromArray($data)->saveAs($filePath);
+        // Nome de usuário/instituição vem de cadastro sem restrição de
+        // caracteres — sem isso, um valor como "=HYPERLINK(...)" viraria
+        // fórmula executável ao abrir o relatório no Excel/LibreOffice.
+        SimpleXLSXGen::fromArray(SpreadsheetSanitizer::sanitizeRows($data))->saveAs($filePath);
 
         $this->report->update([
             'file_path' => $filePath,

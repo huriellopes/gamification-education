@@ -12,6 +12,7 @@ use App\Models\Subject;
 use App\Models\Test;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Queue;
 use Inertia\Testing\AssertableInertia as Assert;
 
@@ -123,6 +124,39 @@ test('teacher can trigger content generation for subject they teach', function (
         ->assertRedirect(route('teacher.subjects.show', $this->subject->id));
 
     Queue::assertPushed(GenerateContentJob::class);
+});
+
+test('triggering content generation too many times is rate limited', function () {
+    Queue::fake();
+
+    // 10 tentativas são permitidas; a 11ª é bloqueada pelo throttle.
+    for ($i = 0; $i < 10; $i++) {
+        $this->actingAs($this->teacher)
+            ->post(route('teacher.subjects.generate', $this->subject->id), [
+                'theme' => 'Tema ' . $i,
+            ]);
+    }
+
+    $this->actingAs($this->teacher)
+        ->post(route('teacher.subjects.generate', $this->subject->id), ['theme' => 'Tema Extra'])
+        ->assertStatus(429);
+});
+
+test('importing pdf too many times is rate limited', function () {
+    $file = UploadedFile::fake()->create('material.pdf', 50, 'application/pdf');
+
+    // 10 tentativas são permitidas; a 11ª é bloqueada pelo throttle (o
+    // conteúdo do arquivo é falso e cada tentativa deve mesmo falhar a
+    // validação/parsing — o que importa aqui é que o throttle, que roda
+    // antes do controller, conta a requisição de qualquer forma).
+    for ($i = 0; $i < 10; $i++) {
+        $this->actingAs($this->teacher)
+            ->post(route('teacher.subjects.import-pdf', $this->subject->id), ['file' => $file]);
+    }
+
+    $this->actingAs($this->teacher)
+        ->post(route('teacher.subjects.import-pdf', $this->subject->id), ['file' => $file])
+        ->assertStatus(429);
 });
 
 test('teacher can store, update, and delete subject', function () {

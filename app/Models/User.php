@@ -35,6 +35,17 @@ class User extends Authenticatable implements AuditableContract
     use Activatable, Auditable, BelongsToInstitution, HasFactory, HasRoles, KeepsDeletedModels, Notifiable;
 
     /**
+     * Atributos nunca gravados no log de auditoria (owen-it/laravel-auditing).
+     * Sem "strict mode" o pacote não exclui $hidden automaticamente — sem
+     * isso, o hash de senha e o segredo 2FA (cifrado) apareceriam em
+     * old_values/new_values, visíveis ao Super Admin em /super-admin/audits,
+     * sem nenhum propósito de auditoria legítimo.
+     *
+     * @var list<string>
+     */
+    protected array $auditExclude = ['password', 'remember_token', 'two_factor_secret', 'two_factor_recovery_codes'];
+
+    /**
      * @return BelongsTo<Institution, $this>
      */
     public function institution(): BelongsTo

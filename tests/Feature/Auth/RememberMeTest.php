@@ -9,6 +9,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Cookie;
 use Tests\TestCase;
 
@@ -72,15 +73,17 @@ class RememberMeTest extends TestCase
     public function test_recaller_keeps_magic_login_user_logged_in_after_session_expires(): void
     {
         $user = User::factory()->create();
-        $token = 'magic-remember-regression-token';
+        $selector = Str::random(16);
+        $verifier = Str::random(48);
         MagicLoginToken::create([
             'user_id' => $user->id,
-            'token' => $token,
+            'selector' => $selector,
+            'token' => hash('sha256', $verifier),
             'expires_at' => Carbon::now()->addMinutes(15),
         ]);
 
         $this->get(route('magic-login.authenticate', [
-            'token' => $token,
+            'token' => $selector . '.' . $verifier,
             'remember' => '1',
         ]));
         $this->assertAuthenticatedAs($user);

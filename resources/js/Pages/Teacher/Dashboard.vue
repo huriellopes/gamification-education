@@ -175,7 +175,7 @@ onUnmounted(() => {
                                     class="h-2.5 w-full overflow-hidden rounded-full bg-zinc-950"
                                 >
                                     <div
-                                        class="h-full rounded-full bg-gradient-to-r from-indigo-500 to-violet-500"
+                                        class="h-full rounded-full bg-linear-to-r from-indigo-500 to-violet-500"
                                         :style="{
                                             width: barWidth(
                                                 c.average_points,
@@ -229,7 +229,7 @@ onUnmounted(() => {
                                     class="h-2.5 w-full overflow-hidden rounded-full bg-zinc-950"
                                 >
                                     <div
-                                        class="h-full rounded-full bg-gradient-to-r from-amber-500 to-orange-500"
+                                        class="h-full rounded-full bg-linear-to-r from-amber-500 to-orange-500"
                                         :style="{
                                             width: barWidth(
                                                 s.points,
