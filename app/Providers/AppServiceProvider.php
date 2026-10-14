@@ -14,6 +14,7 @@ use App\Observers\InstitutionObserver;
 use App\Observers\SubjectObserver;
 use App\Observers\UserObserver;
 use Illuminate\Auth\Events\Login;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Vite;
@@ -36,6 +37,11 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Vite::prefetch(concurrency: 3);
+
+        // Fora de produção, lazy loading lança exceção: N+1 aparece já nos
+        // testes/dev em vez de degradar a performance silenciosamente.
+        Model::preventLazyLoading(!$this->app->isProduction());
+
         User::observe(UserObserver::class);
         Institution::observe(InstitutionObserver::class);
         Subject::observe(SubjectObserver::class);

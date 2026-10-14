@@ -9,9 +9,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\TwoFactorChallengeRequest;
 use App\Models\User;
 use App\Services\Auth\TwoFactorAuthenticationService;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
+use Inertia\Inertia;
+use Symfony\Component\HttpFoundation\Response;
 
 class VerifyTwoFactorChallengeController extends Controller
 {
@@ -22,7 +23,7 @@ class VerifyTwoFactorChallengeController extends Controller
         TwoFactorChallengeRequest $request,
         TwoFactorAuthenticationService $service,
         EvictOtherSessionsAction $evictOtherSessions,
-    ): RedirectResponse {
+    ): Response {
         $userId = $request->session()->get('login.id');
 
         if (!$userId) {
@@ -59,6 +60,8 @@ class VerifyTwoFactorChallengeController extends Controller
         // Sessão única (espelha o login por senha).
         $evictOtherSessions->execute($user, $request->session()->getId());
 
-        return to_route('dashboard');
+        // Recarga completa (não navegação SPA): o visitante só recebeu as rotas
+        // públicas do Ziggy; a página autenticada precisa da lista completa.
+        return Inertia::location(to_route('dashboard'));
     }
 }
