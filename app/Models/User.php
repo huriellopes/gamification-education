@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Carbon;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\DeletedModels\Models\Concerns\KeepsDeletedModels;
@@ -26,6 +27,7 @@ use Spatie\DeletedModels\Models\Concerns\KeepsDeletedModels;
 /**
  * @property UserRole $role
  * @property GeneralStatus $is_active
+ * @property Carbon|null $email_verified_at
  */
 #[Fillable(['name', 'email', 'password', 'institution_id', 'role', 'points', 'is_active', 'must_change_password', 'last_login_at'])]
 #[Hidden(['password', 'remember_token', 'two_factor_secret', 'two_factor_recovery_codes'])]
@@ -104,6 +106,9 @@ class User extends Authenticatable implements AuditableContract
             ->withTimestamps();
     }
 
+    /**
+     * @return BelongsToMany<Institution, $this>
+     */
     public function institutions(): BelongsToMany
     {
         return $this->belongsToMany(Institution::class, 'institution_user')
