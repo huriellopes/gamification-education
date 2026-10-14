@@ -10,7 +10,7 @@ import { createApp, createSSRApp, h } from 'vue';
 // a tela de erro, recarregamos a página via GET: se o "remember" estiver ativo,
 // o cookie recaller re-autentica o usuário e um novo token CSRF é emitido —
 // mantendo-o logado. Sem o recaller, o GET cai naturalmente no /login.
-router.on('invalid', (event) => {
+router.on('httpException', (event) => {
     if (event.detail.response?.status === 419) {
         event.preventDefault();
         router.reload();
