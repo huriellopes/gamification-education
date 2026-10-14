@@ -8,9 +8,12 @@ use App\Http\Middleware\SetSecurityHeaders;
 use App\Models\Institution;
 use App\Models\User;
 use App\Providers\AppServiceProvider;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 use Inertia\Support\Header;
 use Inertia\Testing\AssertableInertia as Assert;
+
+uses(RefreshDatabase::class);
 
 test('responses carry basic security headers', function () {
     $response = $this->get('/login');

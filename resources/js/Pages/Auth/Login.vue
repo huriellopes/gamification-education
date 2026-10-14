@@ -5,7 +5,7 @@ import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
 import { __ } from '@/i18n';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
 import {
     ChevronLeft,
     ChevronRight,
@@ -28,8 +28,10 @@ defineProps({
 
 // Permite abrir a tela já no tab de link mágico via ?tab=magic
 // (usado, por exemplo, pelo botão "Entrar com Link Mágico" da landing page).
+// Lê da URL da página Inertia (e não de window.location) para funcionar no SSR.
 const initialTab =
-    new URLSearchParams(window.location.search).get('tab') === 'magic'
+    new URL(usePage().url, 'http://localhost').searchParams.get('tab') ===
+    'magic'
         ? 'magic'
         : 'password';
 const activeTab = ref(initialTab); // 'password' ou 'magic'

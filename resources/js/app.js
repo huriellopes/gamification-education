@@ -1,13 +1,9 @@
 import '../css/app.css';
 import './bootstrap';
 
-import { __ } from '@/i18n';
+import { installPlugins, resolve, title } from '@/inertia';
 import { createInertiaApp, router } from '@inertiajs/vue3';
-import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
-import { createApp, h } from 'vue';
-import { ZiggyVue } from '../../vendor/tightenco/ziggy';
-
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+import { createApp, createSSRApp, h } from 'vue';
 
 // Sessão/CSRF expiram após o tempo ocioso (SESSION_LIFETIME). Quando isso
 // acontece, um POST do SPA volta 419 (token CSRF inválido). Em vez de estourar
@@ -22,21 +18,17 @@ router.on('invalid', (event) => {
 });
 
 createInertiaApp({
-    title: (title) => `${title} - ${appName}`,
-    resolve: (name) =>
-        resolvePageComponent(
-            `./Pages/${name}.vue`,
-            import.meta.glob('./Pages/**/*.vue'),
-        ),
+    title,
+    resolve,
     setup({ el, App, props, plugin }) {
-        const app = createApp({ render: () => h(App, props) })
-            .use(plugin)
-            .use(ZiggyVue);
+        // Página renderizada pelo SSR (só visitantes) → hidrata o HTML existente;
+        // caso contrário, monta do zero.
+        const createVueApp = el.hasAttribute('data-server-rendered') ? createSSRApp : createApp;
 
-        // Disponibiliza __() globalmente nos templates (igual ao helper do Laravel).
-        app.config.globalProperties.__ = __;
-
-        return app.mount(el);
+        return installPlugins(
+            createVueApp({ render: () => h(App, props) }),
+            plugin,
+        ).mount(el);
     },
     progress: {
         color: '#4B5563',

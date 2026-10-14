@@ -162,6 +162,25 @@ php artisan serve           # in another
 npm run dev                 # in another
 ```
 
+### SSR (Server-Side Rendering) in production
+
+Inertia SSR is used **for guests only** (landing, login, register, legal pages); authenticated pages keep rendering in the browser. It is off by default.
+
+1. `npm run build` already produces both bundles (`public/build` and `bootstrap/ssr`).
+2. In the production `.env`: `INERTIA_SSR_ENABLED=true`.
+3. Keep the Node process alive with supervisor (or systemd) and restart it on every deploy (`php artisan inertia:stop-ssr`; supervisor brings it back up):
+
+```ini
+[program:gamificaedu-ssr]
+command=php /var/www/gamificaedu/artisan inertia:start-ssr
+autostart=true
+autorestart=true
+user=www-data
+stdout_logfile=/var/www/gamificaedu/storage/logs/ssr.log
+```
+
+If the SSR process goes down, Inertia falls back to client-side rendering on its own.
+
 ---
 
 ## 🧪 Quality & Tests
