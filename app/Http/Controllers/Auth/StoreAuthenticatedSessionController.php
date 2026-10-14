@@ -8,15 +8,16 @@ use App\Actions\Auth\EvictOtherSessionsAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Models\User;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
+use Symfony\Component\HttpFoundation\Response;
 
 class StoreAuthenticatedSessionController extends Controller
 {
     /**
      * Handle an incoming authentication request.
      */
-    public function __invoke(LoginRequest $request, EvictOtherSessionsAction $evictOtherSessions): RedirectResponse
+    public function __invoke(LoginRequest $request, EvictOtherSessionsAction $evictOtherSessions): Response
     {
         $request->authenticate();
 
@@ -38,6 +39,8 @@ class StoreAuthenticatedSessionController extends Controller
 
         $evictOtherSessions->execute($user, $request->session()->getId());
 
-        return to_route('dashboard');
+        // Recarga completa (não navegação SPA): o visitante só recebeu as rotas
+        // públicas do Ziggy; a página autenticada precisa da lista completa.
+        return Inertia::location(to_route('dashboard'));
     }
 }

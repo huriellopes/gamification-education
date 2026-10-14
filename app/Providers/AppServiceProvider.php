@@ -14,11 +14,13 @@ use App\Observers\InstitutionObserver;
 use App\Observers\SubjectObserver;
 use App\Observers\UserObserver;
 use Illuminate\Auth\Events\Login;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
+use Inertia\Inertia;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -36,6 +38,18 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Vite::prefetch(concurrency: 3);
+
+        // Fora de produção, lazy loading lança exceção: N+1 aparece já nos
+        // testes/dev em vez de degradar a performance silenciosamente.
+        Model::preventLazyLoading(!$this->app->isProduction());
+
+        // SSR só para visitantes (landing, login, páginas legais): é onde o HTML
+        // pronto ajuda (primeira pintura, SEO). Páginas autenticadas seguem CSR
+        // — evitam custo no processo Node e hydration mismatch (sidebar via localStorage).
+        // A condição precisa incluir o config: com uma closure registrada, o
+        // gateway do Inertia ignora `inertia.ssr.enabled`.
+        Inertia::disableSsr(fn (): bool => !config('inertia.ssr.enabled') || request()->user() !== null);
+
         User::observe(UserObserver::class);
         Institution::observe(InstitutionObserver::class);
         Subject::observe(SubjectObserver::class);

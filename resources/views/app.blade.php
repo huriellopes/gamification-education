@@ -67,7 +67,8 @@
         <x-seo::meta />
 
             <!-- Scripts -->
-            @routes
+            {{-- Visitantes só recebem as rotas públicas (config/ziggy.php). --}}
+            @routes(auth()->check() ? null : 'guest')
             @vite(['resources/js/app.js', "resources/js/Pages/{$page['component']}.vue"])
             @inertiaHead
     </head>
